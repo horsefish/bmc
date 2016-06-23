@@ -1,0 +1,2 @@
+ID  Name             Callin  Link Auth  IPMI Msg   Channel Priv Limit
+2   root             true    true       true       ADMINISTRATOR

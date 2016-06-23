@@ -1,0 +1,28 @@
+{
+  "author": "horsefish",
+  "name": "horsefish-bmc",
+  "version": "0.0.1",
+  "project_page": "https://github.com/orgs/horsefish/dashboard",
+  "source": "https://github.com/horsefish/bmc",
+  "summary": "Installs, configures, and manages Out-of-band management software",
+  "tags": [
+    "ipmi",
+    "bmc",
+    "idrac",
+    "racadm"
+  ],
+  "dependencies": [{
+    "name": "puppetlabs/stdlib",
+    "version_requirement": ">= 2.4.0 < 5.0.0"
+  },{
+    "name": "puppetlabs/apt",
+    "version_requirement": ">= 1.4.0"
+  }
+  ],
+  "license": "Apache-2.0",
+  "operatingsystem_support": [{
+    "operatingsystem": "CentOS",
+    "operatingsystemrelease": [ "7"	]
+  }
+  ]
+}
