@@ -8,7 +8,7 @@ Puppet::Type.newtype(:bmc_user) do
   end
 
   newparam(:name, :namevar => true) do
-    desc 'Username of the user'
+    desc 'Username'
   end
 
   newparam(:password) do
@@ -21,7 +21,7 @@ Puppet::Type.newtype(:bmc_user) do
 
   newparam(:enable) do
     desc 'Set user to disabled or enabled, default is True'
-    defaulto True
+    defaultto true
   end
 
   newparam(:privilege) do
