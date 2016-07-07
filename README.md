@@ -37,7 +37,7 @@ Refer to http://github.com/stdmod/ for complete documentation on the common para
 ###Beginning with module BMC
 
 ##Usage
-
+```
   bmc_user { 'test':
     name => 'test',
     password => 'password',
@@ -46,7 +46,7 @@ Refer to http://github.com/stdmod/ for complete documentation on the common para
     privilege => 'ADMINISTRATOR',
     channel => 1,
   }
-
+```
 ##Operating Systems Support
 
 This is tested on these OS:
