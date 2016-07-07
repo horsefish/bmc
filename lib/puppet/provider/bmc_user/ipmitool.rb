@@ -6,41 +6,46 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
 
   commands :ipmitool => "ipmitool"
 
-
-  channelno = channelno
-  privilege_lvl = {'callback' => 1, 'user' => 2, 'operator' => 3, 'administrator' => 4}
-  user = Hash.new
-  ipmitool_out = ipmitool('user', 'list', @channelno)
-  ipmitool_out.each_line do |line|
-    line_array = line.split(' ')
-    unless line_array[1].to_s.downcase == 'name'
-      user[line_array[1]] = {
-          'id' => line_array[0],
-          'name' => line_array[1],
-          'calling' => line_array[2],
-          'link_auth' => line_array[3],
-          'impi_msg' => line_array[4],
-          'channel_priv_limit' => line_array[5]}
+  def get_user_info
+    user = Hash.new
+    ipmitool_out = ipmitool('user', 'list', resource[:channel])
+    ipmitool_out.each_line do |line|
+      line_array = line.split(' ')
+      unless line_array[1].to_s.downcase == 'name'
+        user[line_array[1]] = {
+            'id'                 => line_array[0],
+            'name'               => line_array[1],
+            'calling'            => line_array[2],
+            'link_auth'          => line_array[3],
+            'impi_msg'           => line_array[4],
+            'channel_priv_limit' => line_array[5]
+        }
+      end
     end
+    user
   end
 
 
   def exits?
-    #Ipmitool doesn't supprt deleting user so we don't test if user exists, but if user is enabled or disabled.
-    user[resource[:name]]['link_auth'] == true
+    get_user_info
+    user[resource[:name]]
   end
 
   def destroy
-    #We can't delete at user, so it is disabled
+    #We can't delete at user, so it is disabled and renamed to xxxxxx. Its renamed because othervise the exixts?
+    #would resturn true. Is there a way to detect if user is enabled or disabled? MAybe with a RAW command?
     ipmitool('user', 'disable', user[resource[:name]['id']])
+    ipmitool('user', 'set', 'name', user[resource[:name]]['id'], 'xxxxxx')
   end
 
   def create
-    if user[resource[:name]]
-      ipmitool('user', 'enable', user[resource[:name]['id']])
-    else
-      #Configure user.
-      ipmitool()
+    #Enabling the user in case it was diabled.
+    ipmitool('user', 'enable', resource[:userid])
+    ipmitool('user', 'set', 'name', resource[:userid],resource[:name] )
+    #Running as exec so password isn't logged during puppet debug run.
+    unless system( "ipmitool user set password #{resurce[:userid]} #{resource[:password]}" )
+      raise Puppet::Error, "Failed to set password for #{resouce[:name]}"
     end
+    ipmitool('channel', 'setaccess', resource[:channel], resource[:userid], "privilege=#{resource[:privilege]}")
   end
 end

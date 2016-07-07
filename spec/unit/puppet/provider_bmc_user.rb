@@ -10,7 +10,7 @@ describe provider_class do
         :name => 'root',
         :password => 'calvin',
         :userid => 2,
-        :enable => True,
+        :enable => true,
         :privilege => 'ADMINISTRATOR',
         :channel => 1
   end

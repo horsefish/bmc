@@ -26,6 +26,19 @@ Puppet::Type.newtype(:bmc_user) do
 
   newparam(:privilege) do
     desc 'Set privilege for user'
+    newvalues(:callback, :user, :operator, :administrator)
+    munge do |priv|
+      case priv
+        when :callback
+          1
+        when :user
+          2
+        when :operator
+          3
+        when :administrator
+          4
+      end
+    end
   end
 
   newparam(:channel) do
