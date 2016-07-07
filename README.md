@@ -38,6 +38,15 @@ Refer to http://github.com/stdmod/ for complete documentation on the common para
 
 ##Usage
 
+  bmc_user { 'test':
+    name => 'test',
+    password => 'password',
+    userid => 3,
+    enable => true,
+    privilege => 'ADMINISTRATOR',
+    channel => 1,
+  }
+
 ##Operating Systems Support
 
 This is tested on these OS:
