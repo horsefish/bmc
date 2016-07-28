@@ -12,7 +12,7 @@ describe provider_class do
         :userid => 2,
         :enable => true,
         :privilege => 'ADMINISTRATOR',
-        :channel => 1
+        :channel => 1)
   end
 
   let(:provider) do
@@ -21,6 +21,9 @@ describe provider_class do
     provider
   end
 
+#  it "Provider exists" do
+#    expect(provider).to eql(nil)
+#  end
 
 end
 
