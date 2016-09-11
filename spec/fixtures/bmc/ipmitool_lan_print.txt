@@ -1,0 +1,27 @@
+Set in Progress         : Set Complete
+Auth Type Support       : NONE MD5 PASSWORD
+Auth Type Enable        : Callback :
+                        : User     :
+                        : Operator :
+                        : Admin    : MD5
+                        : OEM      :
+IP Address Source       : Static Address
+IP Address              : 192.168.1.211
+Subnet Mask             : 255.255.255.0
+MAC Address             : 00:0e:0c:ea:92:a2
+SNMP Community String   :
+IP Header               : TTL=0x40 Flags=0x40 Precedence=0x00 TOS=0x10
+BMC ARP Control         : ARP Responses Enabled, Gratuitous ARP Disabled
+Gratituous ARP Intrvl   : 2.0 seconds
+Default Gateway IP      : 192.168.1.254
+Default Gateway MAC     : 00:0e:0c:aa:8e:13
+Backup Gateway IP       : 0.0.0.0
+Backup Gateway MAC      : 00:00:00:00:00:00
+RMCP+ Cipher Suites     : None
+Cipher Suite Priv Max   : XXXXXXXXXXXXXXX
+                        :     X=Cipher Suite Unused
+                        :     c=CALLBACK
+                        :     u=USER
+                        :     o=OPERATOR
+                        :     a=ADMIN
+                        :     O=OEM

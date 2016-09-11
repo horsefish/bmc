@@ -27,13 +27,13 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
 
 
   def exits?
-    get_user_info
+    user = get_user_info
     user[resource[:name]]
   end
 
   def destroy
-    #We can't delete at user, so it is disabled and renamed to xxxxxx. Its renamed because othervise the exixts?
-    #would resturn true. Is there a way to detect if user is enabled or disabled? MAybe with a RAW command?
+    #We can't delete at user, so it is disabled and renamed to xxxxxx. Its renamed because otherwise the exits?
+    #would resturn true. Is there a way to detect if user is enabled or disabled? Maybe with a RAW command?
     ipmitool('user', 'disable', user[resource[:name]['id']])
     ipmitool('user', 'set', 'name', user[resource[:name]]['id'], 'xxxxxx')
   end
