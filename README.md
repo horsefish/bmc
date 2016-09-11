@@ -48,7 +48,7 @@ Refer to http://github.com/stdmod/ for complete documentation on the common para
     channel => 1,
   }
 ```
-###
+###Network
 ```
   bmc_network { 'test':
     ipaddr => '123.123.123.123',
