@@ -7,7 +7,7 @@ Puppet::Type.newtype(:bmc_user) do
     defaultto :present
   end
 
-  newparam(:type) do
+  newparam(:proto) do
     desc 'IP Address Source'
     newvalues(:static, :dynamic)
   end
