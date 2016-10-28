@@ -1,5 +1,5 @@
-Puppet::Type.type(:bmc_user).provide(:ipmitool) do
-  confine :operationsystem => [:redhat, :debian]
+Puppet::Type.type(:bmc_network).provide(:ipmitool) do
+  confine :osfamily => [:redhat, :debian]
   defaultfor :osfamily => [:redhat, :debian]
 
   desc "Adminstrates network on BMC interface"
@@ -7,7 +7,15 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   commands :ipmitool => "ipmitool"
 
   def exits?
-    #TODO examine if this can be done with ipmitool lan get XXX
+    begin
+      ipmitool('lan', 'print', resource[:channel])
+      true
+    rescue Puppet::ExecutionFailure => e
+      false
+    end
+  end
+
+  def get_values
     lan_info = Hash.new
     ipmitool_out = ipmitool('lan', 'print', resource[:channel])
     ipmitool_out.split("\n").each do |line|
@@ -23,33 +31,51 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
             lan_info['ipaddr'] = line.split(':')[1].strip
           end
         when /Subnet Mask/
-          lan_info['subnet'] = line.split(':')[1].strip
+          lan_info['netmask'] = line.split(':')[1].strip
         when /Default Gateway IP/
           lan_info['gateway'] = line.split(':')[1].strip
       end
     end
-    unless resource[:proto] == "static"
-      true
-    else
-      if resource[:ipaddr] == lan_info['ipaddr'] &&
-          resource[:gateway] == lan_info['gateway'] &&
-          resource[:subnet] == lan_info['subnet']
-        true
-      else
-        false
-      end
-    end
+    lan_info
   end
 
-  def destroy
-    #Is there a way to clear network config? Otherwise it should not be ensurable!
-    true
+  def proto
+    lan_info=get_values
+    debug "current proto: #{lan_info['proto']}"
+    lan_info['proto']
   end
 
-  def create
-    ipmitool('lan', 'set', '1', 'ipaddr', resource[:ipaddr])
-    ipmitool('lan', 'set', '1', 'netmask', resource[:subnet])
-    ipmitool('lan', 'set', '1', 'gateway', resource[:gateway])
-    ipmitool('lan', 'set', '1', 'ipsrc', resource[:type])
+  def proto=(value)
+    ipmitool('lan', 'set', resource[:channel], 'ipsrc', value)
+  end
+
+  def ipaddr
+    lan_info=get_values
+    debug "current ipaddr: #{lan_info['ipaddr']}"
+    lan_info['ipaddr']
+  end
+
+  def ipaddr=(value)
+    ipmitool('lan', 'set', resource[:channel], 'ipaddr', value)
+  end
+
+  def gateway
+    lan_info=get_values
+    debug "current gateway: #{lan_info['gateway']}"
+    lan_info['gateway']
+  end
+
+  def gateway=(value)
+    ipmitool('lan', 'set', resource[:channel], 'defgw', 'ipaddr', value)
+  end
+
+  def netmask
+    lan_info=get_values
+    debug "current netmask: #{lan_info['netmask']}"
+    lan_info['netmask']
+  end
+
+  def netmask=(value)
+    ipmitool('lan', 'set', resource[:channel], 'netmask', value)
   end
 end

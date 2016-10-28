@@ -1,18 +1,17 @@
-Puppet::Type.newtype(:bmc_user) do
-
+Puppet::Type.newtype(:bmc_network) do
   @doc = "BMC user network type"
 
-  ensurable do
-    defaultvalues
-    defaultto :present
-  end
-
-  newparam(:proto) do
+  newproperty(:proto) do
     desc 'IP Address Source'
-    newvalues(:static, :dynamic)
+    newvalues(:static, :dynamic, :none, :bios)
+    defaultto :static
   end
 
-  newparam(:ipaddr, :namevar => true) do
+  newparam(:name, :namevar => true) do
+    desc 'An arbitrary name used as the identity of the resource.'
+  end
+
+  newproperty(:ipaddr) do
     desc 'Ip Address'
     validate do |value|
       unless value =~ /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
@@ -21,7 +20,7 @@ Puppet::Type.newtype(:bmc_user) do
     end
   end
 
-  newparam(:gateway) do
+  newproperty(:gateway) do
     desc 'Gateway'
     validate do |value|
       unless value =~ /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
@@ -30,7 +29,7 @@ Puppet::Type.newtype(:bmc_user) do
     end
   end
 
-  newparam(:subnet) do
+  newproperty (:netmask) do
     desc 'Subnet Mask'
     validate do |value|
       unless value =~ /^\d{3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
@@ -40,7 +39,7 @@ Puppet::Type.newtype(:bmc_user) do
   end
 
   newparam(:channel) do
-    desc 'Channel number user is on, default to 1'
+    desc 'Channel number network is on, default to 1'
     defaultto 1
   end
 end

@@ -1,7 +1,7 @@
 class bmc::params() {
 
   case $::osfamily {
-    'redhat': {
+    'Redhat': {
       case $::operatingsystemmajrelease {
         5: {
           $ipmi_packages = ['OpenIPMI', 'OpenIPMI-tools']
@@ -15,7 +15,7 @@ class bmc::params() {
         }
       }
     }
-    'debian': {
+    'Debian': {
       $ipmi_packages = ['ipmitool']
     }
     default: {

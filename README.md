@@ -54,7 +54,7 @@ Refer to http://github.com/stdmod/ for complete documentation on the common para
     ipaddr => '123.123.123.123',
     gateway => '123.123.123.1',
     netmask => '255.255.255.0',
-    type => static,
+    proto => static,
     channel => 1,
   }
 ```
