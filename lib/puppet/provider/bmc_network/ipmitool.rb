@@ -6,7 +6,7 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
 
   commands :ipmitool => "ipmitool"
 
-  def exits?
+  def exists?
     begin
       ipmitool('lan', 'print', resource[:channel])
       true
@@ -21,10 +21,15 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
     ipmitool_out.split("\n").each do |line|
       case line.split(':')[0]
         when /IP Address Source/
-          if line.split(':')[1] =~ /[Ss]tatic/
-            lan_info['proto'] = 'static'
-          else
-            lan_info['proto'] = line.split(':')[1]
+          case line.split(':')[1]
+            when /[Ss]tatic/
+              lan_info['proto'] = 'static'
+            when /[Dd][Hh][Cc][Pp]/
+              lan_info['proto'] = 'dhcp'
+            when /[Nn]one/
+              lan_info['proto'] = 'none'
+            when /[Bb]ios/
+              lan_info['proto'] = 'bios'
           end
         when /IP Address/
           if line.split(':')[1] =~ /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/

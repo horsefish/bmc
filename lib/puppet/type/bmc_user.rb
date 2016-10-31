@@ -7,11 +7,11 @@ Puppet::Type.newtype(:bmc_user) do
     defaultto :present
   end
 
-  newparam(:name, :namevar => TRUE) do
+  newparam(:name, :namevar => true) do
     desc 'Username of the user'
   end
 
-  newparam(:password) do
+  newproperty(:password) do
     desc 'Password'
   end
 
@@ -19,12 +19,17 @@ Puppet::Type.newtype(:bmc_user) do
     desc 'UserId.'
   end
 
-  newparam(:enable) do
+  newproperty(:enable, :boolean => true) do
     desc 'Set user to disabled or enabled, default is True'
-    defaultto TRUE
+    defaultto true
   end
 
-  newparam(:privilege) do
+  newparam(:overwrite, :boolean => true) do
+    desc 'Should it overwrite existing user? This is to ensure that we do not overwrite a current user by accident.'
+    defaultto false
+  end
+
+  newproperty(:privilege) do
     desc 'Set privilege for user'
     newvalues(:callback, :user, :operator, :administrator)
     munge do |priv|

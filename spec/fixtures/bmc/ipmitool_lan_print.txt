@@ -5,8 +5,8 @@ Auth Type Enable        : Callback : MD5
                         : Operator : MD5
                         : Admin    : MD5
                         : OEM      :
-IP Address Source       : DHCP Address
-IP Address              : 10.10.10.10.
+IP Address Source       : Static Address
+IP Address              : 10.10.10.10
 Subnet Mask             : 255.255.255.0
 MAC Address             : 18:fb:7b:9b:57:27
 SNMP Community String   : public
