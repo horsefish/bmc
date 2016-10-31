@@ -1,11 +1,6 @@
 Puppet::Type.newtype(:bmc_user) do
 
-  @doc = "BMC user administration typy"
-
-  ensurable do
-    defaultvalues
-    defaultto :present
-  end
+  @doc = "BMC user administration type, not that it is not possible to destroy a user, it can only be overwritten."
 
   newparam(:name, :namevar => true) do
     desc 'Username of the user'
