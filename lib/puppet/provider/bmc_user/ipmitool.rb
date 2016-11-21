@@ -75,6 +75,6 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def enable=(value)
-    ipmitool('user', 'enable', value)
+    ipmitool('user', 'enable', resource[:userid])
   end
 end

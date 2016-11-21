@@ -1,7 +1,24 @@
+#Class: bmc
+#
+#
+#
+# Parameters:
+# ensure:
+# running:
+# manage_repo:
+# manage_gems: Should the module install the required gems
+#
+# Actions:
+#
+# Requires: see Modulefile
+#
+# Sample Usage:
+#
 class bmc(
   $ensure      = 'present',
   $running     = 'running',
-  $manage_repo = false
+  $manage_repo = false,
+  $manage_gems = false,
 ) inherits bmc::params {
 
   if $ensure == 'present' or $ensure == 'latest' {

@@ -1,5 +1,5 @@
 Puppet::Type.type(:bmc_network).provide(:ipmitool) do
-  confine :operationsystem => [:redhat, :debian]
+  confine :osfamily => [:redhat, :debian]
   defaultfor :osfamily => [:redhat, :debian]
 
   desc "Adminstrates network on BMC interface"
