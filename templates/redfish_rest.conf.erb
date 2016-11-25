@@ -1,0 +1,14 @@
+#!yaml
+---
+# credentials of a user with administrative power
+admin_username: <%= @admin_username %>
+admin_password: <%= @admin_password %>
+
+# the base url of the idrac
+idrac_base_url: https://<%= @bmc_ip %>/redfish/v1
+
+# timeout in seconds for opening the connection to the Nexus service
+# connection_open_timeout: 10
+
+# timeout in seconds for reading the answer from the Nexus service
+# connection_timeout: 10
