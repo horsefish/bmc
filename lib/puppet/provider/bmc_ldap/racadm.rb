@@ -5,6 +5,6 @@ Puppet::Type.type(:bmc_ldap).provide(:racadm) do
   desc "Adminstrates ldap configuration on BMC interface"
 
 
-  Use the objects in the cfgLdap and cfgLdapRoleGroup groups with the config command.
+  "Use the objects in the cfgLdap and cfgLdapRoleGroup groups with the config command."
 
 end

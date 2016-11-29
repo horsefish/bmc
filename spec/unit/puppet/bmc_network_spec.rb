@@ -13,7 +13,8 @@ describe type_class do
         :ipaddr => '10.10.10.10',
         :gateway => '10.10.10.254',
         :netmask => '255.255.255.0',
-        :channel => 1
+        :channel => 1,
+        :provider => 'ipmitool'
     )
   end
   let(:provider) do
