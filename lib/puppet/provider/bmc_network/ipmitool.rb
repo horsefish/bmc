@@ -1,3 +1,5 @@
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'ipmi', 'ipmitool.rb'))
+
 Puppet::Type.type(:bmc_network).provide(:ipmitool) do
   confine :osfamily => [:redhat, :debian]
   defaultfor :osfamily => [:redhat, :debian]
@@ -6,58 +8,21 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
 
   commands :ipmitool => "ipmitool"
 
-  def exists?
-    begin
-      ipmitool('lan', 'print', resource[:channel])
-      true
-    rescue Puppet::ExecutionFailure => e
-      false
-    end
-  end
-
-  def get_values
-    lan_info = Hash.new
+  def lan_print
     ipmitool_out = ipmitool('lan', 'print', resource[:channel])
-    ipmitool_out.split("\n").each do |line|
-      case line.split(':')[0]
-        when /IP Address Source/
-          case line.split(':')[1]
-            when /[Ss]tatic/
-              lan_info['proto'] = 'static'
-            when /[Dd][Hh][Cc][Pp]/
-              lan_info['proto'] = 'dhcp'
-            when /[Nn]one/
-              lan_info['proto'] = 'none'
-            when /[Bb]ios/
-              lan_info['proto'] = 'bios'
-          end
-        when /IP Address/
-          if line.split(':')[1] =~ /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
-            lan_info['ipaddr'] = line.split(':')[1].strip
-          end
-        when /Subnet Mask/
-          lan_info['netmask'] = line.split(':')[1].strip
-        when /Default Gateway IP/
-          lan_info['gateway'] = line.split(':')[1].strip
-      end
-    end
-    lan_info
+    Ipmi::Ipmitool.parseLan(ipmitool_out)
   end
 
-  def proto
-    lan_info=get_values
-    debug "current proto: #{lan_info['proto']}"
-    lan_info['proto']
+  def ipsrc
+    lan_print['IP Address Source']
   end
 
-  def proto=(value)
+  def ipsrc=(value)
     ipmitool('lan', 'set', resource[:channel], 'ipsrc', value)
   end
 
   def ipaddr
-    lan_info=get_values
-    debug "current ipaddr: #{lan_info['ipaddr']}"
-    lan_info['ipaddr']
+    lan_print['IP Address']
   end
 
   def ipaddr=(value)
@@ -65,9 +30,7 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
   end
 
   def gateway
-    lan_info=get_values
-    debug "current gateway: #{lan_info['gateway']}"
-    lan_info['gateway']
+    lan_print['Default Gateway IP']
   end
 
   def gateway=(value)
@@ -75,9 +38,7 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
   end
 
   def netmask
-    lan_info=get_values
-    debug "current netmask: #{lan_info['netmask']}"
-    lan_info['netmask']
+    lan_print['Subnet Mask']
   end
 
   def netmask=(value)

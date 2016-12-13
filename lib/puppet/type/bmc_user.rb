@@ -1,6 +1,6 @@
 Puppet::Type.newtype(:bmc_user) do
 
-  @doc = "BMC user administration typy"
+  @doc = "BMC user administration"
 
   ensurable do
     defaultvalues
@@ -12,42 +12,41 @@ Puppet::Type.newtype(:bmc_user) do
   end
 
   newproperty(:password) do
-    desc 'Password'
-  end
-
-  newparam(:userid) do
-    desc 'UserId.'
-  end
-
-  newproperty(:enable, :boolean => true) do
-    desc 'Set user to disabled or enabled, default is True'
-    defaultto true
-  end
-
-  newparam(:overwrite, :boolean => true) do
-    desc 'Should it overwrite existing user? This is to ensure that we do not overwrite a current user by accident.'
-    defaultto false
-  end
-
-  newproperty(:privilege) do
-    desc 'Set privilege for user'
-    newvalues(:callback, :user, :operator, :administrator)
-    munge do |priv|
-      case priv
-        when :callback
-          1
-        when :user
-          2
-        when :operator
-          3
-        when :administrator
-          4
-      end
+    def change_to_s(current, desire)
+      'changed password'
     end
   end
 
-  newparam(:channel) do
-    desc 'Channel number user is on, default to 1'
-    defaultto 1
+  newproperty(:callin) do
+    desc 'Configure user access information on the callin channel'
+    defaultto true
+    munge do |priv|
+      priv.to_s
+    end
+  end
+
+  newproperty(:link) do
+    desc 'Configure user access information on the link channel'
+    defaultto true
+    munge do |priv|
+      priv.to_s
+    end
+  end
+
+  newproperty(:ipmi) do
+    desc 'Configure user access information on the ipmi channel'
+    defaultto true
+    munge do |priv|
+      priv.to_s
+    end
+  end
+
+  newproperty(:privilege) do
+    desc 'Force session privilege level'
+    newvalues(:callback, :user, :operator, :administrator, :oem_proprietary, :no_access)
+    defaultto :administrator
+    munge do |priv|
+      priv.upcase
+    end
   end
 end

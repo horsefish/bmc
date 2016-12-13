@@ -40,6 +40,9 @@ Puppet::Type.newtype(:bmc_ssl) do
 
   newparam(:remote_rac_host) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
+    validate do |value|
+      raise ArgumentError, "%s is not a valid ip address" % value unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+    end
   end
 
   newparam(:type, :required_features => :racadm) do

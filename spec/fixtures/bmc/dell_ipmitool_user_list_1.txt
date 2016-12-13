@@ -1,0 +1,7 @@
+ID  Name	     Callin  Link Auth	IPMI Msg   Channel Priv Limit
+2   root             true    true       true       ADMINISTRATOR
+3   xx xxd           true    true       true       USER
+4   xx               true    true       true       OPERATOR
+5   emil             true    false      false      NO ACCESS
+6   name             true    true       true       CALLBACK
+63  last             true    true       true       NO ACCESS

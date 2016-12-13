@@ -9,7 +9,7 @@ describe type_class do
   let(:type) do
     Puppet::Type.type(:bmc_network).new(
         :name => 'test',
-        :proto => 'static',
+        :ipsrc => 'static',
         :ipaddr => '10.10.10.10',
         :gateway => '10.10.10.254',
         :netmask => '255.255.255.0',
@@ -25,31 +25,29 @@ describe type_class do
     type
   end
 
+  it 'exceptions handling' do
+    expect {
+      Puppet::Type.type(:bmc_network).new(
+          :name => 'foo',
+          :ipsrc => 'static',
+          :ipaddr => '10.10.10.10',
+          :gateway => 'XXX',
+          :netmask => '255.255.255.0',
+          :channel => 1
+      ) }.to raise_error(Puppet::ResourceError)
+  end
+
   it 'should not raise error when created' do
     expect {
       Puppet::Type.type(:bmc_network).new(
           :name => 'foo',
-          :proto => 'static',
+          :ipsrc => 'static',
           :ipaddr => '10.10.10.10',
           :gateway => '10.10.10.254',
           :netmask => '255.255.255.0',
           :channel => 1
       ) }.not_to raise_error
   end
-
-  # Leaving this as a command until someone figures out a way to mock ipmitool command in the provider with exit code 1+
-  # it 'should xxxx' do
-  #       subject.provider.stubs(:ipmitool).returns 1
-  #   expect {
-  #     Puppet::Type.type(:bmc_network).new(
-  #         :name => 'foo',
-  #         :proto => 'static',
-  #         :ipaddr => '10.10.10.10',
-  #         :gateway => '10.10.10.254',
-  #         :netmask => '255.255.255.0',
-  #         :channel => 1
-  #     ) }.to raise_error
-  # end
 
   {
       'should require valid ip' => {
@@ -77,20 +75,10 @@ describe type_class do
     end
   end
 
-  [:static, :dynamic, :none, :bios].each do |proto|
-    it 'should accept protocol #{proto}' do
-      expect {
-        Puppet::Type.type(:bmc_network).new(
-            :name => 'foo',
-            :proto => proto
-        ) }.not_to raise_error
-    end
-  end
-
-  {proto: 'static', ipaddr: '10.10.10.10', netmask: '255.255.255.0', gateway: '10.10.10.254'}.each do |key, value|
+  {ipsrc: 'static', ipaddr: '10.10.10.10', netmask: '255.255.255.0', gateway: '10.10.10.254'}.each do |key, value|
     it "#{key} should be in sync" do
       subject.provider.stubs(:ipmitool).returns(
-          IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/ipmitool_lan_print.txt")
+          IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/dell_ipmitool_lan_print.txt")
       )
       p = subject.properties.find { |prop| prop.name == key }
       expect(p.retrieve).to eql(value)

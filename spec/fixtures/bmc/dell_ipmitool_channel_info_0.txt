@@ -1,0 +1,6 @@
+Channel 0x0 info:
+  Channel Medium Type   : IPMB (I2C)
+  Channel Protocol Type : IPMB-1.0
+  Session Support       : session-less
+  Active Session Count  : 0
+  Protocol Vendor ID    : 7154

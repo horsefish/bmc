@@ -1,0 +1,11 @@
+Set in Progress         : Set Complete
+Auth Type Support       :
+IP Address Source       : DHCP Address
+IP Address              : 123.123.123.123
+Subnet Mask             : 255.255.255.0
+MAC Address             : de:ad:be:ef:ca:fe
+BMC ARP Control         : ARP Responses Enabled, Gratuitous ARP Disabled
+Default Gateway IP      : 123.123.123.1
+802.1q VLAN ID          : Disabled
+802.1q VLAN Priority    : 0
+Cipher Suite Priv Max   : Not Available

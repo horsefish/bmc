@@ -1,0 +1,6 @@
+Channel 0x2 info:
+  Channel Medium Type   : Serial/Modem
+  Channel Protocol Type : IPMB-1.0
+  Session Support       : single-session
+  Active Session Count  : 0
+  Protocol Vendor ID    : 7154
