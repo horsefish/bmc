@@ -1,12 +1,17 @@
+require 'open3'
+require 'tempfile'
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'ipmi', 'ipmitool.rb'))
+
 Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
-  require 'open3'
-  require 'tempfile'
 
   has_feature :racadm
 
   confine :manufactor_id => :'674'
   confine :osfamily => [:redhat, :debian]
   confine :exists => '/opt/dell/srvadmin/bin/idracadm'
+
+  #this is to identify racadm8
+  #confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
 
   commands :ipmitool => 'ipmitool'
 
@@ -62,13 +67,8 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
       cmd.push('-r').push(resource[:remote_rac_host])
     else
       ipmitool_out = ipmitool('lan', 'print')
-      ipmitool_out.each_line() do | line |
-        lineArray = line.split(':')
-        if !lineArray.empty? && lineArray[0].strip == 'IP Address'
-          cmd.push('-r').push(lineArray[1].strip)
-          break
-        end
-      end
+      lanPrint = Ipmi::Ipmitool.parseLan(ipmitool_out)
+      cmd.push('-r').push(lanPrint['IP Address'])
     end
 
     command = cmd + cmd_args
