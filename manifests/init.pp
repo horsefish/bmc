@@ -17,8 +17,7 @@
 class bmc(
   $ensure      = 'present',
   $running     = 'running',
-  $manage_repo = false,
-  $manage_gems = false,
+  $manage_repo = false
 ) inherits bmc::params {
 
   if $ensure == 'present' or $ensure == 'latest' {
