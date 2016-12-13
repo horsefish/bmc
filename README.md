@@ -37,16 +37,35 @@ Refer to http://github.com/stdmod/ for complete documentation on the common para
 ###Beginning with module BMC
 
 ##Usage
+To setup a simple bmc_user with username 'simple'   
 ```
-  bmc_user { 'test':
-    name => 'test',
-    password => 'password',
-    userid => 3,
-    enable => true,
-    privilege => 'ADMINISTRATOR',
-    channel => 1,
+  bmc_user { 'simple':
+    password => 'password'
   }
 ```
+A more complex user with username 'More complex'
+```
+  bmc_user { 'More complex':
+    password => 'password',
+    callin   => false,
+    ipmi => true,
+    link => false
+  }
+```
+There is no support for separate rules pr channel for a user.
+
+To change the SSL certificate 
+```
+  bmc_ssl { 'IDRAC ssl':
+    certificate_file => '/etc/ssl/private/idrac.pem',
+    certificate_key  => '/etc/ssl/private/idrac.key',
+    password         => 'idrac_root_password'
+    remote_rac_host  => '192.168.0.2'
+  }
+```
+if remote_rac_host is not set it ask ipmitool lan print
+It only support racadm7
+
 ##Operating Systems Support
 
 This is tested on these OS:
