@@ -12,7 +12,7 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
 
   def initialize(value={})
     super(value)
-    #This is to overcome the that namevar doesn't support defaultto
+    #This is to overcome that namevar doesn't support defaultto
     if value.name.to_s == value.title.to_s
       channel = 1
     else
