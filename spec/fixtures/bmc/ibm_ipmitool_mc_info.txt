@@ -1,0 +1,23 @@
+Device ID                 : 32
+Device Revision           : 0
+Firmware Revision         : 2.7
+IPMI Version              : 2.0
+Manufacturer ID           : 2
+Manufacturer Name         : Unknown (0x02)
+Product ID                : 7 (0x0007)
+Product Name              : Unknown (0x7)
+Device Available          : yes
+Provides Device SDRs      : no
+Additional Device Support :
+  Sensor Device
+  SDR Repository Device
+  SEL Device
+  FRU Inventory Device
+  IPMB Event Receiver
+  IPMB Event Generator
+  Chassis Device
+Aux Firmware Rev Info     :
+  0x5a
+  0x32
+  0x42
+  0x54

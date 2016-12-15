@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 type_class = Puppet::Type.type(:bmc_network)
-provider_class = type_class.provider(:ipmitool)
 
 describe type_class do
   let(:type) do
@@ -16,13 +15,6 @@ describe type_class do
         :channel => 1,
         :provider => 'ipmitool'
     )
-  end
-  let(:provider) do
-    provider_class.new
-  end
-  subject do
-    provider.resource = type
-    type
   end
 
   it 'exceptions handling' do
@@ -69,23 +61,11 @@ describe type_class do
     it 'should require valid ip' do
       expect {
         Puppet::Type.type(:bmc_network).new(
-            :name => 'foo',
+            :name => '1',
             options[:attribute] => options[:value],
         ) }.to raise_error(Puppet::Error, /#{options[:error_msg]}/)
     end
   end
-
-  {ipsrc: 'static', ipaddr: '10.10.10.10', netmask: '255.255.255.0', gateway: '10.10.10.254'}.each do |key, value|
-    it "#{key} should be in sync" do
-      subject.provider.stubs(:ipmitool).returns(
-          IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/dell_ipmitool_lan_print.txt")
-      )
-      p = subject.properties.find { |prop| prop.name == key }
-      expect(p.retrieve).to eql(value)
-      expect(p.insync?(value)).to eql(true)
-    end
-  end
-
 end
 
 

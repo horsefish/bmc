@@ -63,6 +63,38 @@ To change the SSL certificate
     remote_rac_host  => '192.168.0.2'
   }
 ```
+
+A normal setup would be
+
+
+```
+  bmc_user { 'root':
+    password => 'mypassword'
+  }
+  
+  bmc_ssl { 'IDRAC ssl':
+    certificate_file => '/etc/ssl/private/idrac.pem',
+    certificate_key  => '/etc/ssl/private/idrac.key',
+    password         => 'mypassword',
+    require          => Bmc_user['root']
+  }
+```
+
+To configure the NIC to use DHCP
+```
+  bmc_network { 'bmc_network':
+  }
+```
+To configure a static NIC setup
+```
+  bmc_network { 'bmc_network':
+    ipsrc   => static,
+    ipaddr  => '192.168.0.2',
+    gateway => '10.235.70.254',
+    netmask => '255.255.255.0'
+  }
+```
+
 if remote_rac_host is not set it ask ipmitool lan print
 It only support racadm7
 
