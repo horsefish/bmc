@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 type_class = Puppet::Type.type(:bmc_user)
-provider_class = type_class.provider(:ipmitoo)
 
 describe type_class do
   let(:type) do
@@ -15,14 +14,6 @@ describe type_class do
         :channel => 1,
         :provider => 'ipmitool'
     )
-  end
-
-  let(:provider) do
-    provider_class.new
-  end
-  subject do
-    provider.resource = type
-    type
   end
 
   it 'exceptions handling' do

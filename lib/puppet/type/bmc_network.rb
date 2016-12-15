@@ -7,8 +7,8 @@ Puppet::Type.newtype(:bmc_network) do
 
   feature :racadm, 'Dell racadmin specific.'
 
-  newparam(:name, :namevar => true) do
-    desc 'An arbitrary name used as the identity of the resource.'
+  newparam(:channel, :namevar => true) do
+    desc 'Channel number network defaults to 1'
   end
 
   newproperty(:ipsrc) do
@@ -38,19 +38,35 @@ Puppet::Type.newtype(:bmc_network) do
     end
   end
 
-  newparam(:channel) do
-    desc 'Channel number network is on, default to 1'
-    defaultto 1
-  end
-
-=begin
-  newparam(:dns1, :required_features => :racadm) do
+  newproperty(:dns1, :required_features => :racadm) do
     desc 'Static Preferred DNS Server'
     validate do |value|
       raise ArgumentError, "%s is not a valid ip address" % value unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
     end
     defaultto '0.0.0.0'
   end
-=end
 
+  newproperty(:dns2, :required_features => :racadm) do
+    desc 'Static Alternate DNS Server'
+    validate do |value|
+      raise ArgumentError, "%s is not a valid ip address" % value unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+    end
+    defaultto '0.0.0.0'
+  end
+
+  newparam(:username, :required_features => :racadm) do
+    desc 'username used to connect with bmc service.'
+    defaultto 'root'
+  end
+
+  newparam(:password, :required_features => :racadm) do
+    desc 'password used to connect with bmc service.'
+  end
+
+  newparam(:remote_rac_host, :required_features => :racadm) do
+    desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
+    validate do |value|
+      raise ArgumentError, "%s is not a valid ip address" % value unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+    end
+  end
 end

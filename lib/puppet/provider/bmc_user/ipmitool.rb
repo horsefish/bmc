@@ -11,10 +11,6 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
 
   mk_resource_methods
 
-  def initialize(value={})
-    super(value)
-  end
-
   def self.instances
     users = []
     (0..15).each do |channel|
