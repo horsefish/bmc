@@ -17,11 +17,6 @@ Puppet::Type.newtype(:bmc_ldap) do
     desc 'LDAP Server Address.'
   end
 
-  newproperty(:type) do
-    newvalues(:AD, :generic_ldap)
-    desc 'Identification of the type of LDAP.'
-  end
-
   newproperty(:server_port) do
     desc 'LDAP Server Port.'
     defaultto 389
@@ -68,10 +63,10 @@ Puppet::Type.newtype(:bmc_ldap) do
     desc 'password used to connect with bmc service.'
   end
 
-  newproperty(:bmc_server_host) do
+  newparam(:bmc_server_host) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
-      unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
         raise Puppet::ResourceError, "%s is not a valid ip address" % value
       end
     end

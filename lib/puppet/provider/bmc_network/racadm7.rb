@@ -12,9 +12,16 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
 
   defaultfor :osfamily => [:redhat, :debian]
 
-  def dns1
+  def get_instance
     racadm_out = racadm_call ['get', 'iDRAC.IPv4']
-    (Racadm::Racadm.parse_racadm racadm_out)['DNS1']
+    iDRAC_IPv4 = Racadm::Racadm.parse_racadm racadm_out
+    @property_hash[:dns1] = iDRAC_IPv4['DNS1']
+    @property_hash[:dns2] = iDRAC_IPv4['DNS2']
+  end
+
+  def dns1
+    get_instance unless @property_hash.key?(:dns1)
+    @property_hash[:dns1]
   end
 
   def dns1=(value)
@@ -22,8 +29,8 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
   end
 
   def dns2
-    racadm_out = racadm_call ['get', 'iDRAC.IPv4']
-    (Racadm::Racadm.parse_racadm racadm_out)['DNS2']
+    get_instance unless @property_hash.key?(:dns2)
+    @property_hash[:dns2]
   end
 
   def dns2=(value)
