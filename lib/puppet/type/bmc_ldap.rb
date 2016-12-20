@@ -1,5 +1,3 @@
-require 'puppet/parameter/boolean'
-
 Puppet::Type.newtype(:bmc_ldap) do
 
   @doc = "BMC ldap comfiguration"
@@ -67,12 +65,16 @@ Puppet::Type.newtype(:bmc_ldap) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
       unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
-        raise Puppet::ResourceError, "%s is not a valid ip address" % value
+        raise Puppet::ResourceError, "%s is not a valid IP address" % value
       end
     end
   end
 
   validate do
     raise(Puppet::ResourceError, "server must be set") if self[:server].nil?
+    if (!self[:bmc_server_host].nil? && (self[:username].nil? || self[:password].nil?))
+      raise(Puppet::ResourceError,
+            'if bmc_server_host param set you also must set both username and password')
+    end
   end
 end
