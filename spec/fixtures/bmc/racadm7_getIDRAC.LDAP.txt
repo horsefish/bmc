@@ -1,0 +1,14 @@
+Security Alert: Certificate is invalid - self signed certificate in certificate chain
+Continuing execution. Use -S option for racadm to stop execution on certificate-related errors.
+[Key=iDRAC.Embedded.1#LDAP.1]
+BaseDN=CN=users,CN=accounts,DC=dap,DC=cfcs,DC=dk
+BindDN=uid=elasticsearch,CN=sysaccounts,CN=etc,DC=dap,DC=cfcs,DC=dk
+!!BindPassword=******** (Write-Only)
+CertValidationEnable=Enabled
+Enable=Enabled
+GroupAttribute=member
+GroupAttributeIsDN=Enabled
+Port=636
+SearchFilter=
+Server=idm01.dap.cfcs.dk
+UserAttribute=uid

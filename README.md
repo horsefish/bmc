@@ -60,7 +60,7 @@ To change the SSL certificate
     certificate_file => '/etc/ssl/private/idrac.pem',
     certificate_key  => '/etc/ssl/private/idrac.key',
     password         => 'idrac_root_password'
-    remote_rac_host  => '192.168.0.2'
+    bmc_server_host  => '192.168.0.2'
   }
 ```
 
@@ -95,7 +95,7 @@ To configure a static NIC setup
   }
 ```
 
-if remote_rac_host is not set it ask ipmitool lan print
+if bmc_server_host is not set it ask ipmitool lan print
 It only support racadm7
 
 ##Operating Systems Support

@@ -1,5 +1,4 @@
 require 'open3'
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'bmc', 'bmc.rb'))
 
 Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   confine :osfamily => [:redhat, :debian]
@@ -127,7 +126,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def callin=(value)
-    if Bmc::Bmc::to_bool(value)
+    if value
       callin_value = 'on'
     else
       callin_value = 'off'
@@ -139,7 +138,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def link=(value)
-    if Bmc::Bmc::to_bool(value)
+    if value
       link_value = 'on'
     else
       link_value = 'off'
@@ -151,7 +150,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def ipmi=(value)
-    if Bmc::Bmc::to_bool(value)
+    if value
       ipmi_value = 'on'
     else
       ipmi_value = 'off'
@@ -175,4 +174,3 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     channels
   end
 end
-

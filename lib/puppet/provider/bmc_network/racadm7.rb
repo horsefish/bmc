@@ -14,7 +14,7 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
 
   def dns1
     racadm_out = racadm_call ['get', 'iDRAC.IPv4']
-    (Racadm::Racadm.parseiDRAC_IPv4 racadm_out)['DNS1']
+    (Racadm::Racadm.parse_racadm racadm_out)['DNS1']
   end
 
   def dns1=(value)
@@ -23,7 +23,7 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
 
   def dns2
     racadm_out = racadm_call ['get', 'iDRAC.IPv4']
-    (Racadm::Racadm.parseiDRAC_IPv4 racadm_out)['DNS2']
+    (Racadm::Racadm.parse_racadm racadm_out)['DNS2']
   end
 
   def dns2=(value)
@@ -35,8 +35,8 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
     cmd = ['/opt/dell/srvadmin/bin/idracadm']
     cmd.push('-u').push(resource[:username]) if resource[:username]
     cmd.push('-p').push(resource[:password]) if resource[:password]
-    if resource[:remote_rac_host]
-      cmd.push('-r').push(resource[:remote_rac_host])
+    if resource[:bmc_server_host]
+      cmd.push('-r').push(resource[:bmc_server_host])
     else
       ipmitool_out = ipmitool('lan', 'print')
       lanPrint = Ipmi::Ipmitool.parseLan(ipmitool_out)

@@ -9,15 +9,17 @@ class bmc::oem::idrac inherits bmc{
         }
 
         apt::source { 'DellOpenManage':
-          comment     => 'Dell OpenManage Ubuntu & Debian Repositories',
-          location    => "http://linux.dell.com/repo/community/ubuntu",
-          release     => $::lsbdistcodename,
-          repos       => 'openmanage',
-          key         => {
+          comment  => 'Dell OpenManage Ubuntu & Debian Repositories',
+          location => "http://linux.dell.com/repo/community/ubuntu",
+          release  => $::lsbdistcodename,
+          repos    => 'openmanage',
+          key      => {
             'id'     => '42550ABD1E80D7C1BC0BAD851285491434D8786F',
             'server' => 'pool.sks-keyservers.net',
           },
-          include_src => false,
+          include  => {
+            'src' => false
+          }
         }
       }
       default: {

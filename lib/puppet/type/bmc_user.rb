@@ -19,26 +19,20 @@ Puppet::Type.newtype(:bmc_user) do
 
   newproperty(:callin) do
     desc 'Configure user access information on the callin channel'
+    newvalues(:false, :true)
     defaultto true
-    munge do |priv|
-      priv.to_s
-    end
   end
 
   newproperty(:link) do
     desc 'Configure user access information on the link channel'
+    newvalues(:false, :true)
     defaultto true
-    munge do |priv|
-      priv.to_s
-    end
   end
 
   newproperty(:ipmi) do
     desc 'Configure user access information on the ipmi channel'
+    newvalues(:false, :true)
     defaultto true
-    munge do |priv|
-      priv.to_s
-    end
   end
 
   newproperty(:privilege) do

@@ -50,7 +50,6 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
     cmd_args.push('-t').push(resource[:type])
     cmd_args.push('-f').push(tmp_file.path)
     racadm_call cmd_args
-
     if (File.file?(tmp_file.path))
       exists = FileUtils.compare_file(tmp_file.path, resource[:certificate_file])
       tmp_file.unlink
@@ -63,8 +62,8 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
     cmd = ['/opt/dell/srvadmin/bin/idracadm']
     cmd.push('-u').push(resource[:username]) if resource[:username]
     cmd.push('-p').push(resource[:password]) if resource[:password]
-    if resource[:remote_rac_host]
-      cmd.push('-r').push(resource[:remote_rac_host])
+    if resource[:bmc_server_host]
+      cmd.push('-r').push(resource[:bmc_server_host])
     else
       ipmitool_out = ipmitool('lan', 'print')
       lanPrint = Ipmi::Ipmitool.parseLan(ipmitool_out)
@@ -79,5 +78,6 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
       raise(Puppet::Error, "#{command.join(" ")} failed with #{stderr}")
     end
     Puppet.debug("#{command.join(" ")} executed with stdout: '#{stdout}' stderr: '#{stderr}' status: '#{status}'")
+    stdout
   end
 end

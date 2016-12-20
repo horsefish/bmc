@@ -1,5 +1,9 @@
 Puppet::Type.newtype(:bmc_ssl) do
-  ensurable
+
+  ensurable do
+    defaultvalues
+    defaultto :present
+  end
 
   feature :racadm, 'Dell racadmin specific.'
 
@@ -38,10 +42,12 @@ Puppet::Type.newtype(:bmc_ssl) do
     desc 'pass phrase for the Public Key Cryptography Standards file.'
   end
 
-  newparam(:remote_rac_host) do
+  newparam(:bmc_server_host) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
-      raise ArgumentError, "%s is not a valid ip address" % value unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+      unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+        raise ArgumentError, "%s is not a valid ip address" % value
+      end
     end
   end
 
