@@ -10,7 +10,7 @@ describe Racadm::Racadm do
           '..', '..', 'fixtures', 'bmc', 'racadm7_getIDRAC.IPv4.txt'))
   }
 
-  describe 'racadm7 get IDRAC.IPv4' do
+  context 'racadm7 get IDRAC.IPv4' do
     subject { Racadm::Racadm.parseiDRAC_IPv4 getIDRAC }
     it { should include({
                             'Address' => '10.235.70.163',

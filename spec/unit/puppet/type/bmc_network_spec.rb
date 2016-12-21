@@ -25,9 +25,10 @@ describe type_class do
   end
 
   it 'should not raise error when created' do
+    puts network_type_params(provider_name: '')
     expect {
       Puppet::Type.type(:bmc_network).new(
-          network_type_params()
+          network_type_params(provider_name: '')
       ) }.not_to raise_error
   end
 
