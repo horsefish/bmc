@@ -1,43 +1,33 @@
 #!/usr/bin/env rspec
 #
 require 'spec_helper'
+require 'helpers/network_type_params'
+
+RSpec.configure do |c|
+  c.include Helpers
+end
 
 type_class = Puppet::Type.type(:bmc_network)
+
 
 describe type_class do
   let(:type) do
     Puppet::Type.type(:bmc_network).new(
-        :name => 'test',
-        :ipsrc => 'static',
-        :ipaddr => '10.10.10.10',
-        :gateway => '10.10.10.254',
-        :netmask => '255.255.255.0',
-        :channel => 1,
-        :provider => 'ipmitool'
+        network_type_params()
     )
   end
 
   it 'exceptions handling' do
     expect {
       Puppet::Type.type(:bmc_network).new(
-          :name => 'foo',
-          :ipsrc => 'static',
-          :ipaddr => '10.10.10.10',
-          :gateway => 'XXX',
-          :netmask => '255.255.255.0',
-          :channel => 1
+          network_type_params(gateway: 'XXX')
       ) }.to raise_error(Puppet::ResourceError)
   end
 
   it 'should not raise error when created' do
     expect {
       Puppet::Type.type(:bmc_network).new(
-          :name => 'foo',
-          :ipsrc => 'static',
-          :ipaddr => '10.10.10.10',
-          :gateway => '10.10.10.254',
-          :netmask => '255.255.255.0',
-          :channel => 1
+          network_type_params()
       ) }.not_to raise_error
   end
 
@@ -67,7 +57,3 @@ describe type_class do
     end
   end
 end
-
-
-
-
