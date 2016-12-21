@@ -100,7 +100,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     if status.success?
       ipmitool('user', 'enable', @property_hash[:id])
     else
-      raise ArgumentError, "bmc_user '#{resource[:name]}' could not change password: #{stderr}"
+      raise Puppet::Error, "bmc_user '#{resource[:name]}' could not change password: #{stderr}"
     end
   end
 

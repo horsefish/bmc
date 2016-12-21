@@ -12,48 +12,54 @@ Puppet::Type.newtype(:bmc_ldap) do
   end
 
   newproperty(:server) do
-    desc 'LDAP Server Address.'
+    desc 'LDAP Server Address.( FQDN or IP, must match the server certificate if certificate validation is enabled )'
   end
 
   newproperty(:server_port) do
-    desc 'LDAP Server Port.'
-    defaultto 389
+    desc 'LDAP Server Port. Default to 636'
+    defaultto 636
   end
 
   newproperty(:bind_dn) do
-    desc 'Bind DN.'
-  end
-
-  newparam(:bind_password) do
-    desc 'Bind password.'
+    desc 'Bind DN. ( required if anonymous bind is not allowed )'
   end
 
   newproperty(:base_dn) do
-    desc 'Base DN to Search.'
+    desc 'Base DN to Search.( e.g. dc=example,dc=com, required )'
   end
 
   newproperty(:user_attribute) do
-    desc 'Attribute of User Login.'
+    desc 'Attribute of User Login. Default to uid'
     defaultto 'uid'
   end
 
   newproperty(:group_attribue) do
-    desc 'Attribute of Group Membership.'
+    desc 'Attribute of Group Membership. ( e.g. member or uniquemember ) Default to member'
     defaultto 'member'
   end
 
   newproperty(:search_filer) do
-    desc 'Search Filter.'
+    desc 'Search Filter. ( e.g. objectclass=*, optional )'
   end
 
   newproperty(:certificate_validate, :boolean => true) do
-    desc 'Certificate Validation Enabled.'
-    newvalues(:false, :true)
+    desc 'Certificate Validation Enabled. Default to true'
+    newvalues(false, true)
     defaultto true
   end
 
+  newproperty(:group_attribute_is_dn, :boolean => true) do
+    desc 'Use Distinguished Name to Search Group Membership. ( if unchecked, username will be used ). Default to true'
+    newvalues(false, true)
+    defaultto true
+  end
+
+  newparam(:bind_password) do
+    desc 'Bind password.( required if anonymous bind is not allowed ).'
+  end
+
   newparam(:username) do
-    desc 'username used to connect with bmc service.'
+    desc 'username used to connect with bmc service. Default to root'
     defaultto 'root'
   end
 
@@ -65,15 +71,16 @@ Puppet::Type.newtype(:bmc_ldap) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
       unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
-        raise Puppet::ResourceError, "%s is not a valid IP address" % value
+        raise Puppet::Error, "%s is not a valid IP address" % value
       end
     end
   end
 
   validate do
-    raise(Puppet::ResourceError, "server must be set") if self[:server].nil?
+    raise(Puppet::Error, "server must be set") if self[:server].nil?
+    raise(Puppet::Error, "base_dn must be set") if self[:base_dn].nil?
     if (!self[:bmc_server_host].nil? && (self[:username].nil? || self[:password].nil?))
-      raise(Puppet::ResourceError,
+      raise(Puppet::Error,
             'if bmc_server_host param set you also must set both username and password')
     end
   end

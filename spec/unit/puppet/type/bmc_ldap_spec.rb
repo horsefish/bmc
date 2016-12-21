@@ -9,13 +9,15 @@ describe type_class do
     expect {
       Puppet::Type.type(:bmc_ldap).new(
           :name => 'test',
-          :server => 'ldap.server.dk'
+          :server => 'ldap.server.dk',
+          :base_dn => 'dc=example,dc=com'
       )
     }.not_to raise_error
     expect {
       Puppet::Type.type(:bmc_ldap).new(
           :name => 'test',
           :server => 'ldap.server.dk',
+          :base_dn => 'dc=example,dc=com',
           :bmc_server_host => '192.168.0.1',
           :password => 'secret'
       )
@@ -30,19 +32,27 @@ describe type_class do
     expect {
       Puppet::Type.type(:bmc_ldap).new(
           :name => 'test',
+          :server => 'ldap.server.dk'
+      ) }.to raise_error(Puppet::ResourceError)
+    expect {
+      Puppet::Type.type(:bmc_ldap).new(
+          :name => 'test',
           :server => 'ldap.server.dk',
+          :base_dn => 'dc=example,dc=com',
           :certificate_validate => 'NoWay'
       ) }.to raise_error(Puppet::ResourceError)
     expect {
       Puppet::Type.type(:bmc_ldap).new(
           :name => 'test',
           :server => 'ldap.server.dk',
+          :base_dn => 'dc=example,dc=com',
           :bmc_server_host => 'bmc.host.dk'
       ) }.to raise_error(Puppet::ResourceError)
     expect {
       Puppet::Type.type(:bmc_ldap).new(
           :name => 'test',
           :server => 'ldap.server.dk',
+          :base_dn => 'dc=example,dc=com',
           :bmc_server_host => 'Not A DNS NAME',
           :password => 'secret'
       ) }.to raise_error(Puppet::ResourceError)

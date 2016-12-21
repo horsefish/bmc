@@ -21,7 +21,7 @@ Puppet::Type.newtype(:bmc_network) do
     desc 'Ip Address'
     validate do |value|
       unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
-        raise ArgumentError, "%s is not a valid ip address" % value
+        raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
   end
@@ -30,7 +30,7 @@ Puppet::Type.newtype(:bmc_network) do
     desc 'Gateway'
     validate do |value|
       unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
-        raise ArgumentError, "%s is not a valid ip address" % value
+        raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
   end
@@ -39,7 +39,7 @@ Puppet::Type.newtype(:bmc_network) do
     desc 'Subnet Mask'
     validate do |value|
       unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
-        raise ArgumentError, "%s is not a valid ip address" % value
+        raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
   end
@@ -48,7 +48,7 @@ Puppet::Type.newtype(:bmc_network) do
     desc 'Static Preferred DNS Server'
     validate do |value|
       unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
-        raise ArgumentError, "%s is not a valid ip address" % value
+        raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
     defaultto '0.0.0.0'
@@ -58,7 +58,7 @@ Puppet::Type.newtype(:bmc_network) do
     desc 'Static Alternate DNS Server'
     validate do |value|
       unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
-        raise ArgumentError, "%s is not a valid ip address" % value
+        raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
     defaultto '0.0.0.0'
@@ -77,7 +77,7 @@ Puppet::Type.newtype(:bmc_network) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
       unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
-        raise ArgumentError, "%s is not a valid ip address" % value
+        raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
   end
