@@ -1,6 +1,12 @@
 #!/usr/bin/env rspec
 #
 require 'spec_helper'
+require 'helpers/network_type_params'
+
+RSpec.configure do |c|
+  c.include Helpers
+end
+
 
 type_class = Puppet::Type.type(:bmc_user)
 
