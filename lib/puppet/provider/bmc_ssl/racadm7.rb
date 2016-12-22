@@ -4,6 +4,8 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'pu
 
 Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
 
+  desc "Manage SSL certificates via racadm7."
+
   has_feature :racadm
 
   confine :manufactor_id => :'674'
@@ -50,8 +52,7 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
     cmd_args.push('-t').push(resource[:type])
     cmd_args.push('-f').push(tmp_file.path)
     racadm_call cmd_args
-
-    if (File.file?(tmp_file.path))
+    if File.file?(tmp_file.path)
       exists = FileUtils.compare_file(tmp_file.path, resource[:certificate_file])
       tmp_file.unlink
     end
@@ -63,21 +64,20 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
     cmd = ['/opt/dell/srvadmin/bin/idracadm']
     cmd.push('-u').push(resource[:username]) if resource[:username]
     cmd.push('-p').push(resource[:password]) if resource[:password]
-    if resource[:remote_rac_host]
-      cmd.push('-r').push(resource[:remote_rac_host])
+    if resource[:bmc_server_host]
+      cmd.push('-r').push(resource[:bmc_server_host])
     else
       ipmitool_out = ipmitool('lan', 'print')
-      lanPrint = Ipmi::Ipmitool.parseLan(ipmitool_out)
-      cmd.push('-r').push(lanPrint['IP Address'])
+      lan_print = Ipmi::Ipmitool.parseLan(ipmitool_out)
+      cmd.push('-r').push(lan_print['IP Address'])
     end
 
-    command = cmd + cmd_args
-    stdout, stderr, status = Open3.capture3(command.join(" "))
-    nr = command.index('-p')
-    command.fill('<secret>', nr+1, 1) #password is not logged.
-    if !status.success?
-      raise(Puppet::Error, "#{command.join(" ")} failed with #{stderr}")
-    end
-    Puppet.debug("#{command.join(" ")} executed with stdout: '#{stdout}' stderr: '#{stderr}' status: '#{status}'")
+    cmd += cmd_args
+    stdout, stderr, status = Open3.capture3(cmd.join(' '))
+    nr = cmd.index('-p')
+    cmd.fill('<secret>', nr+1, 1) #password is not logged.
+    raise(Puppet::Error, "#{cmd.join(' ')} failed with #{stderr}") unless status.success?
+    Puppet.debug("#{cmd.join(' ')} executed with stdout: '#{stdout}' stderr: '#{stderr}' status: '#{status}'")
+    stdout
   end
 end

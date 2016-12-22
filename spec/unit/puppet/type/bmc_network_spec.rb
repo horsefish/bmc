@@ -35,18 +35,15 @@ describe type_class do
   {
       'should require valid ip' => {
           attribute: :ipaddr,
-          value: '1.10',
-          error_msg: 'is not a valid ip address'
+          value: '1.10'
       },
       'should require valid gateway' => {
           attribute: :gateway,
-          value: '1.1.1',
-          error_msg: 'is not a valid gateway'
+          value: '1.1.1'
       },
       'should reqiore valid netmask' => {
           attribute: :netmask,
-          value: '10.10',
-          error_msg: 'is not a valid subnet mask'
+          value: '10.10'
       }
   }.each do |check, options|
     it 'should require valid ip' do
@@ -54,7 +51,7 @@ describe type_class do
         Puppet::Type.type(:bmc_network).new(
             :name => '1',
             options[:attribute] => options[:value],
-        ) }.to raise_error(Puppet::Error, /#{options[:error_msg]}/)
+        ) }.to raise_error(Puppet::ResourceError)
     end
   end
 end
