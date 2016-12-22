@@ -1,6 +1,8 @@
+require 'resolv'
+
 Puppet::Type.newtype(:bmc_ldap) do
 
-  @doc = "BMC ldap comfiguration"
+  @doc = "A resource type to handle BMC LDAP comfiguration."
 
   ensurable do
     defaultvalues
@@ -77,8 +79,8 @@ Puppet::Type.newtype(:bmc_ldap) do
   end
 
   validate do
-    raise(Puppet::Error, "server must be set") if self[:server].nil?
-    raise(Puppet::Error, "base_dn must be set") if self[:base_dn].nil?
+    raise(Puppet::Error, 'server must be set') if self[:server].nil?
+    raise(Puppet::Error, 'base_dn must be set') if self[:base_dn].nil?
     if (!self[:bmc_server_host].nil? && (self[:username].nil? || self[:password].nil?))
       raise(Puppet::Error,
             'if bmc_server_host param set you also must set both username and password')

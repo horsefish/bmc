@@ -4,9 +4,9 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   confine :osfamily => [:redhat, :debian]
   defaultfor :osfamily => [:redhat, :debian]
 
-  desc "Adminstrates user on BMC interface"
+  desc "Manage local users via ipmitool."
 
-  commands :ipmitool => "ipmitool"
+  commands :ipmitool => 'ipmitool'
 
   mk_resource_methods
 
@@ -65,7 +65,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
       @property_hash[:id] = empty_user['id']
     else
       for user_id in 2..current_user_count+1
-        if not (users.any? { |user| user['id'].to_i == user_id })
+        unless users.any? { |user| user['id'].to_i == user_id }
           @property_hash[:id] = user_id
           ipmitool('user', 'set', 'name', user_id, resource[:name])
         end
@@ -93,9 +93,9 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def password=(newpass)
+  def password=newpass
     cmd = "ipmitool user set password #{@property_hash[:id]} "
-    stdout, stderr, status = Open3.capture3(cmd + resource[:password])
+    stdout, stderr, status = Open3.capture3(cmd + newpass)
     Puppet.debug("#{cmd} <secret> executed with stdout: '#{stdout}' stderr: '#{stderr}' status: '#{status}'")
     if status.success?
       ipmitool('user', 'enable', @property_hash[:id])
@@ -104,7 +104,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def privilege=(value)
+  def privilege=value
     case value
       when :CALLBACK, 'CALLBACK'
         priv = 1
@@ -118,6 +118,8 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
         priv = 5
       when :NO_ACCESS, 'NO_ACCESS'
         priv = 15
+      else
+        raise Puppet::Error, "Unknown channel: #{value}"
     end
     channels = get_channels_by_user @property_hash[:id]
     channels.each do |channel|
@@ -125,7 +127,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def callin=(value)
+  def callin=value
     if value
       callin_value = 'on'
     else
@@ -137,7 +139,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def link=(value)
+  def link=value
     if value
       link_value = 'on'
     else
@@ -149,7 +151,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def ipmi=(value)
+  def ipmi=value
     if value
       ipmi_value = 'on'
     else

@@ -1,9 +1,7 @@
-require "resolv"
+require 'resolv'
 
 Puppet::Type.newtype(:bmc_network) do
-  @doc = "BMC user network type"
-
-  require 'ipaddr'
+  @doc = "A resource type to handle BMC LAN."
 
   feature :racadm, 'Dell racadmin specific.'
 
@@ -12,13 +10,17 @@ Puppet::Type.newtype(:bmc_network) do
   end
 
   newproperty(:ipsrc) do
-    desc 'IP Address Source'
+    desc 'The IP address source:
+    - none unspecified
+    - static manually configured static IP address
+    - dhcp address obtained by BMC running DHCP
+    - bios address loaded by BIOS or system software'
     newvalues(:static, :dhcp, :none, :bios)
     defaultto :dhcp
   end
 
   newproperty(:ipaddr) do
-    desc 'Ip Address'
+    desc 'The IP address for this channel.'
     validate do |value|
       unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
         raise Puppet::Error, "%s is not a valid ip address" % value
@@ -27,7 +29,7 @@ Puppet::Type.newtype(:bmc_network) do
   end
 
   newproperty(:gateway) do
-    desc 'Gateway'
+    desc 'The default gateway IP address.'
     validate do |value|
       unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
         raise Puppet::Error, "%s is not a valid ip address" % value
@@ -36,7 +38,7 @@ Puppet::Type.newtype(:bmc_network) do
   end
 
   newproperty (:netmask) do
-    desc 'Subnet Mask'
+    desc 'The netmask for this channel.'
     validate do |value|
       unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
         raise Puppet::Error, "%s is not a valid ip address" % value
@@ -65,7 +67,7 @@ Puppet::Type.newtype(:bmc_network) do
   end
 
   newparam(:username, :required_features => :racadm) do
-    desc 'username used to connect with bmc service.'
+    desc 'username used to connect with bmc service. '
     defaultto 'root'
   end
 

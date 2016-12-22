@@ -1,4 +1,8 @@
+require 'resolv'
+
 Puppet::Type.newtype(:bmc_ssl) do
+
+  @doc = "A resource type to handle SSL certificates."
 
   ensurable do
     defaultvalues
@@ -12,30 +16,30 @@ Puppet::Type.newtype(:bmc_ssl) do
   end
 
   newparam(:certificate_file) do
+    desc 'Absolute path to the certificate file.'
     validate do |value|
       unless File.file?(value)
         fail("#{value} must be a absolute path to a file")
       end
     end
-    desc 'The certificate file.'
   end
 
   newparam(:certificate_key) do
+    desc 'Absolute path to the certificate key file.'
     validate do |value|
       unless File.file?(value)
         fail("#{value} must be a absolute path to a file")
       end
     end
-    desc 'The certificate file.'
   end
 
   newparam(:username) do
-    desc 'username used to connect with bmc service.'
+    desc 'Username used to connect with bmc service. Default to root'
     defaultto 'root'
   end
 
   newparam(:password) do
-    desc 'password used to connect with bmc service.'
+    desc 'Password used to connect with bmc service.'
   end
 
   newparam(:certificate_pass_phrase) do
@@ -53,15 +57,16 @@ Puppet::Type.newtype(:bmc_ssl) do
 
   newparam(:type, :required_features => :racadm) do
     desc 'Type of certificate
-      [1=server,2=CA certificate for Directory Service,3=Public Key Cryptography Standards file]'
+      [1=server,2=CA certificate for Directory Service,3=Public Key Cryptography Standards file]
+      Default to server'
     defaultto 1
   end
 
   validate do
-    raise(Puppet::Error, "If username is set password must also be set") if (self[:password].nil? && !self[:username].nil?)
-    raise(Puppet::Error, "If password is set username must also be set") if (self[:username].nil? and !self[:password].nil?)
-    raise(Puppet::Error, "certificate_file must be set") if (self[:certificate_file].nil?)
-    raise(Puppet::Error, "certificate_key must be set") if (self[:certificate_key].nil?)
+    raise(Puppet::Error, 'If username is set password must also be set') if (self[:password].nil? && !self[:username].nil?)
+    raise(Puppet::Error, 'If password is set username must also be set') if (self[:username].nil? and !self[:password].nil?)
+    raise(Puppet::Error, 'Certificate_file must be set') if (self[:certificate_file].nil?)
+    raise(Puppet::Error, 'Certificate_key must be set') if (self[:certificate_key].nil?)
   end
 
   autorequire(:file) do

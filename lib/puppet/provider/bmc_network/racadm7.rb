@@ -4,6 +4,8 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'pu
 
 Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
 
+  desc "Manage BMC network via racadm7."
+
   has_feature :racadm
 
   confine :manufactor_id => :'674'
@@ -14,9 +16,9 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
 
   def get_instance
     racadm_out = racadm_call ['get', 'iDRAC.IPv4']
-    iDRAC_IPv4 = Racadm::Racadm.parse_racadm racadm_out
-    @property_hash[:dns1] = iDRAC_IPv4['DNS1']
-    @property_hash[:dns2] = iDRAC_IPv4['DNS2']
+    idrac_ipv4 = Racadm::Racadm.parse_racadm racadm_out
+    @property_hash[:dns1] = idrac_ipv4['DNS1']
+    @property_hash[:dns2] = idrac_ipv4['DNS2']
   end
 
   def dns1
@@ -24,7 +26,7 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
     @property_hash[:dns1]
   end
 
-  def dns1=(value)
+  def dns1=value
     racadm_call ['set', 'iDRAC.IPv4.DNS1', value]
   end
 
@@ -33,7 +35,7 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
     @property_hash[:dns2]
   end
 
-  def dns2=(value)
+  def dns2=value
     racadm_call ['set', 'iDRAC.IPv4.DNS2', value]
   end
 
@@ -46,18 +48,16 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
       cmd.push('-r').push(resource[:bmc_server_host])
     else
       ipmitool_out = ipmitool('lan', 'print')
-      lanPrint = Ipmi::Ipmitool.parseLan(ipmitool_out)
-      cmd.push('-r').push(lanPrint['IP Address'])
+      lan_print = Ipmi::Ipmitool.parseLan(ipmitool_out)
+      cmd.push('-r').push(lan_print['IP Address'])
     end
 
-    command = cmd + cmd_args
-    stdout, stderr, status = Open3.capture3(command.join(" "))
-    nr = command.index('-p')
-    command.fill('<secret>', nr+1, 1) #password is not logged.
-    if !status.success?
-      raise(Puppet::Error, "#{command.join(" ")} failed with #{stderr}")
-    end
-    Puppet.debug("#{command.join(" ")} executed with stdout: '#{stdout}' stderr: '#{stderr}' status: '#{status}'")
+    cmd += cmd_args
+    stdout, stderr, status = Open3.capture3(cmd.join(' '))
+    nr = cmd.index('-p')
+    cmd.fill('<secret>', nr+1, 1) #password is not logged.
+    raise(Puppet::Error, "#{cmd.join(' ')} failed with #{stderr}") unless status.success?
+    Puppet.debug("#{cmd.join(' ')} executed with stdout: '#{stdout}' stderr: '#{stderr}' status: '#{status}'")
     stdout
   end
 end
