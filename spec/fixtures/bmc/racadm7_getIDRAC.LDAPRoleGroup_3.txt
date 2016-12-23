@@ -1,11 +1,5 @@
 Security Alert: Certificate is invalid - self signed certificate in certificate chain
 Continuing execution. Use -S option for racadm to stop execution on certificate-related errors.
-[Key=iDRAC.Embedded.1#IPv4.1]
-Address=192.168.0.1
-DHCPEnable=Disabled
-DNS1=0.0.0.0
-DNS2=0.0.0.0
-DNSFromDHCP=Disabled
-Enable=Enabled
-Gateway=192.168.0.254
-Netmask=255.255.255.0
+[Key=iDRAC.Embedded.1#LDAPRoleGroup.3]
+DN=cn=readonly,cn=groups,cn=accounts,dc=example,dc=com
+Privilege=0x1

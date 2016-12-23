@@ -1,0 +1,7 @@
+Security Alert: Certificate is invalid - self signed certificate in certificate chain
+Continuing execution. Use -S option for racadm to stop execution on certificate-related errors.
+iDRAC.LDAPRoleGroup.1 [Key=iDRAC.Embedded.1#LDAPRoleGroup.1]
+iDRAC.LDAPRoleGroup.2 [Key=iDRAC.Embedded.1#LDAPRoleGroup.2]
+iDRAC.LDAPRoleGroup.3 [Key=iDRAC.Embedded.1#LDAPRoleGroup.3]
+iDRAC.LDAPRoleGroup.4 [Key=iDRAC.Embedded.1#LDAPRoleGroup.4]
+iDRAC.LDAPRoleGroup.5 [Key=iDRAC.Embedded.1#LDAPRoleGroup.5]
