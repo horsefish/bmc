@@ -53,20 +53,4 @@ describe type_class do
         ) }.to raise_error(Puppet::ResourceError)
     end
   end
-=begin
-  0x1ff => admin
-  0x1f3 => operator (minus Configure Users and Clear Logs)
-  0x1   => Read Only (only Login to iDrac)
-  0x000 => None
-
-  Login to iDRAC
-  Configure iDRAC
-  Configure Users
-  Clear Logs
-  Execute Server Control Commands
-  Access Virtual Console
-  Access Virtual Media
-  Test Alerts
-  Execute Diagnostic Commands
-=end
 end

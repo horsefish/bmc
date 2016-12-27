@@ -111,6 +111,15 @@ To configure LDAP
     password        => 'mypassword'
   }
 ```
+To configure LDAP groups
+```
+  bmc_ldap_group{'1' :
+    server          => 'ldap.example.com',
+    base_dn         => 'CN=users,CN=accounts,DC=example,DC=com',
+    password        => 'mypassword'
+  }
+```
+
 
 ##Operating Systems Support
 
