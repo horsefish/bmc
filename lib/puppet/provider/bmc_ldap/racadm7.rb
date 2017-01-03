@@ -1,6 +1,3 @@
-require 'open3'
-require 'tempfile'
-
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'ipmi', 'ipmitool.rb'))
 
 Puppet::Type.type(:bmc_ldap).provide(:racadm7) do
@@ -26,11 +23,11 @@ Puppet::Type.type(:bmc_ldap).provide(:racadm7) do
     self.group_attribue= resource[:group_attribue] unless resource[:group_attribue].nil?
     self.certificate_validate = resource[:certificate_validate] unless resource[:certificate_validate].nil?
     self.password= resource[:bind_password] unless resource[:bind_password].nil?
-    racadm_call ['set', 'iDRAC.LDAP.Enable', 'Enabled']
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.Enable', 'Enabled'])
   end
 
   def destroy
-    racadm_call ['set', 'iDRAC.LDAP.Enable', 'Disabled']
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.Enable', 'Disabled'])
     self.server= "''"
     self.group_attribute_is_dn= :true
     self.server_port= 636
@@ -45,7 +42,7 @@ Puppet::Type.type(:bmc_ldap).provide(:racadm7) do
 
   def exists?
     unless @property_hash.key? :ensure
-      racadm_out = racadm_call ['get', 'iDRAC.LDAP']
+      racadm_out = Racadm::Racadm.racadm_call(resource, ['get', 'iDRAC.LDAP'])
       iDRAC_LDAP = Racadm::Racadm.parse_racadm racadm_out
       @property_hash[:server] = iDRAC_LDAP['Server']
       @property_hash[:server_port] = iDRAC_LDAP['Port']
@@ -66,65 +63,45 @@ Puppet::Type.type(:bmc_ldap).provide(:racadm7) do
     @property_hash[:ensure] == :present
   end
 
-  def server=value
-    racadm_call ['set', 'iDRAC.LDAP.Server', value]
+  def server= value
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.Server', value])
   end
 
-  def server_port=value
-    racadm_call ['set', 'iDRAC.LDAP.Port', value]
+  def server_port= value
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.Port', value])
   end
 
-  def bind_dn=value
-    racadm_call ['set', 'iDRAC.LDAP.BindDN', value]
+  def bind_dn= value
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.BindDN', value])
   end
 
-  def base_dn=value
-    racadm_call ['set', 'iDRAC.LDAP.BaseDN', value]
+  def base_dn= value
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.BaseDN', value])
   end
 
-  def user_attribute=value
-    racadm_call ['set', 'iDRAC.LDAP.UserAttribute', value]
+  def user_attribute= value
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.UserAttribute', value])
   end
 
-  def group_attribue=value
-    racadm_call ['set', 'iDRAC.LDAP.GroupAttribute', value]
+  def group_attribue= value
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.GroupAttribute', value])
   end
 
-  def search_filer=value
-    racadm_call ['set', 'iDRAC.LDAP.SearchFilter', value]
+  def search_filer= value
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.SearchFilter', value])
   end
 
-  def certificate_validate=value
-    racadm_call ['set', 'iDRAC.LDAP.CertValidationEnable', value == :true ? "Enabled" : "Disabled"]
+  def certificate_validate= value
+    Racadm::Racadm.racadm_call(
+        resource, ['set', 'iDRAC.LDAP.CertValidationEnable', value == :true ? "Enabled" : "Disabled"])
   end
 
-  def group_attribute_is_dn=value
-    racadm_call ['set', 'iDRAC.LDAP.GroupAttributeIsDN', value == :true ? "Enabled" : "Disabled"]
+  def group_attribute_is_dn= value
+    Racadm::Racadm.racadm_call(
+        resource, ['set', 'iDRAC.LDAP.GroupAttributeIsDN', value == :true ? "Enabled" : "Disabled"])
   end
 
-  def password=value
-    racadm_call ['set', 'iDRAC.LDAP.BindPassword', value]
-  end
-
-  #candiate to be moved to a shared lib
-  def racadm_call cmd_args
-    cmd = ['/opt/dell/srvadmin/bin/idracadm']
-    cmd.push('-u').push(resource[:username]) if resource[:username]
-    cmd.push('-p').push(resource[:password]) if resource[:password]
-    if resource[:bmc_server_host]
-      cmd.push('-r').push(resource[:bmc_server_host])
-    else
-      ipmitool_out = ipmitool('lan', 'print')
-      lan_print = Ipmi::Ipmitool.parseLan(ipmitool_out)
-      cmd.push('-r').push(lan_print['IP Address'])
-    end
-
-    cmd += cmd_args
-    stdout, stderr, status = Open3.capture3(cmd.join(' '))
-    nr = cmd.index('-p')
-    cmd.fill('<secret>', nr+1, 1) #password is not logged.
-    raise(Puppet::Error, "#{cmd.join(' ')} failed with #{stderr}") unless status.success?
-    Puppet.debug("#{cmd.join(' ')} executed with stdout: '#{stdout}' stderr: '#{stderr}' status: '#{status}'")
-    stdout
+  def password= value
+    Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.LDAP.BindPassword', value])
   end
 end

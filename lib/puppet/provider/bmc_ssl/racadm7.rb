@@ -1,6 +1,5 @@
-require 'open3'
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'racadm', 'racadm.rb'))
 require 'tempfile'
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'ipmi', 'ipmitool.rb'))
 
 Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
 
@@ -12,72 +11,30 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
   confine :osfamily => [:redhat, :debian]
   confine :exists => '/opt/dell/srvadmin/bin/idracadm'
 
-  #this is to identify racadm8
-  #confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
-
   commands :ipmitool => 'ipmitool'
 
   mk_resource_methods
 
   def create
-    cmd_args = ['sslkeyupload']
-    cmd_args.push('-t').push(resource[:type])
-    cmd_args.push('-f').push(resource[:certificate_key])
-    racadm_call cmd_args
-
-    cmd_args = ['sslcertupload']
-    cmd_args.push('-t').push(resource[:type])
-    cmd_args.push('-f').push(resource[:certificate_file])
-    racadm_call cmd_args
-
-    cmd_args = ['racreset']
-    cmd_args.push('soft')
-    racadm_call cmd_args
+    Racadm::Racadm.racadm_call(resource, ['sslkeyupload', '-t', resource[:type], '-f', resource[:certificate_key]])
+    Racadm::Racadm.racadm_call(resource, ['sslkeyupload', '-t', resource[:type], '-f', resource[:certificate_file]])
+    Racadm::Racadm.racadm_call(resource, ['racreset', 'soft'])
   end
 
   def destroy
-    cmd_args = ['sslcertdelete']
-    cmd_args.push('-t').push(resource[:type])
-    racadm_call cmd_args
-
-    cmd_args = ['racreset']
-    cmd_args.push('soft')
-    racadm_call cmd_args
+    Racadm::Racadm.racadm_call(resource, ['sslcertdelete', '-t', resource[:type]])
+    Racadm::Racadm.racadm_call(resource, ['racreset', 'soft'])
   end
 
   def exists?
     exists = false
     tmp_file = Tempfile.new('bmc_ssl')
-    cmd_args = ['sslcertdownload']
-    cmd_args.push('-t').push(resource[:type])
-    cmd_args.push('-f').push(tmp_file.path)
-    racadm_call cmd_args
+
+    Racadm::Racadm.racadm_call(resource, ['sslcertdownload', '-t', resource[:type], '-f', tmp_file.path])
     if File.file?(tmp_file.path)
       exists = FileUtils.compare_file(tmp_file.path, resource[:certificate_file])
       tmp_file.unlink
     end
     exists
-  end
-
-  #candiate to be moved to a shared lib
-  def racadm_call cmd_args
-    cmd = ['/opt/dell/srvadmin/bin/idracadm']
-    cmd.push('-u').push(resource[:username]) if resource[:username]
-    cmd.push('-p').push(resource[:password]) if resource[:password]
-    if resource[:bmc_server_host]
-      cmd.push('-r').push(resource[:bmc_server_host])
-    else
-      ipmitool_out = ipmitool('lan', 'print')
-      lan_print = Ipmi::Ipmitool.parseLan(ipmitool_out)
-      cmd.push('-r').push(lan_print['IP Address'])
-    end
-
-    cmd += cmd_args
-    stdout, stderr, status = Open3.capture3(cmd.join(' '))
-    nr = cmd.index('-p')
-    cmd.fill('<secret>', nr+1, 1) #password is not logged.
-    raise(Puppet::Error, "#{cmd.join(' ')} failed with #{stderr}") unless status.success?
-    Puppet.debug("#{cmd.join(' ')} executed with stdout: '#{stdout}' stderr: '#{stderr}' status: '#{status}'")
-    stdout
   end
 end
