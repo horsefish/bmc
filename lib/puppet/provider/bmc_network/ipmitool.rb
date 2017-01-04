@@ -11,36 +11,33 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
 
   mk_resource_methods
 
-  def initialize(value={})
-    super(value)
-    #This is to overcome that namevar doesn't support defaultto
-    if value.name.to_s == value.title.to_s
-      channel = 1
-    else
-      channel = value.name
+  def self.prefetch(resources)
+    resources.each do |key, type|
+      ipmitool_out = ipmitool('lan', 'print', key)
+      lan_print = Ipmi::Ipmitool.parseLan(ipmitool_out)
+      type.provider = new(
+          :channel => key,
+          :ipsrc => lan_print['IP Address Source'],
+          :ipaddr => lan_print['IP Address'],
+          :gateway => lan_print['Default Gateway IP'],
+          :netmask => lan_print['Subnet Mask']
+      )
     end
-    ipmitool_out = ipmitool('lan', 'print', channel)
-    lan_print =  Ipmi::Ipmitool.parseLan(ipmitool_out)
-    @property_hash[:channel] = channel
-    @property_hash[:ipsrc] = lan_print['IP Address Source']
-    @property_hash[:ipaddr] = lan_print['IP Address']
-    @property_hash[:gateway] = lan_print['Default Gateway IP']
-    @property_hash[:netmask] = lan_print['Subnet Mask']
   end
 
-  def ipsrc=value
+  def ipsrc= value
     ipmitool('lan', 'set', @property_hash[:channel], 'ipsrc', value)
   end
 
-  def ipaddr=value
+  def ipaddr= value
     ipmitool('lan', 'set', @property_hash[:channel], 'ipaddr', value)
   end
 
-  def gateway=value
+  def gateway= value
     ipmitool('lan', 'set', @property_hash[:channel], 'defgw', 'ipaddr', value)
   end
 
-  def netmask=value
+  def netmask= value
     ipmitool('lan', 'set', @property_hash[:channel], 'netmask', value)
   end
 end

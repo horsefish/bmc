@@ -12,25 +12,19 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
 
   def self.instances
     users = []
-    (0..15).each do |channel|
-      begin
-        ipmitool_out = ipmitool('user', 'list', channel)
-        Ipmi::Ipmitool.parseUser(ipmitool_out).each do |user|
-          users << new(:id => user['id'],
-                       :channel => channel,
-                       :ensure => :present,
-                       :name => user['name'],
-                       :callin => user['callin'],
-                       :link => user['link_auth'],
-                       :ipmi => user['ipmi_msg'],
-                       :privilege => user['channel_priv_limit']
-          )
-        end
-      rescue Puppet::ExecutionFailure
-        debug "No users in channel #{channel}"
-      end
+    ipmitool_out = ipmitool('user', 'list', 1)
+    Ipmi::Ipmitool.parseUser(ipmitool_out).each do |user|
+      users << new(:id => user['id'],
+                   :channel => 1,
+                   :ensure => :present,
+                   :name => user['name'],
+                   :callin => user['callin'],
+                   :link => user['link_auth'],
+                   :ipmi => user['ipmi_msg'],
+                   :privilege => user['channel_priv_limit']
+      )
     end
-    return users
+    users
   end
 
   def self.prefetch(resources)
@@ -49,8 +43,12 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   def destroy
     @property_hash[:ensure] = :absent
     ipmitool('user', 'set', 'name', @property_hash[:id], '')
-    ipmitool('user', 'set', 'password', @property_hash[:id], '')
     ipmitool('user', 'disable', @property_hash[:id])
+    self.password=("''")
+    self.privilege=(:NO_ACCESS)
+    self.callin=(false)
+    self.link=(false)
+    self.ipmi=(false)
   end
 
   def create
@@ -58,19 +56,25 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     ipmitool_out = ipmitool('user', 'list', 1)
     users = Ipmi::Ipmitool.parseUser(ipmitool_out)
     current_user_count = users.count
-
     empty_user = users.find { |user| user['name'].empty? }
-    if not empty_user.empty?
-      ipmitool('user', 'set', 'name', empty_user['id'], resource[:name])
-      @property_hash[:id] = empty_user['id']
-    else
+    if empty_user.nil?
       for user_id in 2..current_user_count+1
         unless users.any? { |user| user['id'].to_i == user_id }
           @property_hash[:id] = user_id
-          ipmitool('user', 'set', 'name', user_id, resource[:name])
+        else
+          # current_user_count + 2 is (current_user_count + user with id 1 + next number)
+          @property_hash[:id] = current_user_count + 2
         end
       end
+    else
+      @property_hash[:id] = empty_user['id']
     end
+    ipmitool('user', 'set', 'name', @property_hash[:id], resource[:name])
+    self.password=(resource[:password])
+    self.privilege=(resource[:privilege])
+    self.callin=(resource[:callin])
+    self.link=(resource[:link])
+    self.ipmi=(resource[:ipmi])
   end
 
   def password
@@ -93,7 +97,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def password=newpass
+  def password= newpass
     cmd = "ipmitool user set password #{@property_hash[:id]} "
     stdout, stderr, status = Open3.capture3(cmd + newpass)
     Puppet.debug("#{cmd} <secret> executed with stdout: '#{stdout}' stderr: '#{stderr}' status: '#{status}'")
@@ -104,7 +108,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def privilege=value
+  def privilege= value
     case value
       when :CALLBACK, 'CALLBACK'
         priv = 1
@@ -127,7 +131,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def callin=value
+  def callin= value
     if value
       callin_value = 'on'
     else
@@ -139,7 +143,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def link=value
+  def link= value
     if value
       link_value = 'on'
     else
@@ -151,7 +155,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     end
   end
 
-  def ipmi=value
+  def ipmi= value
     if value
       ipmi_value = 'on'
     else

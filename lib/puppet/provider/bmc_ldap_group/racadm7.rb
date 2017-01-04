@@ -1,7 +1,4 @@
-require 'open3'
-require 'tempfile'
-
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'ipmi', 'ipmitool.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'racadm', 'racadm.rb'))
 
 Puppet::Type.type(:bmc_ldap_group).provide(:racadm7) do
 
@@ -15,21 +12,31 @@ Puppet::Type.type(:bmc_ldap_group).provide(:racadm7) do
 
   mk_resource_methods
 
-  def initialize(value={})
-    super(value)
-    #This is to overcome that namevar doesn't support defaultto
-    if value.name.to_s == value.title.to_s
-      group_nr = 1
-    else
-      group_nr = value.name
+  def self.prefetch(resources)
+    resources.each do |key, type|
+      racadm_out = Racadm::Racadm.racadm_call(
+          {:username => type.value(:username),
+           :password => type.value(:password),
+           :bmc_server_host => type.value(:bmc_server_host)},
+          ['get', "iDRAC.LDAPRoleGroup.#{key}"])
+      iDRAC_LDAPRoleGroup = Racadm::Racadm.parse_racadm racadm_out
+      type.provider = new(
+          :group_nr => key,
+          :role_group_dn => iDRAC_LDAPRoleGroup['DN'],
+          :role_group_privilege => iDRAC_LDAPRoleGroup['Privilege'].to_i(16)
+      )
     end
   end
 
-  def role_group_dn=value
-
+  def role_group_privilege= value
+    Racadm::Racadm.racadm_call(
+        resource,
+        ['set', "iDRAC.LDAPRoleGroup.#{resource[:name]}.Privilege", "0x#{value.to_s(16)}"])
   end
 
-  def role_group_privilege=value
-
+  def role_group_dn= value
+    Racadm::Racadm.racadm_call(
+        resource,
+        ['set', "iDRAC.LDAPRoleGroup.#{resource[:name]}.DN", value])
   end
 end
