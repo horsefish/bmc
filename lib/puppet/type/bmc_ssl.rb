@@ -33,23 +33,23 @@ Puppet::Type.newtype(:bmc_ssl) do
     end
   end
 
-  newparam(:username) do
+  newparam(:certificate_pass_phrase) do
+    desc 'pass phrase for the Public Key Cryptography Standards file.'
+  end
+
+  newparam(:bmc_username) do
     desc 'Username used to connect with bmc service. Default to root'
     defaultto 'root'
   end
 
-  newparam(:password) do
+  newparam(:bmc_password) do
     desc 'Password used to connect with bmc service.'
-  end
-
-  newparam(:certificate_pass_phrase) do
-    desc 'pass phrase for the Public Key Cryptography Standards file.'
   end
 
   newparam(:bmc_server_host) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
-      unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
         raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
@@ -63,8 +63,12 @@ Puppet::Type.newtype(:bmc_ssl) do
   end
 
   validate do
-    raise(Puppet::Error, 'If username is set password must also be set') if (self[:password].nil? && !self[:username].nil?)
-    raise(Puppet::Error, 'If password is set username must also be set') if (self[:username].nil? and !self[:password].nil?)
+    if self[:bmc_password].nil? && !self[:bmc_username].nil?
+      raise(Puppet::Error, 'If bmc_username is set bmc_password must also be set')
+    end
+    if self[:bmc_username].nil? and !self[:bmc_password].nil?
+      raise(Puppet::Error, 'If bmc_password is set bmc_username must also be set')
+    end
     raise(Puppet::Error, 'Certificate_file must be set') if (self[:certificate_file].nil?)
     raise(Puppet::Error, 'Certificate_key must be set') if (self[:certificate_key].nil?)
   end

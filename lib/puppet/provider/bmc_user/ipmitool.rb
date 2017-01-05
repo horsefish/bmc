@@ -70,11 +70,11 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
       @property_hash[:id] = empty_user['id']
     end
     ipmitool('user', 'set', 'name', @property_hash[:id], resource[:name])
-    self.password=(resource[:password])
-    self.privilege=(resource[:privilege])
-    self.callin=(resource[:callin])
-    self.link=(resource[:link])
-    self.ipmi=(resource[:ipmi])
+    self.password=(resource[:password]) unless resource[:password].nil?
+    self.privilege=(resource[:privilege]) unless resource[:privilege].nil?
+    self.callin=(resource[:callin]) unless resource[:callin].nil?
+    self.link=(resource[:link]) unless resource[:link].nil?
+    self.ipmi=(resource[:ipmi]) unless resource[:ipmi].nil?
   end
 
   def password

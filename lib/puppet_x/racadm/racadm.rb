@@ -11,8 +11,8 @@ module Racadm
 
     def self.racadm_call racadm_args, cmd_args
       cmd = ['/opt/dell/srvadmin/bin/idracadm']
-      cmd.push('-u').push(racadm_args[:username]) if racadm_args[:username]
-      cmd.push('-p').push(racadm_args[:password]) if racadm_args[:password]
+      cmd.push('-u').push(racadm_args[:bmc_username]) if racadm_args[:bmc_username]
+      cmd.push('-p').push(racadm_args[:bmc_password]) if racadm_args[:bmc_password]
       if racadm_args[:bmc_server_host]
         cmd.push('-r').push(racadm_args[:bmc_server_host])
       else

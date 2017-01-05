@@ -12,25 +12,24 @@ Puppet::Type.type(:bmc_network).provide(:racadm7, :parent => :ipmitool) do
 
   defaultfor :osfamily => [:redhat, :debian]
 
-  def get_instance
-    racadm_out = Racadm::Racadm.racadm_call(resource, ['get', 'iDRAC.IPv4'])
-    idrac_ipv4 = Racadm::Racadm.parse_racadm racadm_out
-    @property_hash[:dns1] = idrac_ipv4['DNS1']
-    @property_hash[:dns2] = idrac_ipv4['DNS2']
-  end
-
-  def dns1
-    get_instance unless @property_hash.key?(:dns1)
-    @property_hash[:dns1]
+  def self.prefetch(resources)
+    super
+    resources.each_value do | type |
+      racadm_out = Racadm::Racadm.racadm_call(
+          {
+              :bmc_username => type.value(:bmc_username),
+              :bmc_password => type.value(:bmc_password),
+              :bmc_server_host => type.value(:bmc_server_host)
+          },
+          ['get', 'iDRAC.IPv4'])
+      idrac_ipv4 = Racadm::Racadm.parse_racadm racadm_out
+      type.provider.instance_variable_get(:@property_hash)[:dns1] = idrac_ipv4['DNS1']
+      type.provider.instance_variable_get(:@property_hash)[:dns2] = idrac_ipv4['DNS2']
+    end
   end
 
   def dns1= value
     Racadm::Racadm.racadm_call(resource, ['set', 'iDRAC.IPv4.DNS1', value])
-  end
-
-  def dns2
-    get_instance unless @property_hash.key?(:dns2)
-    @property_hash[:dns2]
   end
 
   def dns2= value

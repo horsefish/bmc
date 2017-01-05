@@ -1,3 +1,5 @@
+require 'resolv'
+
 Puppet::Type.newtype(:bmc_user) do
 
   @doc = "BMC local user administration."
@@ -6,6 +8,8 @@ Puppet::Type.newtype(:bmc_user) do
     defaultvalues
     defaultto :present
   end
+
+  feature :racadm, 'Dell racadmin specific.'
 
   newparam(:name, :namevar => true) do
     desc 'Username of the user'
@@ -42,6 +46,40 @@ Puppet::Type.newtype(:bmc_user) do
     defaultto :administrator
     munge do |priv|
       priv.upcase
+    end
+  end
+
+  newproperty(:idrac, :required_features => :racadm) do
+    desc 'iDRAC User Privileges'
+    defaultto 0x0
+    validate do |value|
+      unless value <= 0x1ff && value >= 0x0
+        raise Puppet::Error, "%s is not a valid group privilege" % value
+      end
+    end
+    def should_to_s(value)
+      "0x#{value.to_s(16)}"
+    end
+    def is_to_s(value)
+      "0x#{value.to_s(16)}"
+    end
+  end
+
+  newparam(:bmc_username) do
+    desc 'Username used to connect with bmc service. Default to root'
+    defaultto 'root'
+  end
+
+  newparam(:bmc_password) do
+    desc 'Password used to connect with bmc service.'
+  end
+
+  newparam(:bmc_server_host) do
+    desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
+    validate do |value|
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
+        raise Puppet::Error, "%s is not a valid ip address" % value
+      end
     end
   end
 end

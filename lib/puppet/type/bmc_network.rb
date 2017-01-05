@@ -22,7 +22,7 @@ Puppet::Type.newtype(:bmc_network) do
   newproperty(:ipaddr) do
     desc 'The IP address for this channel.'
     validate do |value|
-      unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
         raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
@@ -31,7 +31,7 @@ Puppet::Type.newtype(:bmc_network) do
   newproperty(:gateway) do
     desc 'The default gateway IP address.'
     validate do |value|
-      unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
         raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
@@ -40,7 +40,7 @@ Puppet::Type.newtype(:bmc_network) do
   newproperty (:netmask) do
     desc 'The netmask for this channel.'
     validate do |value|
-      unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
         raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
@@ -49,7 +49,7 @@ Puppet::Type.newtype(:bmc_network) do
   newproperty(:dns1, :required_features => :racadm) do
     desc 'Static Preferred DNS Server'
     validate do |value|
-      unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
         raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
@@ -59,26 +59,26 @@ Puppet::Type.newtype(:bmc_network) do
   newproperty(:dns2, :required_features => :racadm) do
     desc 'Static Alternate DNS Server'
     validate do |value|
-      unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
         raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end
     defaultto '0.0.0.0'
   end
 
-  newparam(:username, :required_features => :racadm) do
+  newparam(:bmc_username) do
     desc 'username used to connect with bmc service. '
     defaultto 'root'
   end
 
-  newparam(:password, :required_features => :racadm) do
+  newparam(:bmc_password) do
     desc 'password used to connect with bmc service.'
   end
 
-  newparam(:bmc_server_host, :required_features => :racadm) do
+  newparam(:bmc_server_host) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
-      unless (value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex)
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
         raise Puppet::Error, "%s is not a valid ip address" % value
       end
     end

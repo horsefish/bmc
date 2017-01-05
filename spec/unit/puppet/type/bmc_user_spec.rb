@@ -14,7 +14,7 @@ describe type_class do
   let(:type) do
     Puppet::Type.type(:bmc_user).new(
         :name => 'root',
-        :password => 'calvin',
+        :bmc_password => 'calvin',
         :enable => true,
         :privilege => 'ADMINISTRATOR',
         :channel => 1,
@@ -26,7 +26,7 @@ describe type_class do
     expect {
       Puppet::Type.type(:bmc_user).new(
           :name => 'foo',
-          :password => 'theSecret',
+          :bmc_password => 'theSecret',
           :privilege => 'XXXXX'
       ) }.to raise_error(Puppet::ResourceError)
 
