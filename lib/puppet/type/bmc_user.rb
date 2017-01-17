@@ -10,6 +10,7 @@ Puppet::Type.newtype(:bmc_user) do
   end
 
   feature :racadm, 'Dell racadmin specific.'
+  feature :ipmi, 'IPMI specific.'
 
   newparam(:name, :namevar => true) do
     desc 'Username of the user'
@@ -17,35 +18,101 @@ Puppet::Type.newtype(:bmc_user) do
 
   newproperty(:password) do
     desc 'Password used to login'
+
+    def should_to_s(value)
+      '<secret>'
+    end
+
+    def is_to_s(value)
+      '<secret>'
+    end
+
     def change_to_s(current, desire)
       'changed password'
     end
   end
 
-  newproperty(:callin) do
-    desc 'Configure user access information on the callin channel. Default to true'
-    newvalues(:false, :true)
+  newproperty(:callin, :required_features => :ipmi) do
+    desc 'Configure user access information on the callin channels. Default to true for all channels'
     defaultto true
+
+    validate do |value|
+      valid_channels = [true, false]
+      if value.class == Hash
+        unless (value.values - valid_channels).empty?
+          raise Puppet::Error, "%s contains at least one invalid boolean" % value.inspect
+        end
+      else
+        unless value.is_a?(TrueClass) || value.is_a?(FalseClass)
+          raise Puppet::Error, "%s is not a valid boolean" % value
+        end
+      end
+    end
+
+    munge do |value|
+      unless value.class == Hash
+        Bmc.munge_boolean(value)
+      end
+    end
+
+    def should_to_s(value)
+      value.class == Hash ? value.inspect : "All => #{value}"
+    end
   end
 
-  newproperty(:link) do
-    desc 'Configure user access information on the link channel. Default to true '
-    newvalues(:false, :true)
+  newproperty(:link, :required_features => :ipmi) do
+    desc 'Configure user access information on the link channels. Default to true for all channels'
     defaultto true
+
+    validate do |value|
+      valid_channels = [true, false]
+      if value.class == Hash
+        unless (value.values - valid_channels).empty?
+          raise Puppet::Error, "%s contains at least one invalid boolean" % value.inspect
+        end
+      else
+        unless value.is_a?(TrueClass) || value.is_a?(FalseClass)
+          raise Puppet::Error, "%s is not a valid boolean" % value
+        end
+      end
+    end
+
+    munge do |value|
+      unless value.class == Hash
+        Bmc.munge_boolean(value)
+      end
+    end
+
+    def should_to_s(value)
+      value.class == Hash ? value.inspect : "All => #{value}"
+    end
   end
 
-  newproperty(:ipmi) do
-    desc 'Configure user access information on the ipmi channel. Default to true'
-    newvalues(:false, :true)
+  newproperty(:ipmi, :required_features => :ipmi) do
+    desc 'Configure user access information on the ipmi channels. Default to true for all channels'
     defaultto true
-  end
 
-  newproperty(:privilege) do
-    desc 'Force session privilege level'
-    newvalues(:callback, :user, :operator, :administrator, :oem_proprietary, :no_access)
-    defaultto :administrator
-    munge do |priv|
-      priv.upcase
+    validate do |value|
+      valid_channels = [true, false]
+      if value.class == Hash
+        unless (value.values - valid_channels).empty?
+          raise Puppet::Error, "%s contains at least one invalid boolean" % value.inspect
+        end
+      else
+        unless value.is_a?(TrueClass) || value.is_a?(FalseClass)
+          raise Puppet::Error, "%s is not a valid boolean" % value
+        end
+      end
+    end
+
+    munge do |value|
+      unless value.class == Hash
+        Bmc.munge_boolean(value)
+      end
+    end
+
+    def should_to_s(value)
+      value.class == Hash ? value.inspect : "All => #{value}"
     end
   end
 
@@ -57,11 +124,35 @@ Puppet::Type.newtype(:bmc_user) do
         raise Puppet::Error, "%s is not a valid group privilege" % value
       end
     end
+
     def should_to_s(value)
       "0x#{value.to_s(16)}"
     end
+
     def is_to_s(value)
       "0x#{value.to_s(16)}"
+    end
+  end
+
+  newproperty(:privilege) do
+    desc 'Maximum privilege granted. Defaults to administrator for all'
+    defaultto 'administrator'
+
+    validate do |value|
+      valid_roles = ['callback', 'user', 'operator', 'administrator', 'oem_proprietary', 'no_access']
+      if value.class == Hash
+        unless (value.values - valid_roles).empty?
+          raise Puppet::Error, "%s contains at least one invalid role" % value.inspect
+        end
+      else
+        unless valid_roles.include? value.to_s
+          raise Puppet::Error, "%s is not a valid role" % value
+        end
+      end
+    end
+
+    def should_to_s(value)
+      value.class == Hash ? value.inspect : "All => #{value}"
     end
   end
 

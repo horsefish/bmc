@@ -34,7 +34,7 @@ Puppet::Type.newtype(:bmc_ssl) do
   end
 
   newparam(:certificate_pass_phrase) do
-    desc 'pass phrase for the Public Key Cryptography Standards file.'
+    desc 'Pass phrase for the Public Key Cryptography Standards file.'
   end
 
   newparam(:bmc_username) do

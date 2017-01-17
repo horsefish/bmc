@@ -57,6 +57,17 @@ Refer to [stdmod] for complete documentation on the common parameters.
     link => false
   }
 ```
+###A very complex user 
+```puppet
+  bmc_user { 'Very complex':
+    password => 'password',
+    privilege => 
+      {
+        'Lan' => user,
+        'Serial' => administrator
+      }
+  }
+```
 ###With access to iDRAC with admin rights
 ```puppet
   bmc_user { 'idrac_admin':
