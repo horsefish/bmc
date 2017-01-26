@@ -20,7 +20,7 @@ describe type_class do
   it 'exceptions handling' do
     expect {
       Puppet::Type.type(:bmc_network).new(
-          network_type_params(gateway: 'XXX')
+          network_type_params(ipv4_gateway: 'XXX')
       ) }.to raise_error(Puppet::ResourceError)
   end
 
@@ -33,15 +33,15 @@ describe type_class do
 
   {
       'should require valid ip' => {
-          attribute: :ipaddr,
+          attribute: :ipv4_ip_address,
           value: '1.10'
       },
       'should require valid gateway' => {
-          attribute: :gateway,
+          attribute: :ipv4_gateway,
           value: '1.1.1'
       },
       'should reqiore valid netmask' => {
-          attribute: :netmask,
+          attribute: :ipv4_netmask,
           value: '10.10'
       }
   }.each do |check, options|

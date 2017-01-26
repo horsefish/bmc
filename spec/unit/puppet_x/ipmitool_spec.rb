@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'puppet_x/ipmi/ipmitool'
 
-def user_params(id: "2", name: "root", callin: "true", link_auth: "true", ipmi_msg: "true", channel_priv_limit: "ADMINISTRATOR")
+def user_params(id: "2", name: "root", callin: :true, link_auth: :true, ipmi_msg: :true, channel_priv_limit: "ADMINISTRATOR")
   {
       "id" => id,
       "name" => name,
@@ -93,8 +93,8 @@ describe Ipmi::Ipmitool do
                              user_params(id: "4", name: "xx", channel_priv_limit: "OPERATOR")
                          )
       expect(subject).to include(
-                             user_params(id: "5", name: "emil", link_auth: "false", ipmi_msg: "false", channel_priv_limit: "NO ACCESS")
-                         )
+                             user_params(id: "5", name: "emil", link_auth: :false, ipmi_msg: :false, channel_priv_limit: "NO ACCESS")
+                        )
       expect(subject).to include(
                              user_params(id: "6", name: "name", channel_priv_limit: "CALLBACK")
                          )

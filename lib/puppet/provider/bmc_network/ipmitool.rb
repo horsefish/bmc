@@ -5,7 +5,6 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
   desc "Manage BMC network via ipmitool."
 
   confine :osfamily => [:redhat, :debian]
-  defaultfor :osfamily => [:redhat, :debian]
 
   commands :ipmitool => 'ipmitool'
 
@@ -13,31 +12,31 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
 
   def self.prefetch(resources)
     resources.each do |key, type|
-      ipmitool_out = ipmitool('lan', 'print', key)
+      ipmitool_out = ipmitool('lan', 'print', type.value(:channel))
       lan_print = Ipmi::Ipmitool.parseLan(ipmitool_out)
       type.provider = new(
-          :channel => key,
-          :ipsrc => lan_print['IP Address Source'],
-          :ipaddr => lan_print['IP Address'],
-          :gateway => lan_print['Default Gateway IP'],
-          :netmask => lan_print['Subnet Mask']
+          :channel => type.value(:channel),
+          :ip_source => lan_print['IP Address Source'],
+          :ipv4_ip_address => lan_print['IP Address'],
+          :ipv4_gateway => lan_print['Default Gateway IP'],
+          :ipv4_netmask => lan_print['Subnet Mask']
       )
     end
   end
 
-  def ipsrc= value
+  def ip_source= value
     ipmitool('lan', 'set', @property_hash[:channel], 'ipsrc', value)
   end
 
-  def ipaddr= value
+  def ipv4_ip_address= value
     ipmitool('lan', 'set', @property_hash[:channel], 'ipaddr', value)
   end
 
-  def gateway= value
+  def ipv4_gateway= value
     ipmitool('lan', 'set', @property_hash[:channel], 'defgw', 'ipaddr', value)
   end
 
-  def netmask= value
+  def ipv4_netmask= value
     ipmitool('lan', 'set', @property_hash[:channel], 'netmask', value)
   end
 end

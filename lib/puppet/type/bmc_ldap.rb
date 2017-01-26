@@ -60,12 +60,12 @@ Puppet::Type.newtype(:bmc_ldap) do
     desc 'Bind password.( required if anonymous bind is not allowed ).'
   end
 
-  newparam(:username) do
+  newparam(:bmc_username) do
     desc 'username used to connect with bmc service. Default to root'
     defaultto 'root'
   end
 
-  newparam(:password) do
+  newparam(:bmc_password) do
     desc 'password used to connect with bmc service.'
   end
 
@@ -81,7 +81,7 @@ Puppet::Type.newtype(:bmc_ldap) do
   validate do
     raise(Puppet::Error, 'server must be set') if self[:server].nil?
     raise(Puppet::Error, 'base_dn must be set') if self[:base_dn].nil?
-    if (!self[:bmc_server_host].nil? && (self[:username].nil? || self[:password].nil?))
+    if !self[:bmc_server_host].nil? && (self[:bmc_username].nil? || self[:bmc_password].nil?)
       raise(Puppet::Error,
             'if bmc_server_host param set you also must set both username and password')
     end

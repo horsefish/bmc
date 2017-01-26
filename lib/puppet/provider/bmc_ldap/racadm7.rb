@@ -43,17 +43,17 @@ Puppet::Type.type(:bmc_ldap).provide(:racadm7) do
   def exists?
     unless @property_hash.key? :ensure
       racadm_out = Racadm::Racadm.racadm_call(resource, ['get', 'iDRAC.LDAP'])
-      iDRAC_LDAP = Racadm::Racadm.parse_racadm racadm_out
-      @property_hash[:server] = iDRAC_LDAP['Server']
-      @property_hash[:server_port] = iDRAC_LDAP['Port']
-      @property_hash[:bind_dn] = iDRAC_LDAP['BindDN']
-      @property_hash[:base_dn] = iDRAC_LDAP['BaseDN']
-      @property_hash[:user_attribute] = iDRAC_LDAP['UserAttribute']
-      @property_hash[:group_attribue] = iDRAC_LDAP['GroupAttribute']
-      @property_hash[:search_filer] = iDRAC_LDAP['SearchFilter']
-      @property_hash[:certificate_validate] = (iDRAC_LDAP['CertValidationEnable'].eql? 'Enabled').to_s
-      @property_hash[:group_attribute_is_dn] = (iDRAC_LDAP['GroupAttributeIsDN'].eql? 'Enabled').to_s
-      @property_hash[:ensure] = (iDRAC_LDAP['Enable'].eql? 'Enabled') ? :present : :absent
+      idrac_ldap = Racadm::Racadm.parse_racadm racadm_out
+      @property_hash[:server] = idrac_ldap['Server']
+      @property_hash[:server_port] = idrac_ldap['Port']
+      @property_hash[:bind_dn] = idrac_ldap['BindDN']
+      @property_hash[:base_dn] = idrac_ldap['BaseDN']
+      @property_hash[:user_attribute] = idrac_ldap['UserAttribute']
+      @property_hash[:group_attribue] = idrac_ldap['GroupAttribute']
+      @property_hash[:search_filer] = idrac_ldap['SearchFilter']
+      @property_hash[:certificate_validate] = (idrac_ldap['CertValidationEnable'].eql? 'Enabled').to_s
+      @property_hash[:group_attribute_is_dn] = (idrac_ldap['GroupAttributeIsDN'].eql? 'Enabled').to_s
+      @property_hash[:ensure] = (idrac_ldap['Enable'].eql? 'Enabled') ? :present : :absent
       #Have not been able to find a way to test if the password is changed so to make sure
       #it's set every time (if enabled)
       if @property_hash[:ensure] == :present && !resource[:bind_password].nil?

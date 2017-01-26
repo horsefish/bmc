@@ -19,7 +19,7 @@ describe type_class do
           :server => 'ldap.server.dk',
           :base_dn => 'dc=example,dc=com',
           :bmc_server_host => '192.168.0.1',
-          :password => 'secret'
+          :bmc_password => 'secret'
       )
     }.not_to raise_error
   end
@@ -54,7 +54,7 @@ describe type_class do
           :server => 'ldap.server.dk',
           :base_dn => 'dc=example,dc=com',
           :bmc_server_host => 'Not A DNS NAME',
-          :password => 'secret'
+          :bmc_assword => 'secret'
       ) }.to raise_error(Puppet::ResourceError)
   end
 end
