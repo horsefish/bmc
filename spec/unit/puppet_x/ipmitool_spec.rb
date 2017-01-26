@@ -17,6 +17,7 @@ end
 describe Ipmi::Ipmitool do
 
   let(:dell_lan_print) { IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/dell_ipmitool_lan_print.txt") }
+  let(:dell_lan_print_reboot) { IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/dell_ipmitool_lan_print_reboot.txt") }
   let(:ibm_lan_print) { IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/ibm_ipmitool_lan_print.txt") }
   let(:hp_lan_print) { IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/hp_ipmitool_lan_print.txt") }
   let(:dell_ipmitool_user_list_1) { IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/dell_ipmitool_user_list_1.txt") }
@@ -44,6 +45,11 @@ describe Ipmi::Ipmitool do
                         'RMCP+ Cipher Suites' => '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14',
                         'Cipher Suite Priv Max' => 'Xaaaaaaaaaaaaaa') }
     it { should include('Auth Type Enable') }
+  end
+  context "DELL ipmitool lan print reboot" do
+    subject { Ipmi::Ipmitool.parseLan dell_lan_print_reboot }
+    it { should include('Get Device ID command failed' => '0xc0 Node busy',
+                        'Invalid channel' => '0') }
   end
   context "IBM ipmitool lan print" do
     subject { Ipmi::Ipmitool.parseLan ibm_lan_print }

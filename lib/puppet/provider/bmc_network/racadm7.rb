@@ -8,7 +8,7 @@ Puppet::Type.type(:bmc_network).provide(:racadm7) do
 
   confine :manufactor_id => :'674'
   confine :osfamily => [:redhat, :debian]
-  confine :exists => '/opt/dell/srvadmin/bin/idracadm'
+  confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
 
   defaultfor :osfamily => [:redhat, :debian]
 

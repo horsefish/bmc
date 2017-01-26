@@ -1,4 +1,5 @@
 require 'resolv'
+require 'pathname'
 
 Puppet::Type.newtype(:bmc_ssl) do
 
@@ -18,7 +19,7 @@ Puppet::Type.newtype(:bmc_ssl) do
   newparam(:certificate_file) do
     desc 'Absolute path to the certificate file.'
     validate do |value|
-      unless File.file?(value)
+      unless (Pathname.new value).absolute?
         fail("#{value} must be a absolute path to a file")
       end
     end
@@ -27,7 +28,7 @@ Puppet::Type.newtype(:bmc_ssl) do
   newparam(:certificate_key) do
     desc 'Absolute path to the certificate key file.'
     validate do |value|
-      unless File.file?(value)
+      unless (Pathname.new value).absolute?
         fail("#{value} must be a absolute path to a file")
       end
     end
@@ -38,8 +39,7 @@ Puppet::Type.newtype(:bmc_ssl) do
   end
 
   newparam(:bmc_username) do
-    desc 'Username used to connect with bmc service. Default to root'
-    defaultto 'root'
+    desc 'Username used to connect with bmc service.'
   end
 
   newparam(:bmc_password) do
@@ -59,6 +59,7 @@ Puppet::Type.newtype(:bmc_ssl) do
     desc 'Type of certificate
       [1=server,2=CA certificate for Directory Service,3=Public Key Cryptography Standards file]
       Default to server'
+    newvalues(1,2,3)
     defaultto 1
   end
 
@@ -70,7 +71,6 @@ Puppet::Type.newtype(:bmc_ssl) do
       raise(Puppet::Error, 'If bmc_password is set bmc_username must also be set')
     end
     raise(Puppet::Error, 'Certificate_file must be set') if (self[:certificate_file].nil?)
-    raise(Puppet::Error, 'Certificate_key must be set') if (self[:certificate_key].nil?)
   end
 
   autorequire(:file) do

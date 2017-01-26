@@ -1,0 +1,2 @@
+Get Device ID command failed: 0xc0 Node busy
+Invalid channel: 0

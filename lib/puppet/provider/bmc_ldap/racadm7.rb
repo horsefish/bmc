@@ -1,4 +1,4 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'ipmi', 'ipmitool.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'racadm', 'racadm.rb'))
 
 Puppet::Type.type(:bmc_ldap).provide(:racadm7) do
 
@@ -6,9 +6,7 @@ Puppet::Type.type(:bmc_ldap).provide(:racadm7) do
 
   confine :manufactor_id => :'674'
   confine :osfamily => [:redhat, :debian]
-  confine :exists => '/opt/dell/srvadmin/bin/idracadm'
-
-  commands :ipmitool => 'ipmitool'
+  confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
 
   mk_resource_methods
 
