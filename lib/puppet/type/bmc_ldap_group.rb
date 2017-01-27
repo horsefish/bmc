@@ -44,8 +44,7 @@ Puppet::Type.newtype(:bmc_ldap_group) do
   end
 
   newparam(:bmc_username) do
-    desc 'username used to connect with bmc service. Default to root'
-    defaultto 'root'
+    desc 'username used to connect with bmc service.'
   end
 
   newparam(:bmc_password) do

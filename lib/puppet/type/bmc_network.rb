@@ -108,7 +108,6 @@ Puppet::Type.newtype(:bmc_network) do
 
   newparam(:bmc_username) do
     desc 'username used to connect with bmc service.'
-    defaultto 'root'
   end
 
   newparam(:bmc_password) do

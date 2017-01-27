@@ -19,6 +19,7 @@ describe type_class do
           :server => 'ldap.server.dk',
           :base_dn => 'dc=example,dc=com',
           :bmc_server_host => '192.168.0.1',
+          :bmc_username => 'root',
           :bmc_password => 'secret'
       )
     }.not_to raise_error

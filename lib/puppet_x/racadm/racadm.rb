@@ -2,23 +2,16 @@ require 'puppet/provider'
 require 'open3'
 
 module Racadm
-  class Racadm < Puppet::Provider
-
-    #needed by ::commands
-    self.initvars
-
-    commands :ipmitool => 'ipmitool'
+  class Racadm
 
     def self.racadm_call racadm_args, cmd_args, suppress_error = false
-      cmd = ['/opt/dell/srvadmin/bin/idracadm']
-      cmd.push('-u').push(racadm_args[:bmc_username]) if racadm_args[:bmc_username]
-      cmd.push('-p').push(racadm_args[:bmc_password]) if racadm_args[:bmc_password]
-      if racadm_args[:bmc_server_host]
-        cmd.push('-r').push(racadm_args[:bmc_server_host])
-      else
-        ipmitool_out = ipmitool('lan', 'print')
-        lan_print = Ipmi::Ipmitool.parseLan(ipmitool_out)
-        cmd.push('-r').push(lan_print['IP Address'])
+      cmd = ['/opt/dell/srvadmin/bin/idracadm7']
+      unless racadm_args[:bmc_server_host].nil? ||
+          racadm_args[:bmc_username].nil? ||
+          racadm_args[:bmc_password].nil?
+        cmd.push('-u').push(racadm_args[:bmc_username]) if racadm_args[:bmc_username]
+        cmd.push('-p').push(racadm_args[:bmc_password]) if racadm_args[:bmc_password]
+        cmd.push('-r').push(racadm_args[:bmc_server_host]) if racadm_args[:bmc_server_host]
       end
 
       cmd += cmd_args

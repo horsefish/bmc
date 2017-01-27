@@ -6,9 +6,7 @@ Puppet::Type.type(:bmc_ldap_group).provide(:racadm7) do
 
   confine :manufactor_id => :'674'
   confine :osfamily => [:redhat, :debian]
-  confine :exists => '/opt/dell/srvadmin/bin/idracadm'
-
-  commands :ipmitool => 'ipmitool'
+  confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
 
   mk_resource_methods
 
