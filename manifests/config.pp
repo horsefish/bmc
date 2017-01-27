@@ -1,2 +1,2 @@
-class bmc::config {
+class bmc::config inherits bmc {
 }

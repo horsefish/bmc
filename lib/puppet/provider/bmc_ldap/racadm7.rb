@@ -4,9 +4,9 @@ Puppet::Type.type(:bmc_ldap).provide(:racadm7) do
 
   desc "Manage LDAP configuration via racadm7."
 
-  confine :manufactor_id => :'674'
   confine :osfamily => [:redhat, :debian]
   confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
+  defaultfor :manufactor_id => :'674'
 
   mk_resource_methods
 

@@ -1,5 +1,5 @@
 class bmc::oem::idrac inherits bmc {
-  if $manage_repo {
+  if str2bool($manage_repo) {
     case $::osfamily {
       'Debian': {
         include ::apt
@@ -17,7 +17,16 @@ class bmc::oem::idrac inherits bmc {
           include  => {
             'src' => false
           },
-          before   => Class['apt::update']
+          before   => [Class['apt::update'], Class['srvadmin-all']]
+        }
+      }
+      'RedHat': {
+        exec{'Dell Yum repository':
+          command => 'wget -q -O - http://linux.dell.com/repo/hardware/dsu/bootstrap.cgi | bash',
+          cwd     => '/tmp',
+          creates => '/etc/yum.repos.d/dell-system-update.repo',
+          path    => ['/usr/bin', '/usr/sbin'],
+          before  => Package['srvadmin-all']
         }
       }
       default: {

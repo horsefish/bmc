@@ -7,9 +7,9 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
 
   has_feature :racadm
 
-  confine :manufactor_id => :'674'
   confine :osfamily => [:redhat, :debian]
   confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
+  defaultfor :manufactor_id => :'674'
 
   commands :ipmitool => 'ipmitool'
 

@@ -1,4 +1,10 @@
-class bmc::params() {
+class bmc::params () {
+
+  case $manufactor_id {
+    # Dell inc.
+    '674': { $manage_idrac = true }
+    default: { $manage_idrac = false }
+  }
 
   case $::osfamily {
     'Redhat': {
@@ -11,7 +17,8 @@ class bmc::params() {
         }
         default: {
           $ipmi_packages = ['ipmitool']
-          warning("Module ${module_name} is not offically supported on redhat ${::operatingsystemmajrelease}. Will try to install ${ipmi_package}")
+          warning("Module ${module_name} is not offically supported on redhat ${::operatingsystemmajrelease}
+            . Will try to install ${ipmi_package}")
         }
       }
     }

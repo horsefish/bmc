@@ -8,11 +8,9 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
 
   has_feature :racadm
 
-  confine :manufactor_id => :'674'
   confine :osfamily => [:redhat, :debian]
   confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
-
-  defaultfor :osfamily => [:redhat, :debian]
+  defaultfor :manufactor_id => :'674'
 
   def self.prefetch(resources)
     resources.each_value do |type|

@@ -1,7 +1,4 @@
-class bmc::oem() {
+class bmc::oem() inherits bmc {
 
-  # Dell inc.
-  if $manufactor_id == '674' {
-    contain 'bmc::oem::idrac'
-  }
+  if str2bool($manage_idrac) { contain 'bmc::oem::idrac' }
 }
