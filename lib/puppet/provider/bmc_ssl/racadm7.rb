@@ -20,15 +20,12 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
       Racadm::Racadm.racadm_call(resource, ['sslkeyupload', '-t', resource[:type], '-f', resource[:certificate_key]])
     end
     Racadm::Racadm.racadm_call(resource, ['sslcertupload', '-t', resource[:type], '-f', resource[:certificate_file]])
-    if resource[:type].to_s == '1'
-      Racadm::Racadm.racadm_call(resource, ['racreset', 'soft'])
-    end
   end
 
   def destroy
     if resource[:type].to_s == '1'
       Racadm::Racadm.racadm_call(resource, ['sslcertdelete', '-t', '3'])
-      Racadm::Racadm.racadm_call(resource, ['racreset', 'soft'])
+      Racadm::Racadm.racadm_call(resource, ['sslresetcfg'])
     end
   end
 
