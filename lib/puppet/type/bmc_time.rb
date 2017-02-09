@@ -5,8 +5,6 @@ Puppet::Type.newtype(:bmc_time) do
 
   @doc = "A resource type to handle SSL certificates."
 
-  feature :racadm, 'Dell racadmin specific.'
-
   newparam(:name, :namevar => true) do
     desc 'Identification of the BMC time setup.'
   end

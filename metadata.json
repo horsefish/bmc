@@ -4,8 +4,8 @@
   "version": "0.0.1",
   "project_page": "https://github.com/orgs/horsefish/dashboard",
   "source": "https://github.com/horsefish/bmc",
-  "summary": "Installs, configures, and manages Out-of-band management software.",
-  "tags": ["ipmi", "bmc", "idrac", "racadm", "rmm2", "ilom", "imm", "ilo"],
+  "summary": "Configures and manages Out-of-band management controller.",
+  "tags": ["ipmi", "bmc", "idrac", "racadm", "rmm2", "ilom", "imm", "ilo", "bios"],
   "dependencies": [{
     "name": "puppetlabs/stdlib",
     "version_requirement": ">= 2.4.0"
@@ -16,6 +16,22 @@
   ],
   "license": "Apache-2.0",
   "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
