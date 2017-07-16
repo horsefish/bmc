@@ -10,3 +10,12 @@ begin
 rescue Gem::LoadError
   task :default => :rspec
 end
+
+
+desc "Run syntax, lint, and spec tests."
+task :test => [
+  :syntax,
+  :lint,
+  :spec,
+  :metadata_lint,
+]
