@@ -4,7 +4,6 @@ language: ruby
 bundler_args: --without development system_tests
 before_install: rm Gemfile.lock || true
 rvm:
-  - 1.9.3
   - 2.0.0
   - 2.1.0
   - 2.1.5
@@ -16,9 +15,6 @@ env:
 
 matrix:
   exclude:
-  # Ruby 1.9.3
-  - rvm: 1.9.3
-    env: PUPPET_VERSION="~> 4.10.0"
   # Ruby 2.0.0
   - rvm: 2.0.0
     env: PUPPET_VERSION="~> 4.10.0"
