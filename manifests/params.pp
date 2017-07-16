@@ -11,7 +11,7 @@ class bmc::params() {
         }
         default: {
           $ipmi_packages = ['ipmitool']
-          warning("Module ${module_name} is not offically supported on redhat ${::operatingsystemmajrelease}. Will try to install ${ipmi_package}")
+          warning("Module ${module_name} is not offically supported on redhat ${::operatingsystemmajrelease}. Will try to install ${bmc::params::ipmi_packages}")
         }
       }
     }

@@ -1,16 +1,16 @@
 class bmc::oem::idrac inherits bmc{
-  if $manage_repo {
+  if $bmc::manage_repo {
     case $::osfamily {
       'Debian': {
         include ::apt
         Class['apt::update'] -> Package['srvadmin-all']
         package { 'srvadmin-all':
-          ensure => $ensure,
+          ensure => $bmc::ensure,
         }
 
         apt::source { 'DellOpenManage':
           comment     => 'Dell OpenManage Ubuntu & Debian Repositories',
-          location    => "http://linux.dell.com/repo/community/ubuntu",
+          location    => 'http://linux.dell.com/repo/community/ubuntu',
           release     => $::lsbdistcodename,
           repos       => 'openmanage',
           key         => {

@@ -1,5 +1,5 @@
 class bmc::service inherits bmc {
   service { 'ipmievd':
-    ensure => $running
+    ensure => $bmc::running,
   }
 }

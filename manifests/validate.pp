@@ -1,6 +1,6 @@
 class bmc::validate inherits bmc{
 
-  validate_re($ensure, ['^present$', '^absent$', '^purged$', '^latest$'])
+  validate_re($bmc::ensure, ['^present$', '^absent$', '^purged$', '^latest$'])
 
-  validate_bool($manage_repo)
+  validate_bool($bmc::manage_repo)
 }
