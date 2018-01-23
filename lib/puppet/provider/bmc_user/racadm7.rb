@@ -8,6 +8,8 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
 
   has_feature :racadm
 
+  mk_resource_methods
+
   confine :osfamily => [:redhat, :debian]
   confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
   defaultfor :manufactor_id => :'674'
@@ -17,7 +19,7 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
       call_info = {
           :bmc_username => type.value(:bmc_username),
           :bmc_password => type.value(:bmc_password),
-          :bmc_server_host => type.value(:bmc_server_host)
+          :bmc_server_host => type.value(:bmc_server_host),
       }
       # the getconfig method is deprecated but have not been able to figure out how the alternative "get Idrac.Users"
       # support serach by username
@@ -28,7 +30,7 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
       if getconfig_user.empty?
         type.provider = new(
             :ensure => :absent,
-            :name => type.name
+            :name => type.name,
         )
       else
         racadm_out = Racadm::Racadm.racadm_call(
@@ -96,10 +98,6 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   def password= value
     Racadm::Racadm.racadm_call(
         resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.Password", value])
-  end
-
-  def idrac
-    @property_hash[:idrac]
   end
 
   def idrac= value

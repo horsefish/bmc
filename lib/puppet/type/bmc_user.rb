@@ -134,6 +134,13 @@ Puppet::Type.newtype(:bmc_user) do
     end
   end
 
+  # This is a feature for racadm only because ipmitool can set the value enable/disable BUT
+  # for some reason you can not get ipmitool to tell you if a user is enabled or disabled.
+  newproperty(:enable, :required_features => :racadm) do
+    desc 'Indicates whether the user login state is enabled or disabled'
+    defaultto true
+  end
+
   newproperty(:privilege) do
     desc 'Maximum privilege granted. Defaults to administrator for all'
     defaultto 'administrator'

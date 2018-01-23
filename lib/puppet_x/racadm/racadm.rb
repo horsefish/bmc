@@ -47,11 +47,11 @@ module Racadm
     end
 
     def self.bool_to_s(value)
-      value ? "Enabled" : "Disabled"
+      value.to_s == 'true' ? 'Enabled' : 'Disabled'
     end
 
     def self.s_to_bool(value)
-      "Enabled".eql? value
+      'Enabled'.eql? value
     end
   end
 end

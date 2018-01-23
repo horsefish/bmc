@@ -24,7 +24,7 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
 
   def destroy
     if resource[:type].to_s == '1'
-      Racadm::Racadm.racadm_call(resource, ['sslcertdelete', '-t', '3'])
+      Racadm::Racadm.racadm_call(resource, ['sslcertdelete', '-t', '3'], true)
       Racadm::Racadm.racadm_call(resource, ['sslresetcfg'])
     end
   end

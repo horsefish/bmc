@@ -1,3 +1,15 @@
+## Supported Release 0.0.2
+### Summary
+* bmc_user
+    - added support for enable/disable when using racadm provider
+* bmc_network
+    - added support for more API calls exposed by racadm
+    - removed defaultto from most property
+    - performance improvments
+
+* other
+    - more robust manufactor_id fact
+
 ## Supported Release 0.0.1
 ### Summary
 Still under heavy development and **NO** API are frozen - so use with caution

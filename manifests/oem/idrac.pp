@@ -30,7 +30,7 @@ class bmc::oem::idrac inherits bmc {
         }
       }
       default: {
-        fail("\"${module_name}\" provides no repository information for OSfamily \"${::osfamily}\"")
+        fail("${module_name} provides no repository information for OSfamily: ${::osfamily}")
       }
     }
   }
