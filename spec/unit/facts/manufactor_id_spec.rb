@@ -1,33 +1,36 @@
 require 'spec_helper'
 
-describe Facter::Util::Fact do
-  before do
+describe 'bmc', type: :fact do
+  before(:each) do
+    Facter.clear
+  end
+  after(:each) do
     Facter.clear
   end
 
-  describe 'ipmitool mc info' do
-    context 'dell manufactor_id' do
-      before :each do
-        Facter.fact(:is_virtual).stubs(:value).returns false
-        Facter::Util::Resolution.stubs(:which).with('ipmitool').returns(true)
-        Facter::Util::Resolution.stubs(:exec).with('ipmitool mc info 2>&1').
-            returns(IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/dell_ipmitool_mc_info.txt"))
-      end
-      it do
-        expect(Facter.fact(:manufactor_id).value).to eq('674')
-      end
+  describe '#manufactor_id physical' do
+    output = File.join(
+      File.dirname(__FILE__), '..', '..', 'fixtures', 'bmc', 'dell_ipmitool_mc_info.txt'
+    )
+    Facter.fact(:is_virtual).stubs(:value).returns false
+    Facter::Core::Execution.stubs(:which).returns '/bin/ipmitool'
+    Facter::Core::Execution
+      .expects(:execute)
+      .with('/bin/ipmitool mc info 2>&1')
+      .returns(IO.read(output))
+    Facter::Core::Execution
+      .expects(:execute)
+      .with('uname -m', on_fail: nil)
+      .returns 'x86_64'
+    it do
+      expect(Facter.fact(:manufactor_id).value).to eq '674'
     end
-    context 'IBM manufactor_id' do
-      before :each do
-        Facter.fact(:is_virtual).stubs(:value).returns false
-        Facter::Util::Resolution.stubs(:which).with('ipmitool').returns(true)
-        Facter::Util::Resolution.stubs(:exec).with('ipmitool mc info 2>&1').
-            returns(IO.read("#{File.dirname(__FILE__)}/../../fixtures/bmc/ibm_ipmitool_mc_info.txt"))
-      end
-      it do
-        expect(Facter.fact(:manufactor_id).value).to eq('2')
-      end
-    end
+  end
 
+  describe '#manufactor_id virtual' do
+    Facter.fact(:is_virtual).stubs(:value).returns true
+    it do
+      expect(Facter.fact(:manufactor_id)).to be_nil
+    end
   end
 end

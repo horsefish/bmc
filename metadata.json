@@ -1,20 +1,21 @@
 {
-  "author": "horsefish",
   "name": "horsefish-bmc",
   "version": "0.0.1",
-  "project_page": "https://github.com/orgs/horsefish/dashboard",
-  "source": "https://github.com/horsefish/bmc",
+  "author": "horsefish",
   "summary": "Configures and manages Out-of-band management controller.",
-  "tags": ["ipmi", "bmc", "idrac", "racadm", "rmm2", "ilom", "imm", "ilo", "bios"],
-  "dependencies": [{
-    "name": "puppetlabs/stdlib",
-    "version_requirement": ">= 2.4.0"
-  },{
-    "name": "puppetlabs/apt",
-    "version_requirement": ">= 1.4.0"
-  }
-  ],
   "license": "Apache-2.0",
+  "source": "https://github.com/horsefish/bmc",
+  "project_page": "https://github.com/orgs/horsefish/dashboard",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 2.4.0"
+    },
+    {
+      "name": "puppetlabs/apt",
+      "version_requirement": ">= 1.4.0"
+    }
+  ],
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -38,5 +39,24 @@
         "14.04"
       ]
     }
-  ]
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 4.7.0 < 6.0.0"
+    }
+  ],
+  "tags": [
+    "ipmi",
+    "bmc",
+    "idrac",
+    "racadm",
+    "rmm2",
+    "ilom",
+    "imm",
+    "ilo",
+    "bios"
+  ],
+  "template-url": "file:///opt/puppetlabs/pdk/share/cache/pdk-templates.git",
+  "template-ref": "1.3.2-0-g07678c8"
 }
