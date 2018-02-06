@@ -73,8 +73,7 @@ describe Ipmi::Ipmitool do
     subject { described_class.parseLan dell_lan_print_reboot }
 
     it do
-      is_expected.to
-      include(
+      is_expected.to include(
         'Get Device ID command failed' => '0xc0 Node busy',
         'Invalid channel' => '0',
       )
