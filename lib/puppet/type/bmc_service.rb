@@ -2,10 +2,9 @@ require 'resolv'
 require 'pathname'
 
 Puppet::Type.newtype(:bmc_service) do
+  @doc = 'A resource type to restart the bmc instance.'
 
-  @doc = "A resource type to restart the bmc instance."
-
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'Identification of the BMC service.'
   end
 
@@ -21,7 +20,7 @@ Puppet::Type.newtype(:bmc_service) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
       unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
-        raise Puppet::Error, "%s is not a valid ip address" % value
+        raise Puppet::Error, '%s is not a valid ip address' % value
       end
     end
   end

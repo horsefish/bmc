@@ -3,7 +3,7 @@ require 'resolv'
 Puppet::Type.newtype(:bmc_ldap_group) do
   @doc = 'A resource type to handle LDAP groups.'
 
-  newparam(:group_nr, :namevar => true) do
+  newparam(:group_nr, namevar: true) do
     newvalues(1, 2, 3, 4, 5)
     desc 'LDAP group number'
   end
@@ -32,12 +32,14 @@ Puppet::Type.newtype(:bmc_ldap_group) do
     defaultto 0x0
     validate do |value|
       unless value <= 0x1ff && value >= 0x0
-        raise Puppet::Error, "%s is not a valid group privilege" % value
+        raise Puppet::Error, '%s is not a valid group privilege' % value
       end
     end
+
     def should_to_s(value)
       "0x#{value.to_s(16)}"
     end
+
     def is_to_s(value)
       "0x#{value.to_s(16)}"
     end

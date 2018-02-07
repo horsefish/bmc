@@ -1,15 +1,14 @@
 require 'resolv'
 
 Puppet::Type.newtype(:bmc_ldap) do
-
-  @doc = "A resource type to handle BMC LDAP comfiguration."
+  @doc = 'A resource type to handle BMC LDAP comfiguration.'
 
   ensurable do
     defaultvalues
     defaultto :present
   end
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'Identification of the BMC LDAP setup.'
   end
 
@@ -44,13 +43,13 @@ Puppet::Type.newtype(:bmc_ldap) do
     desc 'Search Filter. ( e.g. objectclass=*, optional )'
   end
 
-  newproperty(:certificate_validate, :boolean => true) do
+  newproperty(:certificate_validate, boolean: true) do
     desc 'Certificate Validation Enabled. Default to true'
     newvalues(false, true)
     defaultto true
   end
 
-  newproperty(:group_attribute_is_dn, :boolean => true) do
+  newproperty(:group_attribute_is_dn, boolean: true) do
     desc 'Use Distinguished Name to Search Group Membership. ( if unchecked, username will be used ). Default to true'
     newvalues(false, true)
     defaultto true
@@ -72,7 +71,7 @@ Puppet::Type.newtype(:bmc_ldap) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
       unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
-        raise Puppet::Error, "%s is not a valid IP address" % value
+        raise Puppet::Error, '%s is not a valid IP address' % value
       end
     end
   end

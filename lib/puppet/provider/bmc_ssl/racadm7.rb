@@ -2,16 +2,15 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'pu
 require 'tempfile'
 
 Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
-
-  desc "Manage SSL certificates via racadm7."
+  desc 'Manage SSL certificates via racadm7.'
 
   has_feature :racadm
 
-  confine :osfamily => [:redhat, :debian]
-  confine :exists => '/opt/dell/srvadmin/bin/idracadm7'
-  defaultfor :manufactor_id => :'674'
+  confine osfamily: [:redhat, :debian]
+  confine exists: '/opt/dell/srvadmin/bin/idracadm7'
+  defaultfor manufactor_id: :'674'
 
-  commands :ipmitool => 'ipmitool'
+  commands ipmitool: 'ipmitool'
 
   mk_resource_methods
 
@@ -23,10 +22,9 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
   end
 
   def destroy
-    if resource[:type].to_s == '1'
-      Racadm::Racadm.racadm_call(resource, ['sslcertdelete', '-t', '3'], true)
-      Racadm::Racadm.racadm_call(resource, ['sslresetcfg'])
-    end
+    return unless resource[:type].to_s == '1'
+    Racadm::Racadm.racadm_call(resource, ['sslcertdelete', '-t', '3'], true)
+    Racadm::Racadm.racadm_call(resource, ['sslresetcfg'])
   end
 
   def exists?

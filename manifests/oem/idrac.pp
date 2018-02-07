@@ -1,13 +1,13 @@
 class bmc::oem::idrac inherits bmc {
-  if str2bool($manage_repo) {
+  if $::bmc::manage_repo {
     case $::osfamily {
       'Debian': {
         include ::apt
 
-        Class['apt::update'] -> Package['srvadmin-all']
+        Class['::apt::update'] -> Package['::srvadmin-all']
         apt::source { 'DellOpenManage':
           comment  => 'Dell OpenManage Ubuntu & Debian Repositories',
-          location => "http://linux.dell.com/repo/community/ubuntu",
+          location => 'http://linux.dell.com/repo/community/ubuntu',
           release  => $::lsbdistcodename,
           repos    => 'openmanage',
           key      => {
@@ -21,7 +21,7 @@ class bmc::oem::idrac inherits bmc {
         }
       }
       'RedHat': {
-        exec{'Dell Yum repository':
+        exec { 'Dell Yum repository':
           command => 'wget -q -O - http://linux.dell.com/repo/hardware/dsu/bootstrap.cgi | bash',
           cwd     => '/tmp',
           creates => '/etc/yum.repos.d/dell-system-update.repo',
@@ -35,7 +35,7 @@ class bmc::oem::idrac inherits bmc {
     }
   }
 
-  package { 'srvadmin-all':
-    ensure => $ensure
+  package { '::srvadmin-all':
+    ensure => $::bmc::ensure
   }
 }

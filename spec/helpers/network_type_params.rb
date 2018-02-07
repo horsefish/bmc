@@ -17,7 +17,7 @@ module Helpers
         ipv4_gateway: ipv4_gateway,
         ipv4_netmask: ipv4_netmask,
         channel: channel,
-        provider: provider_name
+        provider: provider_name,
       }
     end
   end

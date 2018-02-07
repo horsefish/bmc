@@ -2,8 +2,7 @@ require 'resolv'
 require 'pathname'
 
 Puppet::Type.newtype(:bmc_ssl) do
-
-  @doc = "A resource type to handle SSL certificates."
+  @doc = 'A resource type to handle SSL certificates.'
 
   ensurable do
     defaultvalues
@@ -12,7 +11,7 @@ Puppet::Type.newtype(:bmc_ssl) do
 
   feature :racadm, 'Dell racadmin specific.'
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'Identification of the BMC SSL setup.'
   end
 
@@ -20,7 +19,7 @@ Puppet::Type.newtype(:bmc_ssl) do
     desc 'Absolute path to the certificate file.'
     validate do |value|
       unless (Pathname.new value).absolute?
-        fail("#{value} must be a absolute path to a file")
+        raise(Puppet::Error, "#{value} must be a absolute path to a file")
       end
     end
   end
@@ -29,7 +28,7 @@ Puppet::Type.newtype(:bmc_ssl) do
     desc 'Absolute path to the certificate key file.'
     validate do |value|
       unless (Pathname.new value).absolute?
-        fail("#{value} must be a absolute path to a file")
+        raise(Puppet::Error, "#{value} must be a absolute path to a file")
       end
     end
   end
@@ -50,16 +49,16 @@ Puppet::Type.newtype(:bmc_ssl) do
     desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
     validate do |value|
       unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
-        raise Puppet::Error, "%s is not a valid ip address" % value
+        raise Puppet::Error, '%s is not a valid ip address' % value
       end
     end
   end
 
-  newparam(:type, :required_features => :racadm) do
+  newparam(:type, required_features: :racadm) do
     desc 'Type of certificate
       [1=server,2=CA certificate for Directory Service,3=Public Key Cryptography Standards file]
       Default to server'
-    newvalues(1,2,3)
+    newvalues(1, 2, 3)
     defaultto 1
   end
 
@@ -67,10 +66,10 @@ Puppet::Type.newtype(:bmc_ssl) do
     if self[:bmc_password].nil? && !self[:bmc_username].nil?
       raise(Puppet::Error, 'If bmc_username is set bmc_password must also be set')
     end
-    if self[:bmc_username].nil? and !self[:bmc_password].nil?
+    if self[:bmc_username].nil? && !self[:bmc_password].nil?
       raise(Puppet::Error, 'If bmc_password is set bmc_username must also be set')
     end
-    raise(Puppet::Error, 'Certificate_file must be set') if (self[:certificate_file].nil?)
+    raise(Puppet::Error, 'Certificate_file must be set') if self[:certificate_file].nil?
   end
 
   autorequire(:file) do

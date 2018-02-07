@@ -4,7 +4,7 @@ if ipmitool_path
   if ipmitool_mc_info.include? 'Manufacturer ID'
     Facter.add(:manufactor_id) do
       has_weight 100
-      confine :is_virtual => false
+      confine is_virtual: false
       setcode do
         %r{Manufacturer ID\s*: ([\w\.]+)}.match(ipmitool_mc_info)[1]
       end
