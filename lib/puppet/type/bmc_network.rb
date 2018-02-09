@@ -1,4 +1,5 @@
 require 'resolv'
+require 'puppet/parameter/boolean'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'puppet_x', 'bmc.rb'))
 
 Puppet::Type.newtype(:bmc_network) do

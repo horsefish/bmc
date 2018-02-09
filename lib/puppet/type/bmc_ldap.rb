@@ -80,8 +80,7 @@ Puppet::Type.newtype(:bmc_ldap) do
     raise(Puppet::Error, 'server must be set') if self[:server].nil?
     raise(Puppet::Error, 'base_dn must be set') if self[:base_dn].nil?
     if !self[:bmc_server_host].nil? && (self[:bmc_username].nil? || self[:bmc_password].nil?)
-      raise(Puppet::Error,
-            'if bmc_server_host param set you also must set both username and password')
+      raise(Puppet::Error, 'if bmc_server_host param set you also must set both username and password')
     end
   end
 end

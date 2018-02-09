@@ -12,7 +12,7 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
   def self.prefetch(resources)
     resources.each do |_key, type|
       ipmitool_out = ipmitool('lan', 'print', type.value(:channel))
-      lan_print = Ipmi::Ipmitool.parse_lan(ipmitool_out)
+      lan_print = Ipmitool.parse_lan(ipmitool_out)
       type.provider = new(
         channel: type.value(:channel),
         ip_source: lan_print['IP Address Source'],

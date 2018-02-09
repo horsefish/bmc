@@ -17,4 +17,6 @@ describe provider_class do
     provider.prefetch('test' => resource)
     provider
   end
+
+  it { expect(provider_class.name).to eq :ipmitool }
 end

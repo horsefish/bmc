@@ -11,7 +11,7 @@ Puppet::Type.type(:bmc_ldap_group).provide(:racadm7) do
 
   def self.prefetch(resources)
     resources.each do |key, type|
-      racadm_out = Racadm::Racadm.racadm_call(
+      racadm_out = Racadm.racadm_call(
         {
           bmc_username: type.value(:bmc_username),
           bmc_password: type.value(:bmc_password),
@@ -19,7 +19,7 @@ Puppet::Type.type(:bmc_ldap_group).provide(:racadm7) do
         },
         ['get', "iDRAC.LDAPRoleGroup.#{key}"],
       )
-      idrac_ldap_role_group = Racadm::Racadm.parse_racadm racadm_out
+      idrac_ldap_role_group = Racadm.parse_racadm racadm_out
       type.provider = new(
         group_nr: key,
         role_group_dn: idrac_ldap_role_group['DN'],
@@ -29,14 +29,14 @@ Puppet::Type.type(:bmc_ldap_group).provide(:racadm7) do
   end
 
   def role_group_privilege=(value)
-    Racadm::Racadm.racadm_call(
+    Racadm.racadm_call(
       resource,
       ['set', "iDRAC.LDAPRoleGroup.#{resource[:name]}.Privilege", "0x#{value.to_s(16)}"],
     )
   end
 
   def role_group_dn=(value)
-    Racadm::Racadm.racadm_call(
+    Racadm.racadm_call(
       resource,
       ['set', "iDRAC.LDAPRoleGroup.#{resource[:name]}.DN", value],
     )

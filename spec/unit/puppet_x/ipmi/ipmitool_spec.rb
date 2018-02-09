@@ -140,18 +140,18 @@ describe Ipmitool do
     it do
       is_expected.not_to be_empty
     end
-    it 'users' do
-      expect(subject).to include(user_params)
-      expect(subject).to include(user_params(id: '3', name: 'xx xxd', channel_priv_limit: 'USER'))
-      expect(subject).to include(user_params(id: '4', name: 'xx', channel_priv_limit: 'OPERATOR'))
-      expect(subject)
+    it do
+      is_expected.to include(user_params)
+      is_expected.to include(user_params(id: '3', name: 'xx xxd', channel_priv_limit: 'USER'))
+      is_expected.to include(user_params(id: '4', name: 'xx', channel_priv_limit: 'OPERATOR'))
+      is_expected
         .to include(user_params(id: '5',
                                 name: 'emil',
                                 link_auth: :false,
                                 ipmi_msg: :false,
                                 channel_priv_limit: 'NO ACCESS'))
-      expect(subject).to include(user_params(id: '6', name: 'name', channel_priv_limit: 'CALLBACK'))
-      expect(subject).to include(user_params(id: '63', name: 'last', channel_priv_limit: 'NO ACCESS'))
+      is_expected.to include(user_params(id: '6', name: 'name', channel_priv_limit: 'CALLBACK'))
+      is_expected.to include(user_params(id: '63', name: 'last', channel_priv_limit: 'NO ACCESS'))
     end
   end
   context 'Dell ipmitool user list channel 3' do

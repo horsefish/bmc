@@ -8,6 +8,6 @@ Puppet::Type.type(:bmc_service).provide(:racadm7) do
   mk_resource_methods
 
   def restart
-    Racadm::Racadm.racadm_call(resource, ['racreset', 'soft', '-f'])
+    Racadm.racadm_call(resource, ['racreset', 'soft', '-f'])
   end
 end

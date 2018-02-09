@@ -12,45 +12,45 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
 
   def self.prefetch(resources)
     call_info = {} # only support local ipmitool
-    ipmitool_out_lan = Ipmi::Ipmitool.ipmi_call call_info, ['user', 'list', 1]
-    users_lan = Ipmi::Ipmitool.parse_user(ipmitool_out_lan)
-    ipmitool_out_serial = Ipmi::Ipmitool.ipmi_call call_info, ['user', 'list', 2]
-    users_serial = Ipmi::Ipmitool.parse_user(ipmitool_out_serial)
+    ipmitool_out_lan = Ipmitool.ipmi_call call_info, ['user', 'list', 1]
+    users_lan = Ipmitool.parse_user(ipmitool_out_lan)
+    ipmitool_out_serial = Ipmitool.ipmi_call call_info, ['user', 'list', 2]
+    users_serial = Ipmitool.parse_user(ipmitool_out_serial)
     resources.each_value do |type|
       user_lan = users_lan.find { |x| x['name'] == type.name }
       user_serial = users_serial.find { |x| x['name'] == type.name }
-      if user_lan.nil?
-        type.provider = new(
-          ensure: :absent,
-          name: type.name,
-        )
-      else
-        type.provider = new(
-          id: user_lan['id'],
-          ensure: :present,
-          name: user_lan['name'],
-          callin:
-                {
-                  '1' => user_lan['callin'],
-                  '2' => user_serial['callin'],
-                },
-          link:
-                {
-                  '1' => user_lan['link_auth'],
-                  '2' => user_serial['link_auth'],
-                },
-          ipmi:
-                {
-                  '1' => user_lan['ipmi_msg'],
-                  '2' => user_serial['ipmi_msg'],
-                },
-          privilege:
-                {
-                  '1' => user_lan['channel_priv_limit'].downcase,
-                  '2' => user_serial['channel_priv_limit'].downcase,
-                },
-        )
-      end
+      type.provider << if user_lan
+                         new(
+                           id: user_lan['id'],
+                           ensure: :present,
+                           name: user_lan['name'],
+                           callin:
+                             {
+                               '1' => user_lan['callin'],
+                               '2' => user_serial['callin'],
+                             },
+                           link:
+                             {
+                               '1' => user_lan['link_auth'],
+                               '2' => user_serial['link_auth'],
+                             },
+                           ipmi:
+                             {
+                               '1' => user_lan['ipmi_msg'],
+                               '2' => user_serial['ipmi_msg'],
+                             },
+                           privilege:
+                             {
+                               '1' => user_lan['channel_priv_limit'].downcase,
+                               '2' => user_serial['channel_priv_limit'].downcase,
+                             },
+                         )
+                       else
+                         new(
+                           ensure: :absent,
+                           name: type.name,
+                         )
+                       end
     end
   end
 
@@ -82,12 +82,12 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def next_free_id
-    ipmitool_out = Ipmi::Ipmitool.ipmi_call resource, ['user', 'summary', 1]
-    summary = Ipmi::Ipmitool.parse_summay(ipmitool_out)
+    ipmitool_out = Ipmitool.ipmi_call resource, ['user', 'summary', 1]
+    summary = Ipmitool.parse_summay(ipmitool_out)
     max_id = summary['Maximum IDs'].to_i
     reserved = summary['Fixed Name Count'].to_i
-    ipmitool_out = Ipmi::Ipmitool.ipmi_call resource, ['user', 'list', 1]
-    users = Ipmi::Ipmitool.parse_user(ipmitool_out)
+    ipmitool_out = Ipmitool.ipmi_call resource, ['user', 'list', 1]
+    users = Ipmitool.parse_user(ipmitool_out)
     current_user_count = users.count
     puts "max #{max_id} reserved #{reserved} count #{current_user_count}"
     empty_user = users.find { |user| user['name'].empty? }
@@ -111,19 +111,19 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def enable=(value)
-    Ipmi::Ipmitool.ipmi_call resource, ['user', value ? 'enable' : 'disable', @property_hash[:id]]
+    Ipmitool.ipmi_call resource, ['user', value ? 'enable' : 'disable', @property_hash[:id]]
   end
 
   def username=(value)
-    Ipmi::Ipmitool.ipmi_call resource, ['user', 'set', 'name', @property_hash[:id], value]
+    Ipmitool.ipmi_call resource, ['user', 'set', 'name', @property_hash[:id], value]
   end
 
   def password=(value)
-    Ipmi::Ipmitool.ipmi_call resource, ['user', 'set', 'password', @property_hash[:id], value]
+    Ipmitool.ipmi_call resource, ['user', 'set', 'password', @property_hash[:id], value]
   end
 
   def password
-    return unless Ipmi::Ipmitool.ipmi_current_password resource, @property_hash[:id], resource[:password]
+    return unless Ipmitool.ipmi_current_password resource, @property_hash[:id], resource[:password]
     resource[:password]
   end
 
@@ -140,18 +140,15 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def privilege=(value)
-    if value.class == Hash
-      channel_1_priv = Bmc.role_to_s(value['1']) if value.key?('1')
-      channel_2_priv = Bmc.role_to_s(value['2']) if value.key?('2')
-    else
-      channel_1_priv = Bmc.role_to_s(value)
-      channel_2_priv = Bmc.role_to_s(value)
+    if value.class == Hash && value.key?('1')
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "privilege=#{Bmc.role_to_s(value['1'])}"]
+    elsif Bmc.role_to_s(value)
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "privilege=#{Bmc.role_to_s(value)}"]
     end
-    unless channel_1_priv.nil?
-      Ipmi::Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "privilege=#{channel_1_priv}"]
-    end
-    unless channel_2_priv.nil?
-      Ipmi::Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "privilege=#{channel_2_priv}"]
+    if value.class == Hash && value.key?('2')
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "privilege=#{Bmc.role_to_s(value['2'])}"]
+    elsif Bmc.role_to_s(value)
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "privilege=#{Bmc.role_to_s(value)}"]
     end
   end
 
@@ -168,18 +165,15 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def callin=(value)
-    if value.class == Hash
-      channel_1_callin = Ipmi::Ipmitool.symbol_to_s(value['1']) if value.key?('1')
-      channel_2_callin = Ipmi::Ipmitool.symbol_to_s(value['2']) if value.key?('2')
-    else
-      channel_1_callin = Ipmi::Ipmitool.symbol_to_s(value)
-      channel_2_callin = Ipmi::Ipmitool.symbol_to_s(value)
+    if value.class == Hash && value.key?('1')
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "callin=#{Bmc.role_to_s(value['1'])}"]
+    elsif Bmc.role_to_s(value)
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "callin=#{Bmc.role_to_s(value)}"]
     end
-    unless channel_1_callin.nil?
-      Ipmi::Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "callin=#{channel_1_callin}"]
-    end
-    unless channel_2_callin.nil?
-      Ipmi::Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "callin=#{channel_2_callin}"]
+    if value.class == Hash && value.key?('2')
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "callin=#{Bmc.role_to_s(value['2'])}"]
+    elsif Bmc.role_to_s(value)
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "callin=#{Bmc.role_to_s(value)}"]
     end
   end
 
@@ -196,18 +190,15 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def link=(value)
-    if value.class == Hash
-      channel_1_link = Ipmi::Ipmitool.symbol_to_s(value['1']) if value.key?('1')
-      channel_2_link = Ipmi::Ipmitool.symbol_to_s(value['2']) if value.key?('2')
-    else
-      channel_1_link = Ipmi::Ipmitool.symbol_to_s(value)
-      channel_2_link = Ipmi::Ipmitool.symbol_to_s(value)
+    if value.class == Hash && value.key?('1')
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "link=#{Bmc.role_to_s(value['1'])}"]
+    elsif Bmc.role_to_s(value)
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "link=#{Bmc.role_to_s(value)}"]
     end
-    unless channel_1_link.nil?
-      Ipmi::Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "link=#{channel_1_link}"]
-    end
-    unless channel_2_link.nil?
-      Ipmi::Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "link=#{channel_2_link}"]
+    if value.class == Hash && value.key?('2')
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "link=#{Bmc.role_to_s(value['2'])}"]
+    elsif Bmc.role_to_s(value)
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "link=#{Bmc.role_to_s(value)}"]
     end
   end
 
@@ -224,18 +215,15 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def ipmi=(value)
-    if value.class == Hash
-      channel_1_ipmi = Ipmi::Ipmitool.symbol_to_s(value['1']) if value.key?('1')
-      channel_2_ipmi = Ipmi::Ipmitool.symbol_to_s(value['2']) if value.key?('2')
-    else
-      channel_1_ipmi = Ipmi::Ipmitool.symbol_to_s(value)
-      channel_2_ipmi = Ipmi::Ipmitool.symbol_to_s(value)
+    if value.class == Hash && value.key?('1')
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "ipmi=#{Bmc.role_to_s(value['1'])}"]
+    elsif Bmc.role_to_s(value)
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "ipmi=#{Bmc.role_to_s(value)}"]
     end
-    unless channel_1_ipmi.nil?
-      Ipmi::Ipmitool.ipmi_call resource, ['channel', 'setaccess', 1, @property_hash[:id], "ipmi=#{channel_1_ipmi}"]
-    end
-    unless channel_2_ipmi.nil?
-      Ipmi::Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "ipmi=#{channel_2_ipmi}"]
+    if value.class == Hash && value.key?('2')
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "ipmi=#{Bmc.role_to_s(value['2'])}"]
+    elsif Bmc.role_to_s(value)
+      Ipmitool.ipmi_call resource, ['channel', 'setaccess', 2, @property_hash[:id], "ipmi=#{Bmc.role_to_s(value)}"]
     end
   end
 end

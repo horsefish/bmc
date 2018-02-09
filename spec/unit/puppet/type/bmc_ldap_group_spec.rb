@@ -1,47 +1,63 @@
 require 'spec_helper'
 
-type_class = Puppet::Type.type(:bmc_ldap_group)
+type_class = Puppet::Type.type(:bmc_ldap)
 
 describe type_class do
   it 'normal' do
     expect {
-      type_class.new(
-        name: 'Default group',
-        group_nr: 1,
-        role_group_dn: 'cn=none,cn=groups,cn=accounts,dc=example,dc=com',
+      Puppet::Type.type(:bmc_ldap).new(
+        name: 'test',
+        server: 'ldap.server.dk',
+        base_dn: 'dc=example,dc=com',
       )
     }.not_to raise_error
     expect {
-      type_class.new(
-        name: 'Admin group',
-        group_nr: 1,
-        role_group_dn: 'cn=administrator,cn=groups,cn=accounts,dc=example,dc=com',
-        role_group_privilege: 0x1ff,
-      )
-    }.not_to raise_error
-    expect {
-      type_class.new(
-        name: '1',
+      Puppet::Type.type(:bmc_ldap).new(
+        name: 'test',
+        server: 'ldap.server.dk',
+        base_dn: 'dc=example,dc=com',
+        bmc_server_host: '192.168.0.1',
+        bmc_username: 'root',
+        bmc_password: 'secret',
       )
     }.not_to raise_error
   end
 
   it 'exceptions handling' do
     expect {
-      type_class.new(
-        name: 'Illegal groupname',
+      Puppet::Type.type(:bmc_ldap).new(
+        name: 'test',
       )
     }.to raise_error(Puppet::ResourceError)
     expect {
-      type_class.new(
-        name: '1',
-        group_nr: 10,
+      Puppet::Type.type(:bmc_ldap).new(
+        name: 'test',
+        server: 'ldap.server.dk',
       )
     }.to raise_error(Puppet::ResourceError)
     expect {
-      type_class.new(
-        name: '1',
-        role_group_privilege: 'Illegal',
+      Puppet::Type.type(:bmc_ldap).new(
+        name: 'test',
+        server: 'ldap.server.dk',
+        base_dn: 'dc=example,dc=com',
+        certificate_validate: 'NoWay',
+      )
+    }.to raise_error(Puppet::ResourceError)
+    expect {
+      Puppet::Type.type(:bmc_ldap).new(
+        name: 'test',
+        server: 'ldap.server.dk',
+        base_dn: 'dc=example,dc=com',
+        bmc_server_host: 'bmc.host.dk',
+      )
+    }.to raise_error(Puppet::ResourceError)
+    expect {
+      Puppet::Type.type(:bmc_ldap).new(
+        name: 'test',
+        server: 'ldap.server.dk',
+        base_dn: 'dc=example,dc=com',
+        bmc_server_host: 'Not A DNS NAME',
+        bmc_assword: 'secret',
       )
     }.to raise_error(Puppet::ResourceError)
   end

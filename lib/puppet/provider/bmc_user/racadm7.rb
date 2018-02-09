@@ -22,40 +22,40 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
       }
       # the getconfig method is deprecated but have not been able to figure out how the alternative "get Idrac.Users"
       # support serach by username
-      racadm_out = Racadm::Racadm.racadm_call(
+      racadm_out = Racadm.racadm_call(
         call_info,
         ['getconfig', '-u', "'#{type.name}'"],
         true,
       )
-      getconfig_user = Racadm::Racadm.parse_racadm racadm_out
+      getconfig_user = Racadm.parse_racadm racadm_out
       if getconfig_user.empty?
         type.provider = new(
           ensure: :absent,
           name: type.name,
         )
       else
-        racadm_out = Racadm::Racadm.racadm_call(
+        racadm_out = Racadm.racadm_call(
           call_info,
           ['get', "iDRAC.Users.#{getconfig_user['# cfgUserAdminIndex']}"],
         )
-        idrac_user = Racadm::Racadm.parse_racadm racadm_out
+        idrac_user = Racadm.parse_racadm racadm_out
         type.provider = new(
           id: getconfig_user['# cfgUserAdminIndex'],
           ensure: :present,
-          enable: Racadm::Racadm.s_to_bool(idrac_user['Enable']),
+          enable: Racadm.s_to_bool(idrac_user['Enable']),
           privilege:
-                {
-                  'Lan' => Bmc.s_to_role(idrac_user['IpmiLanPrivilege']),
-                  'Serial' => Bmc.s_to_role(idrac_user['IpmiSerialPrivilege']),
-                },
+            {
+              'Lan' => Bmc.s_to_role(idrac_user['IpmiLanPrivilege']),
+              'Serial' => Bmc.s_to_role(idrac_user['IpmiSerialPrivilege']),
+            },
           idrac: idrac_user['Privilege'].to_i(16),
           md5v3key: idrac_user['MD5v3Key'],
           password_sha256: idrac_user['SHA256Password'],
           password_salt: idrac_user['SHA256PasswordSalt'],
           snmpv3_authentication_type: ['SNMPv3AuthenticationType'],
-          snmpv3_enable: Racadm::Racadm.s_to_bool(idrac_user['SNMPv3Enable']),
+          snmpv3_enable: Racadm.s_to_bool(idrac_user['SNMPv3Enable']),
           snmpv3_privacy_type: ['SNMPv3PrivacyType'],
-          sol_enable: Racadm::Racadm.s_to_bool(idrac_user['SolEnable']),
+          sol_enable: Racadm.s_to_bool(idrac_user['SolEnable']),
           name: idrac_user['UserName'],
         )
       end
@@ -65,33 +65,34 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   def privilege
     if resource[:privilege].class == Hash
       @property_hash[:privilege]
+    elsif @property_hash[:privilege].values.select! { |value| value == resource[:privilege] }.nil?
+      resource[:privilege]
     else
-      if @property_hash[:privilege].values.select! { |value| value == resource[:privilege] }.nil?
-        resource[:privilege]
-      else
-        @property_hash[:privilege]
-      end
+      @property_hash[:privilege]
     end
   end
 
   def privilege=(value)
-    if value.class == Hash
-      lan_priv = Bmc.role_to_s(value['Lan']) if value.key?('Lan')
-      serial_priv = Bmc.role_to_s(value['Serial']) if value.key?('Serial')
-    else
-      lan_priv = Bmc.role_to_s(value)
-      serial_priv = Bmc.role_to_s(value)
-    end
-    if lan_priv.nil?
-      Racadm::Racadm.racadm_call(
+    if value.class == Hash && value.key?('Lan')
+      Racadm.racadm_call(
         resource,
-        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiLanPrivilege", lan_priv],
+        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiLanPrivilege", Bmc.role_to_s(value['Lan'])],
+      )
+    elsif Bmc.role_to_s(value)
+      Racadm.racadm_call(
+        resource,
+        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiLanPrivilege", Bmc.role_to_s(value)],
       )
     end
-    if serial_priv.nil?
-      Racadm::Racadm.racadm_call(
+    if value.class == Hash && value.key?('Serial')
+      Racadm.racadm_call(
         resource,
-        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiSerialPrivilege", serial_priv],
+        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiSerialPrivilege", Bmc.role_to_s(value['Serial'])],
+      )
+    elsif Bmc.role_to_s(value)
+      Racadm.racadm_call(
+        resource,
+        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiSerialPrivilege", Bmc.role_to_s(value)],
       )
     end
   end
@@ -99,53 +100,53 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   def password
     newpass = Digest::SHA256.hexdigest(
       resource[:password] +
-      @property_hash[:password_salt].gsub(%r{..}) { |pair| pair.hex.chr }
+      @property_hash[:password_salt].gsub(%r{..}) { |pair| pair.hex.chr },
     ).upcase
     resource[:password] if newpass.eql? @property_hash[:password_sha256]
   end
 
   def password=(value)
-    Racadm::Racadm.racadm_call(
+    Racadm.racadm_call(
       resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.Password", value]
     )
   end
 
   def idrac=(value)
-    Racadm::Racadm.racadm_call(
+    Racadm.racadm_call(
       resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.Privilege", "0x#{value.to_s(16)}"]
     )
   end
 
   def enable=(value)
-    Racadm::Racadm.racadm_call(
-      resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.enable", Racadm::Racadm.bool_to_s(value)]
+    Racadm.racadm_call(
+      resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.enable", Racadm.bool_to_s(value)]
     )
   end
 
   def username=(value)
-    Racadm::Racadm.racadm_call(
+    Racadm.racadm_call(
       resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.UserName", value]
     )
   end
 
   def sol_enable=(value)
-    Racadm::Racadm.racadm_call(
-      resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.SolEnable", Racadm::Racadm.bool_to_s(value)]
+    Racadm.racadm_call(
+      resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.SolEnable", Racadm.bool_to_s(value)]
     )
   end
 
   def next_free_id
-    racadm_out = Racadm::Racadm.racadm_call(
+    racadm_out = Racadm.racadm_call(
       resource,
       ['get', 'iDRAC.Users'],
     )
-    idrac_users = Racadm::Racadm.parse_racadm racadm_out
+    idrac_users = Racadm.parse_racadm racadm_out
     idrac_users.each_key do |key|
-      racadm_out = Racadm::Racadm.racadm_call(resource, ['get', key])
-      idrac_user = Racadm::Racadm.parse_racadm racadm_out
+      racadm_out = Racadm.racadm_call(resource, ['get', key])
+      idrac_user = Racadm.parse_racadm racadm_out
 
       if !idrac_user['IpmiLanPrivilege'].nil? &&
-         !(Racadm::Racadm.s_to_bool idrac_user['Enable']) &&
+         !(Racadm.s_to_bool idrac_user['Enable']) &&
          idrac_user['UserName'].empty?
         return key.split('.').last
       end

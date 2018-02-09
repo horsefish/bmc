@@ -1,3 +1,5 @@
+# @api private
+# Params for BMC variables
 class bmc::params () {
 
   case $::manufactor_id {

@@ -111,7 +111,7 @@ Puppet::Type.newtype(:bmc_user) do
     end
 
     def should_to_s(value)
-      value.class == Hash ? value.inspect : "All => #{value}"
+      (value.class == Hash) ? value.inspect : "All => #{value}"
     end
   end
 

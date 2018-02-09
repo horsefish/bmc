@@ -16,22 +16,22 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
 
   def create
     unless resource[:certificate_key].nil?
-      Racadm::Racadm.racadm_call(resource, ['sslkeyupload', '-t', resource[:type], '-f', resource[:certificate_key]])
+      Racadm.racadm_call(resource, ['sslkeyupload', '-t', resource[:type], '-f', resource[:certificate_key]])
     end
-    Racadm::Racadm.racadm_call(resource, ['sslcertupload', '-t', resource[:type], '-f', resource[:certificate_file]])
+    Racadm.racadm_call(resource, ['sslcertupload', '-t', resource[:type], '-f', resource[:certificate_file]])
   end
 
   def destroy
     return unless resource[:type].to_s == '1'
-    Racadm::Racadm.racadm_call(resource, ['sslcertdelete', '-t', '3'], true)
-    Racadm::Racadm.racadm_call(resource, ['sslresetcfg'])
+    Racadm.racadm_call(resource, ['sslcertdelete', '-t', '3'], true)
+    Racadm.racadm_call(resource, ['sslresetcfg'])
   end
 
   def exists?
     exists = false
     tmp_file = Tempfile.new('bmc_ssl')
 
-    Racadm::Racadm.racadm_call(resource, ['sslcertdownload', '-t', resource[:type], '-f', tmp_file.path], true)
+    Racadm.racadm_call(resource, ['sslcertdownload', '-t', resource[:type], '-f', tmp_file.path], true)
     if File.file?(tmp_file.path)
       exists = FileUtils.compare_file(tmp_file.path, resource[:certificate_file])
       tmp_file.unlink

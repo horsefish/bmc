@@ -1,6 +1,8 @@
+# @api private
+# Install ipmitools
 class bmc::install() inherits bmc {
 
   package { $::bmc::params::ipmi_packages:
-    ensure => $::bmc::ensure
+    ensure => $::bmc::ensure,
   }
 }

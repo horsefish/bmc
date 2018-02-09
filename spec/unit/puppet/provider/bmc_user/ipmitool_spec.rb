@@ -8,7 +8,5 @@ describe provider_class do
     provider_class.new(resource)
   end
 
-  it do
-    expect(provider.name).to eq 'test'
-  end
+  it { expect(provider.name).to eq 'test' }
 end

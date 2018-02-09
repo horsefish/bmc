@@ -2,7 +2,6 @@ require 'puppet/provider'
 require 'open3'
 
 class Racadm
-
   def self.racadm_call(racadm_args, cmd_args, suppress_error = false)
     cmd = ['/opt/dell/srvadmin/bin/idracadm7']
     unless racadm_args[:bmc_server_host].nil? ||

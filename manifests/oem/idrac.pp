@@ -1,3 +1,5 @@
+# @api private
+# Install idrac software
 class bmc::oem::idrac inherits bmc {
   if $::bmc::manage_repo {
     case $::osfamily {
@@ -17,7 +19,7 @@ class bmc::oem::idrac inherits bmc {
           include  => {
             'src' => false
           },
-          before   => [Class['apt::update'], Class['srvadmin-all']]
+          before   => Class['apt::update', 'srvadmin-all'],
         }
       }
       'RedHat': {
@@ -26,7 +28,7 @@ class bmc::oem::idrac inherits bmc {
           cwd     => '/tmp',
           creates => '/etc/yum.repos.d/dell-system-update.repo',
           path    => ['/usr/bin', '/usr/sbin'],
-          before  => Package['srvadmin-all']
+          before  => Package['srvadmin-all'],
         }
       }
       default: {
@@ -35,7 +37,7 @@ class bmc::oem::idrac inherits bmc {
     }
   }
 
-  package { '::srvadmin-all':
-    ensure => $::bmc::ensure
+  package { 'srvadmin-all':
+    ensure => $::bmc::ensure,
   }
 }

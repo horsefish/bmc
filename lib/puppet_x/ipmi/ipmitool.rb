@@ -1,3 +1,4 @@
+
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'puppet_x', 'bmc.rb'))
 require 'open3'
 
@@ -120,7 +121,7 @@ class Ipmitool
         next
       end
       line.match(
-        %r{(?'id'\d*)\s*(?'na'.*?)\s*(?'ca'true|false)\s*(?'li'true|false)\s*(?'ip'true|false)\s*(?'ch'.*)}i
+        %r{(?'id'\d*)\s*(?'na'.*?)\s*(?'ca'true|false)\s*(?'li'true|false)\s*(?'ip'true|false)\s*(?'ch'.*)}i,
       ) do |match|
         users.push(
           'id' => match['id'],
