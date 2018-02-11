@@ -1,3 +1,10 @@
+## Supported Release 0.0.3
+### Summary
+Puppet4 data types used.
+
+* bmc_user
+    - general support for enable/disable user.
+
 ## Supported Release 0.0.2
 ### Summary
 * bmc_user
