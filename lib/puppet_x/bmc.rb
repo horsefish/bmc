@@ -1,6 +1,5 @@
+# General Utilily class
 class Bmc
-  @doc = 'Utilily methods'
-
   def self.munge_boolean(value)
     return :true if [true, 'true', :true].include? value
     return :false if [false, 'false', :false].include? value

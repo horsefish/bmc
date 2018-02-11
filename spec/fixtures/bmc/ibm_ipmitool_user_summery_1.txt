@@ -1,0 +1,10 @@
+Maximum IDs         : 20
+Enabled User Count  : 3
+Fixed Name Count    : 2
+# ipmitool user list 1
+ID  Name     Enabled Callin  Link Auth  IPMI Msg   Channel Priv Lim
+1            true    false   false      true       USER
+2   root     true    false   false      true       ADMINISTRATOR
+3   sysoper  true    true    false      true       OPERATOR
+12  default  true    true    false      true       NO ACCESS
+13           true    false   true       false      CALLBACK

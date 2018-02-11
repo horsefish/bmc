@@ -41,32 +41,59 @@ describe Ipmitool do
     output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'dell_ipmitool_user_list_3.txt')
     IO.read(output)
   end
+  let(:ibm_ipmitool_user_summery_1) do
+    output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'ibm_ipmitool_user_summery_1.txt')
+    IO.read(output)
+  end
+
+  context 'IBM ipmitool user summery' do
+    subject { described_class.parse_summay ibm_ipmitool_user_summery_1 }
+
+    it do
+      is_expected.not_to be_empty
+    end
+    it do
+      is_expected.to include(
+        'Maximum IDs' => '20',
+        'Enabled User Count' => '3',
+        'Fixed Name Count' => '2',
+      )
+      is_expected.to have_key('Users')
+      is_expected.to include(
+        'Users' =>
+        [{ 'id' => '1', 'name' => '', 'enabled' => :true, 'callin' => :false, 'link_auth' => :false, 'ipmi_msg' => :true, 'channel_priv_limit' => 'USER' },
+         { 'id' => '2', 'name' => 'root', 'enabled' => :true, 'callin' => :false, 'link_auth' => :false, 'ipmi_msg' => :true, 'channel_priv_limit' => 'ADMINISTRATOR' },
+         { 'id' => '3', 'name' => 'sysoper', 'enabled' => :true, 'callin' => :true, 'link_auth' => :false, 'ipmi_msg' => :true, 'channel_priv_limit' => 'OPERATOR' },
+         { 'id' => '12', 'name' => 'default', 'enabled' => :true, 'callin' => :true, 'link_auth' => :false, 'ipmi_msg' => :true, 'channel_priv_limit' => 'NO ACCESS' },
+         { 'id' => '13', 'name' => '', 'enabled' => :true, 'callin' => :false, 'link_auth' => :true, 'ipmi_msg' => :false, 'channel_priv_limit' => 'CALLBACK' }],
+      )
+    end
+  end
 
   context 'DELL ipmitool lan print' do
     subject { described_class.parse_lan dell_lan_print }
 
     it do
       is_expected
-        .to include
-      {
-        'Auth Type Support' => 'MD5',
-        'IP Address Source' => 'static',
-        'IP Address' => '10.10.10.10',
-        'Subnet Mask' => '255.255.255.0',
-        'MAC Address' => '18:fb:7b:9b:57:27',
-        'SNMP Community String' => 'public',
-        'IP Header' => 'TTL=0x40 Flags=0x40 Precedence=0x00 TOS=0x10',
-        'BMC ARP Control' => 'ARP Responses Enabled, Gratuitous ARP Disabled',
-        'Gratituous ARP Intrvl' => '2.0 seconds',
-        'Default Gateway IP' => '10.10.10.254',
-        'Default Gateway MAC' => '00:00:00:00:00:00',
-        'Backup Gateway IP' => '0.0.0.0',
-        'Backup Gateway MAC' => '00:00:00:00:00:00',
-        '802.1q VLAN ID' => 'Disabled',
-        '802.1q VLAN Priority' => '0',
-        'RMCP+ Cipher Suites' => '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14',
-        'Cipher Suite Priv Max' => 'Xaaaaaaaaaaaaaa',
-      }
+        .to include(
+          'Auth Type Support' => 'MD5',
+          'IP Address Source' => 'static',
+          'IP Address' => '10.10.10.10',
+          'Subnet Mask' => '255.255.255.0',
+          'MAC Address' => '18:fb:7b:9b:57:27',
+          'SNMP Community String' => 'public',
+          'IP Header' => 'TTL=0x40 Flags=0x40 Precedence=0x00 TOS=0x10',
+          'BMC ARP Control' => 'ARP Responses Enabled, Gratuitous ARP Disabled',
+          'Gratituous ARP Intrvl' => '2.0 seconds',
+          'Default Gateway IP' => '10.10.10.254',
+          'Default Gateway MAC' => '00:00:00:00:00:00',
+          'Backup Gateway IP' => '0.0.0.0',
+          'Backup Gateway MAC' => '00:00:00:00:00:00',
+          '802.1q VLAN ID' => 'Disabled',
+          '802.1q VLAN Priority' => '0',
+          'RMCP+ Cipher Suites' => '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14',
+          'Cipher Suite Priv Max' => 'Xaaaaaaaaaaaaaa',
+        )
     end
     it do
       is_expected.to include('Auth Type Enable')
@@ -77,11 +104,10 @@ describe Ipmitool do
 
     it do
       is_expected
-        .to include
-      {
-        'Get Device ID command failed' => '0xc0 Node busy',
-        'Invalid channel' => '0',
-      }
+        .to include(
+          'Get Device ID command failed' => '0xc0 Node busy',
+          'Invalid channel' => '0',
+        )
     end
   end
   context 'IBM ipmitool lan print' do
@@ -89,26 +115,25 @@ describe Ipmitool do
 
     it do
       is_expected
-        .to include
-      {
-        'Auth Type Support' => 'NONE MD2 MD5 PASSWORD',
-        'IP Address Source' => 'bios',
-        'IP Address' => '192.168.0.3',
-        'Subnet Mask' => '255.255.255.0',
-        'MAC Address' => '00:14:5e:1b:c6:c1',
-        'SNMP Community String' => 'public',
-        'IP Header' => 'TTL=0x40 Flags=0x40 Precedence=0x00 TOS=0x10',
-        'BMC ARP Control' => 'ARP Responses Enabled, Gratuitous ARP Disabled',
-        'Gratituous ARP Intrvl' => '2.0 seconds',
-        'Default Gateway IP' => '192.168.0.1',
-        'Default Gateway MAC' => '00:00:00:00:00:00',
-        'Backup Gateway IP' => '0.0.0.0',
-        'Backup Gateway MAC' => '00:00:00:00:00:00',
-        '802.1q VLAN ID' => 'Disabled',
-        '802.1q VLAN Priority' => '0',
-        'RMCP+ Cipher Suites' => '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14',
-        'Cipher Suite Priv Max' => 'aaaaaaaaaaaaaaa',
-      }
+        .to include(
+          'Auth Type Support' => 'NONE MD2 MD5 PASSWORD',
+          'IP Address Source' => 'bios',
+          'IP Address' => '192.168.0.3',
+          'Subnet Mask' => '255.255.255.0',
+          'MAC Address' => '00:14:5e:1b:c6:c1',
+          'SNMP Community String' => 'public',
+          'IP Header' => 'TTL=0x40 Flags=0x40 Precedence=0x00 TOS=0x10',
+          'BMC ARP Control' => 'ARP Responses Enabled, Gratuitous ARP Disabled',
+          'Gratituous ARP Intrvl' => '2.0 seconds',
+          'Default Gateway IP' => '192.168.0.1',
+          'Default Gateway MAC' => '00:00:00:00:00:00',
+          'Backup Gateway IP' => '0.0.0.0',
+          'Backup Gateway MAC' => '00:00:00:00:00:00',
+          '802.1q VLAN ID' => 'Disabled',
+          '802.1q VLAN Priority' => '0',
+          'RMCP+ Cipher Suites' => '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14',
+          'Cipher Suite Priv Max' => 'aaaaaaaaaaaaaaa',
+        )
     end
     it do
       is_expected.to include('Auth Type Enable')
@@ -119,19 +144,18 @@ describe Ipmitool do
 
     it do
       is_expected
-        .to include
-      {
-        'Auth Type Support' => '',
-        'IP Address Source' => 'dhcp',
-        'IP Address' => '123.123.123.123',
-        'Subnet Mask' => '255.255.255.0',
-        'MAC Address' => 'de:ad:be:ef:ca:fe',
-        'BMC ARP Control' => 'ARP Responses Enabled, Gratuitous ARP Disabled',
-        'Default Gateway IP' => '123.123.123.1',
-        '802.1q VLAN ID' => 'Disabled',
-        '802.1q VLAN Priority' => '0',
-        'Cipher Suite Priv Max' => 'Not Available',
-      }
+        .to include(
+          'Auth Type Support' => '',
+          'IP Address Source' => 'dhcp',
+          'IP Address' => '123.123.123.123',
+          'Subnet Mask' => '255.255.255.0',
+          'MAC Address' => 'de:ad:be:ef:ca:fe',
+          'BMC ARP Control' => 'ARP Responses Enabled, Gratuitous ARP Disabled',
+          'Default Gateway IP' => '123.123.123.1',
+          '802.1q VLAN ID' => 'Disabled',
+          '802.1q VLAN Priority' => '0',
+          'Cipher Suite Priv Max' => 'Not Available',
+        )
     end
   end
   context 'Dell ipmitool user list channel 1' do
@@ -145,11 +169,13 @@ describe Ipmitool do
       is_expected.to include(user_params(id: '3', name: 'xx xxd', channel_priv_limit: 'USER'))
       is_expected.to include(user_params(id: '4', name: 'xx', channel_priv_limit: 'OPERATOR'))
       is_expected
-        .to include(user_params(id: '5',
-                                name: 'emil',
-                                link_auth: :false,
-                                ipmi_msg: :false,
-                                channel_priv_limit: 'NO ACCESS'))
+        .to include(
+          user_params(id: '5',
+                      name: 'emil',
+                      link_auth: :false,
+                      ipmi_msg: :false,
+                      channel_priv_limit: 'NO ACCESS'),
+        )
       is_expected.to include(user_params(id: '6', name: 'name', channel_priv_limit: 'CALLBACK'))
       is_expected.to include(user_params(id: '63', name: 'last', channel_priv_limit: 'NO ACCESS'))
     end

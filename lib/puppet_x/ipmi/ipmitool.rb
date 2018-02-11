@@ -1,7 +1,7 @@
-
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'puppet_x', 'bmc.rb'))
 require 'open3'
 
+# Ipmitool specific Utilily class
 class Ipmitool
   def self.symbol_to_s(value)
     (value == :true) ? 'on' : 'off'
@@ -65,12 +65,35 @@ class Ipmitool
 
   def self.parse_summay(reply)
     parsed = {}
+    users = []
+    summery_part = true # indicate we are still in the general part and not the user list part of the output
     reply.each_line do |line|
-      line_array = line.split(':')
-      key = line_array.slice!(0).strip
-      value = line_array.join(':').strip
-      parsed[key] = value
+      if line.start_with?('ID')
+        summery_part = false
+        next
+      end
+      if summery_part
+        line_array = line.split(':')
+        key = line_array.slice!(0).strip
+        value = line_array.join(':').strip
+        parsed[key] = value
+      else
+        line.match(
+          %r{(?'id'^\d+)\s*(?'na'.*?)\s*(?'en'true|false)\s*(?'ca'true|false)\s*(?'li'true|false)\s*(?'ip'true|false)\s*(?'ch'ADMINISTRATOR|USER|OPERATOR|NO ACCESS|CALLBACK|OEM)$}i,
+        ) do |match|
+          users.push(
+            'id' => match['id'],
+            'name' => match['na'],
+            'enabled' => Bmc.munge_boolean(match['en']),
+            'callin' => Bmc.munge_boolean(match['ca']),
+            'link_auth' => Bmc.munge_boolean(match['li']),
+            'ipmi_msg' => Bmc.munge_boolean(match['ip']),
+            'channel_priv_limit' => match['ch'],
+          )
+        end
+      end
     end
+    parsed['Users'] = users
     parsed
   end
 

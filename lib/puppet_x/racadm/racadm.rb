@@ -1,6 +1,7 @@
 require 'puppet/provider'
 require 'open3'
 
+# Racadm specific Utilily class
 class Racadm
   def self.racadm_call(racadm_args, cmd_args, suppress_error = false)
     cmd = ['/opt/dell/srvadmin/bin/idracadm7']
