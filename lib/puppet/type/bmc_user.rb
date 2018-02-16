@@ -31,6 +31,51 @@ Puppet::Type.newtype(:bmc_user) do
     end
   end
 
+  newproperty(:enable) do
+    desc 'Indicates whether the user login state is enabled or disabled'
+    newvalues(:true, :false)
+    defaultto :true
+  end
+
+  newproperty(:privilege) do
+    desc 'Maximum privilege granted. Defaults to administrator for all'
+    defaultto 'administrator'
+
+    validate do |value|
+      valid_roles = %w[callback user operator administrator oem_proprietary no_access]
+      if value.class == Hash
+        unless (value.values - valid_roles).empty?
+          raise Puppet::Error, '%s contains at least one invalid role' % value.inspect
+        end
+      else
+        unless valid_roles.include? value.to_s
+          raise Puppet::Error, '%s is not a valid role' % value
+        end
+      end
+    end
+
+    def should_to_s(value)
+      (value.class == Hash) ? value.inspect : "All => #{value}"
+    end
+  end
+
+  newparam(:bmc_username) do
+    desc 'Username used to connect with bmc service.'
+  end
+
+  newparam(:bmc_password) do
+    desc 'Password used to connect with bmc service.'
+  end
+
+  newparam(:bmc_server_host) do
+    desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
+    validate do |value|
+      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
+        raise Puppet::Error, '%s is not a valid ip address' % value
+      end
+    end
+  end
+
   newproperty(:callin, required_features: :ipmi) do
     desc 'Configure user access information on the callin channels. Default to true for all channels'
     defaultto true
@@ -130,51 +175,6 @@ Puppet::Type.newtype(:bmc_user) do
 
     def is_to_s(value)
       "0x#{value.to_s(16)}"
-    end
-  end
-
-  newproperty(:enable) do
-    desc 'Indicates whether the user login state is enabled or disabled'
-    newvalues(:true, :false)
-    defaultto true
-  end
-
-  newproperty(:privilege) do
-    desc 'Maximum privilege granted. Defaults to administrator for all'
-    defaultto 'administrator'
-
-    validate do |value|
-      valid_roles = %w[callback user operator administrator oem_proprietary no_access]
-      if value.class == Hash
-        unless (value.values - valid_roles).empty?
-          raise Puppet::Error, '%s contains at least one invalid role' % value.inspect
-        end
-      else
-        unless valid_roles.include? value.to_s
-          raise Puppet::Error, '%s is not a valid role' % value
-        end
-      end
-    end
-
-    def should_to_s(value)
-      (value.class == Hash) ? value.inspect : "All => #{value}"
-    end
-  end
-
-  newparam(:bmc_username) do
-    desc 'Username used to connect with bmc service.'
-  end
-
-  newparam(:bmc_password) do
-    desc 'Password used to connect with bmc service.'
-  end
-
-  newparam(:bmc_server_host) do
-    desc 'RAC host address. Defaults to ipmitool lan print > IP Address'
-    validate do |value|
-      unless value =~ Resolv::IPv4::Regex || value =~ Resolv::IPv6::Regex
-        raise Puppet::Error, '%s is not a valid ip address' % value
-      end
     end
   end
 end

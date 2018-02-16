@@ -11,46 +11,50 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   mk_resource_methods
 
   def self.prefetch(resources)
-    call_info = {} # only support local ipmitool
-    ipmitool_out_lan = Ipmitool.ipmi_call call_info, ['user', 'list', 1]
-    users_lan = Ipmitool.parse_user(ipmitool_out_lan)
-    ipmitool_out_serial = Ipmitool.ipmi_call call_info, ['user', 'list', 2]
-    users_serial = Ipmitool.parse_user(ipmitool_out_serial)
+    channel_possibilities = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15]
+    channel_cache = Hash[channel_possibilities.map {|channel| [channel, nil]}]
+    call_info = {
+        bmc_username: resources.values[0].value(:bmc_username),
+        bmc_password: resources.values[0].value(:bmc_password),
+        bmc_server_host: resources.values[0].value(:bmc_server_host),
+    }
+    channel_possibilities.each do |channel|
+      ipmitool_out = Ipmitool.ipmi_call call_info, ['-c', 'user', 'list', channel], true
+      if ipmitool_out.empty?
+        channel_cache.delete(channel)
+      else
+        channel_cache[channel] = Ipmitool.parse_user_csv ipmitool_out
+      end
+    end
     resources.each_value do |type|
-      user_lan = users_lan.find { |x| x['name'] == type.name }
-      user_serial = users_serial.find { |x| x['name'] == type.name }
-      type.provider << if user_lan
-                         new(
-                           id: user_lan['id'],
-                           ensure: :present,
-                           name: user_lan['name'],
-                           callin:
-                             {
-                               '1' => user_lan['callin'],
-                               '2' => user_serial['callin'],
-                             },
-                           link:
-                             {
-                               '1' => user_lan['link_auth'],
-                               '2' => user_serial['link_auth'],
-                             },
-                           ipmi:
-                             {
-                               '1' => user_lan['ipmi_msg'],
-                               '2' => user_serial['ipmi_msg'],
-                             },
-                           privilege:
-                             {
-                               '1' => user_lan['channel_priv_limit'].downcase,
-                               '2' => user_serial['channel_priv_limit'].downcase,
-                             },
-                         )
-                       else
-                         new(
-                           ensure: :absent,
-                           name: type.name,
-                         )
-                       end
+      user = channel_cache.values[0].find {|x| x[:name] == type.name}
+      if user
+        callin = {}
+        link_auth = {}
+        ipmi_msg = {}
+        privilege = {}
+        channel_cache.each do |channel, users|
+          channel_user = users.select {|x| x[:name] == type.name}[0]
+          callin[channel] = channel_user[:callin]
+          link_auth[channel] = channel_user[:link_auth]
+          ipmi_msg[channel] = channel_user[:ipmi_msg]
+          privilege[channel] = channel_user[:channel_priv_limit].downcase
+        end
+        type.provider = new(
+            id: user[:id],
+            ensure: :present,
+            name: user[:name],
+            callin: callin,
+            link: link_auth,
+            ipmi: ipmi_msg,
+            privilege: privilege,
+            )
+      else
+        type.provider = new(
+            ensure: :absent,
+            name: type.name,
+            )
+      end
     end
   end
 
@@ -82,32 +86,21 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
   end
 
   def next_free_id
-    ipmitool_out = Ipmitool.ipmi_call resource, ['user', 'summary', 1]
-    summary = Ipmitool.parse_summay(ipmitool_out)
-    max_id = summary['Maximum IDs'].to_i
-    reserved = summary['Fixed Name Count'].to_i
-    ipmitool_out = Ipmitool.ipmi_call resource, ['user', 'list', 1]
-    users = Ipmitool.parse_user(ipmitool_out)
-    current_user_count = users.count
-    puts "max #{max_id} reserved #{reserved} count #{current_user_count}"
-    empty_user = users.find { |user| user['name'].empty? }
-    if empty_user.nil?
-      for user_id in 2..current_user_count + 1
-        if users.any? { |user| user['id'].to_i == user_id }
-          # current_user_count + 2 is (current_user_count + user with id 1 + next number)
-          if (current_user_count + reserved) < max_id
-            free_id = current_user_count + 2
-          else
-            raise Puppet::Error, 'There are no free userids to assign to a new user'
-          end
-        else
-          free_id = user_id
-        end
-      end
-    else
-      free_id = empty_user['id']
+    user_summary = Ipmitool.ipmi_call resource, ['-c', 'user', 'summary', 1]
+    summary = Ipmitool.parse_user_summay_csv(user_summary)
+    enabled_i = summary[:enabled_count].to_i
+    max_i = summary[:max_count].to_i
+    reserved_i = summary[:fixed_count].to_i
+
+    if max_i == (enabled_i + reserved_i)
+      raise Puppet::Error, 'There are no free userids to assign to a new user'
     end
-    free_id
+
+    ipmitool_out = Ipmitool.ipmi_call resource, [ '-c', 'user', 'list', 1]
+    users = Ipmitool.parse_user_csv(ipmitool_out)
+
+    empty_users = users.select { |user| user[:name].nil? }
+    empty_users[1][:id]
   end
 
   def enable=(value)
@@ -131,7 +124,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     if resource[:privilege].class == Hash
       @property_hash[:privilege]
     else
-      if @property_hash[:privilege].values.select! { |value| value == resource[:privilege] }.nil?
+      if @property_hash[:privilege].values.select! {|value| value == resource[:privilege]}.nil?
         resource[:privilege]
       else
         @property_hash[:privilege]
@@ -156,7 +149,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     if resource[:callin].class == Hash
       @property_hash[:callin]
     else
-      if @property_hash[:callin].values.select! { |value| value == resource[:callin] }.nil?
+      if @property_hash[:callin].values.select! {|value| value == resource[:callin]}.nil?
         resource[:callin]
       else
         @property_hash[:callin]
@@ -181,7 +174,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     if resource[:link].class == Hash
       @property_hash[:link]
     else
-      if @property_hash[:link].values.select! { |value| value == resource[:link] }.nil?
+      if @property_hash[:link].values.select! {|value| value == resource[:link]}.nil?
         resource[:link]
       else
         @property_hash[:link]
@@ -206,7 +199,7 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
     if resource[:ipmi].class == Hash
       @property_hash[:ipmi]
     else
-      if @property_hash[:ipmi].values.select! { |value| value == resource[:ipmi] }.nil?
+      if @property_hash[:ipmi].values.select! {|value| value == resource[:ipmi]}.nil?
         resource[:ipmi]
       else
         @property_hash[:ipmi]

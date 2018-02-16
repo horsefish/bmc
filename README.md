@@ -38,15 +38,15 @@ It use [IPMItool] or a server provider specific tool (ie. [racadm]) to do the ac
 
 
 ##Usage
-###To setup a simple bmc_user with username 'simple'
-This user can b
-  
+###Simple user
+To setup a bmc_user with username 'simple' with password: password
 ```puppet
   bmc_user { 'simple':
     password => 'password',
   }
 ```
 ###A more complex user
+A bmc user that only can use ipmi
 ```puppet
   bmc_user { 'More complex':
     password => 'password',
@@ -55,14 +55,17 @@ This user can b
     link     => false,
   }
 ```
-###A very complex user 
+###A very complex user
+A bmc user with administrator privilege on channel 2 and user privilege on channem 1. 
 ```puppet
   bmc_user { 'Very complex':
     password  => 'password',
+    callin    => false,
+    ipmi      => true,
     privilege => 
       {
-        'Lan'    => user,
-        'Serial' => administrator,
+        '1' => user,
+        '2' => administrator,
       }
   }
 ```

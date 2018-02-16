@@ -1,5 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'puppet_x', 'bmc.rb'))
 require 'open3'
+require 'csv'
 
 # Ipmitool specific Utilily class
 class Ipmitool
@@ -63,38 +64,9 @@ class Ipmitool
     end
   end
 
-  def self.parse_summay(reply)
-    parsed = {}
-    users = []
-    summery_part = true # indicate we are still in the general part and not the user list part of the output
-    reply.each_line do |line|
-      if line.start_with?('ID')
-        summery_part = false
-        next
-      end
-      if summery_part
-        line_array = line.split(':')
-        key = line_array.slice!(0).strip
-        value = line_array.join(':').strip
-        parsed[key] = value
-      else
-        line.match(
-          %r{(?'id'^\d+)\s*(?'na'.*?)\s*(?'en'true|false)\s*(?'ca'true|false)\s*(?'li'true|false)\s*(?'ip'true|false)\s*(?'ch'ADMINISTRATOR|USER|OPERATOR|NO ACCESS|CALLBACK|OEM)$}i,
-        ) do |match|
-          users.push(
-            'id' => match['id'],
-            'name' => match['na'],
-            'enabled' => Bmc.munge_boolean(match['en']),
-            'callin' => Bmc.munge_boolean(match['ca']),
-            'link_auth' => Bmc.munge_boolean(match['li']),
-            'ipmi_msg' => Bmc.munge_boolean(match['ip']),
-            'channel_priv_limit' => match['ch'],
-          )
-        end
-      end
-    end
-    parsed['Users'] = users
-    parsed
+  def self.parse_user_summay_csv(reply)
+    keys = [:max_count, :enabled_count, :fixed_count]
+    CSV.parse(reply).map { |a| Hash[ keys.zip(a)] }[0]
   end
 
   def self.parse_lan(reply)
@@ -136,26 +108,17 @@ class Ipmitool
     parsed
   end
 
-  # can not handle if user has name true or false
-  def self.parse_user(reply)
-    users = []
-    reply.each_line do |line|
-      if line.start_with?('ID')
-        next
-      end
-      line.match(
-        %r{(?'id'\d*)\s*(?'na'.*?)\s*(?'ca'true|false)\s*(?'li'true|false)\s*(?'ip'true|false)\s*(?'ch'.*)}i,
-      ) do |match|
-        users.push(
-          'id' => match['id'],
-          'name' => match['na'],
-          'callin' => Bmc.munge_boolean(match['ca']),
-          'link_auth' => Bmc.munge_boolean(match['li']),
-          'ipmi_msg' => Bmc.munge_boolean(match['ip']),
-          'channel_priv_limit' => match['ch'],
-        )
-      end
+  def self.parse_user_csv(reply)
+    keys = [:id, :name, :callin, :link_auth, :ipmi_msg, :channel_priv_limit ]
+    result = []
+    CSV.parse(reply) do | row |
+      n_row = Bmc.munge_array_boolean(row, [2,3,4])
+      result.push(n_row)
     end
-    users
+    result.map { |a| Hash[ keys.zip(a)] }
+  end
+
+  def self.parse_channel_getaccess(reply)
+
   end
 end

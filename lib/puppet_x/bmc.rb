@@ -1,5 +1,15 @@
 # General Utilily class
 class Bmc
+  def self.munge_array_boolean(input_array, munchable_elements = [])
+    input_array.each_with_index.map do |value,index|
+      if munchable_elements.include?(index)
+        munge_boolean(value)
+      else
+        value
+      end
+    end
+  end
+
   def self.munge_boolean(value)
     return :true if [true, 'true', :true].include? value
     return :false if [false, 'false', :false].include? value

@@ -70,14 +70,14 @@ Puppet::Type.newtype(:bmc_network) do
     end
   end
 
-  newproperty(:ipv4_dns_from_dhcp, required_features: :racadm) do
+  newproperty(:ipv4_dns_from_dhcp, boolean: true, required_features: :racadm) do
     desc 'Select this option to obtain Primary and Secondary DNS server addresses from DHCPv4 server.
         If DHCP is not used to obtain the DNS server addresses,
         provide the IP addresses in the Preferred DNS Server and Alternate DNS Server fields.'
     newvalues(:true, :false)
   end
 
-  newproperty(:ipv4_enable, required_features: :racadm) do
+  newproperty(:ipv4_enable, boolean: true, required_features: :racadm) do
     desc 'enable IPv4 protocol support.'
     newvalues(:true, :false)
   end
@@ -100,34 +100,34 @@ Puppet::Type.newtype(:bmc_network) do
     end
   end
 
-  newproperty(:enable, required_features: :racadm) do
+  newproperty(:enable, boolean: true, required_features: :racadm) do
     desc 'Enables or Disables the bmc network interface controller.'
     newvalues(:true, :false)
     defaultto :true
   end
 
-  newproperty(:dns_domain_from_dhcp, required_features: :racadm) do
+  newproperty(:dns_domain_from_dhcp, boolean: true, required_features: :racadm) do
     desc 'Specifies that the bmc DNS domain name must be assigned from the network DHCP server.'
     newvalues(:true, :false)
   end
 
-  newproperty(:dns_domain_name_from_dhcp, required_features: :racadm) do
+  newproperty(:dns_domain_name_from_dhcp, boolean: true, required_features: :racadm) do
     desc 'Specifies that the bmc DNS domain name must be assigned from the network DHCP server.'
     newvalues(:true, :false)
   end
 
-  newproperty(:auto_config, required_features: :racadm) do
+  newproperty(:auto_config, boolean: true, required_features: :racadm) do
     desc 'Select this option to enable iDRAC to obtain the IPv6 address for the iDRAC NIC from the DHCPv6 server.
           You can configure both static and dynamic IP addresses.'
     newvalues(:true, :false)
   end
 
-  newproperty(:auto_detect, required_features: :racadm) do
+  newproperty(:auto_detect, boolean: true, required_features: :racadm) do
     desc 'Enable DHCP Provisionin.'
     newvalues(:true, :false)
   end
 
-  newproperty(:autoneg, required_features: :racadm) do
+  newproperty(:autoneg, boolean: true, required_features: :racadm) do
     desc 'Determines if iDRAC automatically sets the duplex mode and network speed by communicating
           with the nearest router or hub (On) or allows you to set them manually..'
     newvalues(:true, :false)
@@ -158,7 +158,7 @@ Puppet::Type.newtype(:bmc_network) do
     desc 'Select the network speed to match your network environment.'
   end
 
-  newproperty(:vlan_enable, required_features: :racadm) do
+  newproperty(:vlan_enable, boolean: true, required_features: :racadm) do
     desc 'elect this option to enable VLAN ID. Only matched Virtual LAN (VLAN) ID traffic is accepted.
           Clear this option to disable VLAN ID.'
     newvalues(:true, :false)

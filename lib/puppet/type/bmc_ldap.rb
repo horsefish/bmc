@@ -45,14 +45,14 @@ Puppet::Type.newtype(:bmc_ldap) do
 
   newproperty(:certificate_validate, boolean: true) do
     desc 'Certificate Validation Enabled. Default to true'
-    newvalues(false, true)
-    defaultto true
+    newvalues(:false, :true)
+    defaultto :true
   end
 
   newproperty(:group_attribute_is_dn, boolean: true) do
     desc 'Use Distinguished Name to Search Group Membership. ( if unchecked, username will be used ). Default to true'
-    newvalues(false, true)
-    defaultto true
+    newvalues(:false, :true)
+    defaultto :true
   end
 
   newparam(:bind_password) do

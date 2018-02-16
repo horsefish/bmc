@@ -1,14 +1,14 @@
 require 'spec_helper'
 require 'puppet_x/ipmi/ipmitool'
 
-def user_params(id: '2', name: 'root', callin: :true, link_auth: :true, ipmi_msg: :true, channel_priv_limit: 'ADMINISTRATOR')
+def user_params(id: nil, name: nil, callin: :true, link_auth: :true, ipmi_msg: :true, channel_priv_limit: 'NO ACCESS')
   {
-    'id' => id,
-    'name' => name,
-    'callin' => callin,
-    'link_auth' => link_auth,
-    'ipmi_msg' => ipmi_msg,
-    'channel_priv_limit' => channel_priv_limit,
+    id: id,
+    name: name,
+    callin: callin,
+    link_auth: link_auth,
+    ipmi_msg: ipmi_msg,
+    channel_priv_limit: channel_priv_limit,
   }
 end
 
@@ -30,7 +30,7 @@ describe Ipmitool do
     IO.read(output)
   end
   let(:dell_ipmitool_user_list_1) do
-    output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'dell_ipmitool_user_list_1.txt')
+    output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'dell_ipmitool_user_list_1.csv')
     IO.read(output)
   end
   let(:dell_ipmitool_user_list_2) do
@@ -42,30 +42,21 @@ describe Ipmitool do
     IO.read(output)
   end
   let(:ibm_ipmitool_user_summery_1) do
-    output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'ibm_ipmitool_user_summery_1.txt')
+    output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'dell_ipmitool_user_summary_1.csv')
     IO.read(output)
   end
 
   context 'IBM ipmitool user summery' do
-    subject { described_class.parse_summay ibm_ipmitool_user_summery_1 }
+    subject { described_class.parse_user_summay_csv ibm_ipmitool_user_summery_1 }
 
     it do
       is_expected.not_to be_empty
     end
     it do
       is_expected.to include(
-        'Maximum IDs' => '20',
-        'Enabled User Count' => '3',
-        'Fixed Name Count' => '2',
-      )
-      is_expected.to have_key('Users')
-      is_expected.to include(
-        'Users' =>
-        [{ 'id' => '1', 'name' => '', 'enabled' => :true, 'callin' => :false, 'link_auth' => :false, 'ipmi_msg' => :true, 'channel_priv_limit' => 'USER' },
-         { 'id' => '2', 'name' => 'root', 'enabled' => :true, 'callin' => :false, 'link_auth' => :false, 'ipmi_msg' => :true, 'channel_priv_limit' => 'ADMINISTRATOR' },
-         { 'id' => '3', 'name' => 'sysoper', 'enabled' => :true, 'callin' => :true, 'link_auth' => :false, 'ipmi_msg' => :true, 'channel_priv_limit' => 'OPERATOR' },
-         { 'id' => '12', 'name' => 'default', 'enabled' => :true, 'callin' => :true, 'link_auth' => :false, 'ipmi_msg' => :true, 'channel_priv_limit' => 'NO ACCESS' },
-         { 'id' => '13', 'name' => '', 'enabled' => :true, 'callin' => :false, 'link_auth' => :true, 'ipmi_msg' => :false, 'channel_priv_limit' => 'CALLBACK' }],
+        max_count: "16",
+        enabled_count: '1',
+        fixed_count: '1',
       )
     end
   end
@@ -158,33 +149,20 @@ describe Ipmitool do
         )
     end
   end
-  context 'Dell ipmitool user list channel 1' do
-    subject { described_class.parse_user dell_ipmitool_user_list_1 }
+  context '#parse_user_csv' do
+    subject { described_class.parse_user_csv dell_ipmitool_user_list_1 }
 
     it do
       is_expected.not_to be_empty
     end
     it do
-      is_expected.to include(user_params)
+      is_expected.to include(user_params(id: '1', link_auth: :false, ipmi_msg: :false))
+      is_expected.to include(user_params(id: '2', name: 'root', channel_priv_limit: 'ADMINISTRATOR'))
       is_expected.to include(user_params(id: '3', name: 'xx xxd', channel_priv_limit: 'USER'))
       is_expected.to include(user_params(id: '4', name: 'xx', channel_priv_limit: 'OPERATOR'))
-      is_expected
-        .to include(
-          user_params(id: '5',
-                      name: 'emil',
-                      link_auth: :false,
-                      ipmi_msg: :false,
-                      channel_priv_limit: 'NO ACCESS'),
-        )
+      is_expected.to include(user_params(id: '5', name: 'true', channel_priv_limit: 'OEM'))
       is_expected.to include(user_params(id: '6', name: 'name', channel_priv_limit: 'CALLBACK'))
-      is_expected.to include(user_params(id: '63', name: 'last', channel_priv_limit: 'NO ACCESS'))
-    end
-  end
-  context 'Dell ipmitool user list channel 3' do
-    subject { described_class.parse_user dell_ipmitool_user_list_3 }
-
-    it do
-      is_expected.to be_empty
+      is_expected.to include(user_params(id: '7'))
     end
   end
 end

@@ -10,7 +10,7 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   mk_resource_methods
 
   confine osfamily: [:redhat, :debian]
-  confine exists: '/opt/dell/srvadmin/bin/idracadm7'
+  confine exists: '/opt/dell/srvadmin/bin/idracadm7XX'
   defaultfor manufactor_id: :'674'
 
   def self.prefetch(resources)
@@ -42,7 +42,7 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
         type.provider = new(
           id: getconfig_user['# cfgUserAdminIndex'],
           ensure: :present,
-          enable: Racadm.s_to_bool(idrac_user['Enable']),
+          enable: Bmc.munge_boolean(Racadm.s_to_bool(idrac_user['Enable'])),
           privilege:
             {
               'Lan' => Bmc.s_to_role(idrac_user['IpmiLanPrivilege']),
@@ -53,9 +53,9 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
           password_sha256: idrac_user['SHA256Password'],
           password_salt: idrac_user['SHA256PasswordSalt'],
           snmpv3_authentication_type: ['SNMPv3AuthenticationType'],
-          snmpv3_enable: Racadm.s_to_bool(idrac_user['SNMPv3Enable']),
+          snmpv3_enable: Bmc.munge_boolean(Racadm.s_to_bool(idrac_user['SNMPv3Enable'])),
           snmpv3_privacy_type: ['SNMPv3PrivacyType'],
-          sol_enable: Racadm.s_to_bool(idrac_user['SolEnable']),
+          sol_enable: Bmc.munge_boolean(Racadm.s_to_bool(idrac_user['SolEnable'])),
           name: idrac_user['UserName'],
         )
       end
