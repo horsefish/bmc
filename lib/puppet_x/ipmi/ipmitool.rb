@@ -66,7 +66,7 @@ class Ipmitool
 
   def self.parse_user_summay_csv(reply)
     keys = [:max_count, :enabled_count, :fixed_count]
-    CSV.parse(reply).map { |a| Hash[ keys.zip(a)] }[0]
+    CSV.parse(reply).map { |a| Hash[keys.zip(a)] }[0]
   end
 
   def self.parse_lan(reply)
@@ -109,16 +109,34 @@ class Ipmitool
   end
 
   def self.parse_user_csv(reply)
-    keys = [:id, :name, :callin, :link_auth, :ipmi_msg, :channel_priv_limit ]
+    keys = [:id, :name, :callin, :link, :ipmi, :privilege]
     result = []
-    CSV.parse(reply) do | row |
-      n_row = Bmc.munge_array_boolean(row, [2,3,4])
+    CSV.parse(reply) do |row|
+      n_row = Bmc.munge_array_boolean(row, [2, 3, 4])
       result.push(n_row)
     end
-    result.map { |a| Hash[ keys.zip(a)] }
+    result.map { |a| Hash[keys.zip(a)] }
   end
 
-  def self.parse_channel_getaccess(reply)
+  @channel_getaccess_keys = {
+    'Maximum User IDs' => :max_id_count,
+    'Enabled User IDs' => :enabled_id_count,
+    'User ID' => :user_id,
+    'User Name' => :user_name,
+    'Fixed Name' => :fixed_name,
+    'Access Available' => :access_avaliable,
+    'Link Authentication' => :link,
+    'IPMI Messaging' => :ipmi,
+    'Privilege Level' => :privilege,
+    'Enable Status' => :enable,
+  }
 
+  def self.parse_channel_getaccess(reply)
+    parsed = {}
+    reply.each_line do |line|
+      line_array = line.split(':').map(&:strip)
+      parsed[@channel_getaccess_keys[line_array[0]] || line_array[0]] = line_array[1] unless line_array[0].empty?
+    end
+    parsed
   end
 end

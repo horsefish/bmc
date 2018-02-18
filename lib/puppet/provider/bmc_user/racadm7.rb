@@ -21,7 +21,7 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
         bmc_server_host: type.value(:bmc_server_host),
       }
       # the getconfig method is deprecated but have not been able to figure out how the alternative "get Idrac.Users"
-      # support serach by username
+      # support search by username
       racadm_out = Racadm.racadm_call(
         call_info,
         ['getconfig', '-u', "'#{type.name}'"],

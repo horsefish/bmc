@@ -1,7 +1,7 @@
 # General Utilily class
 class Bmc
   def self.munge_array_boolean(input_array, munchable_elements = [])
-    input_array.each_with_index.map do |value,index|
+    input_array.each_with_index.map do |value, index|
       if munchable_elements.include?(index)
         munge_boolean(value)
       else
