@@ -40,7 +40,7 @@ Puppet::Type.newtype(:bmc_ldap_group) do
       "0x#{value.to_s(16)}"
     end
 
-    def is_to_s(value)
+    def to_s?(value)
       "0x#{value.to_s(16)}"
     end
   end

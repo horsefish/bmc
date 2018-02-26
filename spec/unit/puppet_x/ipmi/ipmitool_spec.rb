@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'puppet_x/ipmi/ipmitool'
 
-def user_params(id: nil, name: nil, callin: :true, link: :true, ipmi: :true, privilege: 'NO ACCESS')
+def user_params(id: nil, name: nil, callin: true, link: true, ipmi: true, privilege: 'NO ACCESS')
   {
     id: id,
     name: name,
@@ -167,7 +167,7 @@ describe Ipmitool do
       is_expected.not_to be_empty
     end
     it do
-      is_expected.to include(user_params(id: '1', link: :false, ipmi: :false))
+      is_expected.to include(user_params(id: '1', link: false, ipmi: false))
       is_expected.to include(user_params(id: '2', name: 'root', privilege: 'ADMINISTRATOR'))
       is_expected.to include(user_params(id: '3', name: 'xx xxd', privilege: 'USER'))
       is_expected.to include(user_params(id: '4', name: 'xx', privilege: 'OPERATOR'))

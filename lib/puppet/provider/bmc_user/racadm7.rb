@@ -10,7 +10,7 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   mk_resource_methods
 
   confine osfamily: [:redhat, :debian]
-  confine exists: '/opt/dell/srvadmin/bin/idracadm7XX'
+  confine exists: '/opt/dell/srvadmin/bin/idracadm7'
   defaultfor manufactor_id: :'674'
 
   def self.prefetch(resources)
@@ -42,20 +42,20 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
         type.provider = new(
           id: getconfig_user['# cfgUserAdminIndex'],
           ensure: :present,
-          enable: Bmc.munge_boolean(Racadm.s_to_bool(idrac_user['Enable'])),
+          enable: Bmc.boolean_to_symbol(Racadm.s_to_bool(idrac_user['Enable'])),
           privilege:
             {
-              'Lan' => Bmc.s_to_role(idrac_user['IpmiLanPrivilege']),
-              'Serial' => Bmc.s_to_role(idrac_user['IpmiSerialPrivilege']),
+              'Lan' => Racadm.s_to_role(idrac_user['IpmiLanPrivilege']),
+              'Serial' => Racadm.s_to_role(idrac_user['IpmiSerialPrivilege']),
             },
           idrac: idrac_user['Privilege'].to_i(16),
           md5v3key: idrac_user['MD5v3Key'],
           password_sha256: idrac_user['SHA256Password'],
           password_salt: idrac_user['SHA256PasswordSalt'],
           snmpv3_authentication_type: ['SNMPv3AuthenticationType'],
-          snmpv3_enable: Bmc.munge_boolean(Racadm.s_to_bool(idrac_user['SNMPv3Enable'])),
+          snmpv3_enable: Bmc.boolean_to_symbol(Racadm.s_to_bool(idrac_user['SNMPv3Enable'])),
           snmpv3_privacy_type: ['SNMPv3PrivacyType'],
-          sol_enable: Bmc.munge_boolean(Racadm.s_to_bool(idrac_user['SolEnable'])),
+          sol_enable: Bmc.boolean_to_symbol(Racadm.s_to_bool(idrac_user['SolEnable'])),
           name: idrac_user['UserName'],
         )
       end
@@ -63,10 +63,10 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   end
 
   def privilege
-    if resource[:privilege].class == Hash
+    if @resource[:privilege].class == Hash
       @property_hash[:privilege]
-    elsif @property_hash[:privilege].values.select! { |value| value == resource[:privilege] }.nil?
-      resource[:privilege]
+    elsif @property_hash[:privilege].values.select! { |value| value == @resource[:privilege] }.nil?
+      @resource[:privilege]
     else
       @property_hash[:privilege]
     end
@@ -75,79 +75,78 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   def privilege=(value)
     if value.class == Hash && value.key?('Lan')
       Racadm.racadm_call(
-        resource,
-        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiLanPrivilege", Bmc.role_to_s(value['Lan'])],
+        @resource,
+        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiLanPrivilege", Racadm.role_to_s(value['Lan'])],
       )
-    elsif Bmc.role_to_s(value)
+    elsif Racadm.role_to_s(value)
       Racadm.racadm_call(
-        resource,
-        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiLanPrivilege", Bmc.role_to_s(value)],
+        @resource,
+        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiLanPrivilege", Racadm.role_to_s(value)],
       )
     end
     if value.class == Hash && value.key?('Serial')
       Racadm.racadm_call(
-        resource,
-        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiSerialPrivilege", Bmc.role_to_s(value['Serial'])],
+        @resource,
+        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiSerialPrivilege", Racadm.role_to_s(value['Serial'])],
       )
-    elsif Bmc.role_to_s(value)
+    elsif Racadm.role_to_s(value)
       Racadm.racadm_call(
-        resource,
-        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiSerialPrivilege", Bmc.role_to_s(value)],
+        @resource,
+        ['set', "iDRAC.Users.#{@property_hash[:id]}.IpmiSerialPrivilege", Racadm.role_to_s(value)],
       )
     end
   end
 
   def password
     newpass = Digest::SHA256.hexdigest(
-      resource[:password] +
+      @resource[:password] +
       @property_hash[:password_salt].gsub(%r{..}) { |pair| pair.hex.chr },
     ).upcase
-    resource[:password] if newpass.eql? @property_hash[:password_sha256]
+    @resource[:password] if newpass.eql? @property_hash[:password_sha256]
   end
 
   def password=(value)
     Racadm.racadm_call(
-      resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.Password", value]
+      @resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.Password", value]
     )
   end
 
   def idrac=(value)
     Racadm.racadm_call(
-      resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.Privilege", "0x#{value.to_s(16)}"]
+      @resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.Privilege", "0x#{value.to_s(16)}"]
     )
   end
 
   def enable=(value)
     Racadm.racadm_call(
-      resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.enable", Racadm.bool_to_s(value)]
+      @resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.enable", Racadm.bool_to_s(value)]
     )
   end
 
   def username=(value)
     Racadm.racadm_call(
-      resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.UserName", value]
+      @resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.UserName", value]
     )
   end
 
   def sol_enable=(value)
     Racadm.racadm_call(
-      resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.SolEnable", Racadm.bool_to_s(value)]
+      @resource, ['set', "iDRAC.Users.#{@property_hash[:id]}.SolEnable", Racadm.bool_to_s(value)]
     )
   end
 
   def next_free_id
     racadm_out = Racadm.racadm_call(
-      resource,
+      @resource,
       ['get', 'iDRAC.Users'],
     )
     idrac_users = Racadm.parse_racadm racadm_out
     idrac_users.each_key do |key|
-      racadm_out = Racadm.racadm_call(resource, ['get', key])
+      # ship user because it is readonly anonymous
+      next if 'iDRAC.Users.1'.eql?(key)
+      racadm_out = Racadm.racadm_call(@resource, ['get', key])
       idrac_user = Racadm.parse_racadm racadm_out
-
-      if !idrac_user['IpmiLanPrivilege'].nil? &&
-         !(Racadm.s_to_bool idrac_user['Enable']) &&
-         idrac_user['UserName'].empty?
+      if idrac_user['UserName'].empty?
         return key.split('.').last
       end
     end
@@ -157,10 +156,10 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   def create
     @property_hash[:ensure] = :present
     @property_hash[:id] = next_free_id
-    self.username = resource[:name] unless resource[:name].nil?
-    self.password = resource[:password] unless resource[:password].nil?
-    self.idrac = resource[:idrac] unless resource[:idrac].nil?
-    self.privilege = resource[:privilege] unless resource[:privilege].nil?
+    self.username = @resource[:name] unless @resource[:name].nil?
+    self.password = @resource[:password] unless @resource[:password].nil?
+    self.idrac = @resource[:idrac] unless @resource[:idrac].nil?
+    self.privilege = @resource[:privilege] unless @resource[:privilege].nil?
     self.sol_enable = true
     self.enable = true
   end

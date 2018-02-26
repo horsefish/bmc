@@ -1,4 +1,5 @@
 require 'resolv'
+require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:bmc_user) do
   @doc = 'BMC local user administration.'
@@ -22,7 +23,7 @@ Puppet::Type.newtype(:bmc_user) do
       '<secret>'
     end
 
-    def is_to_s(_value)
+    def to_s?(_value)
       '<secret>'
     end
 
@@ -43,7 +44,7 @@ Puppet::Type.newtype(:bmc_user) do
 
     validate do |value|
       valid_roles = %w[callback user operator administrator oem_proprietary no_access]
-      if value.class == Hash
+      if value.is_a?(::Hash)
         unless (value.values - valid_roles).empty?
           raise Puppet::Error, '%s contains at least one invalid role' % value.inspect
         end
@@ -55,7 +56,7 @@ Puppet::Type.newtype(:bmc_user) do
     end
 
     def should_to_s(value)
-      (value.class == Hash) ? value.inspect : "All => #{value}"
+      value.is_a?(::Hash) ? value.inspect : "All => #{value}"
     end
   end
 
@@ -82,25 +83,19 @@ Puppet::Type.newtype(:bmc_user) do
 
     validate do |value|
       valid_channels = [true, false]
-      if value.class == Hash
-        unless (value.values - valid_channels).empty?
-          raise Puppet::Error, '%s contains at least one invalid boolean' % value.inspect
-        end
+      if value.is_a?(::Hash)
+        raise Puppet::Error, '%s contains at least one invalid boolean' % value.inspect unless (value.values - valid_channels).empty?
       else
-        unless value.is_a?(TrueClass) || value.is_a?(FalseClass)
-          raise Puppet::Error, '%s is not a valid boolean' % value
-        end
+        raise Puppet::Error, '%s is not a valid boolean' % value unless value.is_a?(TrueClass) || value.is_a?(FalseClass)
       end
     end
 
     munge do |value|
-      unless value.class == Hash
-        Bmc.munge_boolean(value)
-      end
+      value.is_a?(::Hash) ? value : Bmc.boolean_to_symbol(value)
     end
 
     def should_to_s(value)
-      (value.class == Hash) ? value.inspect : "All => #{value}"
+      value.is_a?(::Hash) ? value.inspect : "All => #{value}"
     end
   end
 
@@ -110,25 +105,19 @@ Puppet::Type.newtype(:bmc_user) do
 
     validate do |value|
       valid_channels = [true, false]
-      if value.class == Hash
-        unless (value.values - valid_channels).empty?
-          raise Puppet::Error, '%s contains at least one invalid boolean' % value.inspect
-        end
+      if value.is_a?(::Hash)
+        raise Puppet::Error, '%s contains at least one invalid boolean' % value.inspect unless (value.values - valid_channels).empty?
       else
-        unless value.is_a?(TrueClass) || value.is_a?(FalseClass)
-          raise Puppet::Error, '%s is not a valid boolean' % value
-        end
+        raise Puppet::Error, '%s is not a valid boolean' % value unless value.is_a?(TrueClass) || value.is_a?(FalseClass)
       end
     end
 
     munge do |value|
-      unless value.class == Hash
-        Bmc.munge_boolean(value)
-      end
+      value.is_a?(::Hash) ? value : Bmc.boolean_to_symbol(value)
     end
 
     def should_to_s(value)
-      (value.class == Hash) ? value.inspect : "All => #{value}"
+      value.is_a?(::Hash) ? value.inspect : "All => #{value}"
     end
   end
 
@@ -138,25 +127,19 @@ Puppet::Type.newtype(:bmc_user) do
 
     validate do |value|
       valid_channels = [true, false]
-      if value.class == Hash
-        unless (value.values - valid_channels).empty?
-          raise Puppet::Error, '%s contains at least one invalid boolean' % value.inspect
-        end
+      if value.is_a?(::Hash)
+        raise Puppet::Error, '%s contains at least one invalid boolean' % value.inspect unless (value.values - valid_channels).empty?
       else
-        unless value.is_a?(TrueClass) || value.is_a?(FalseClass)
-          raise Puppet::Error, '%s is not a valid boolean' % value
-        end
+        raise Puppet::Error, '%s is not a valid boolean' % value unless value.is_a?(TrueClass) || value.is_a?(FalseClass)
       end
     end
 
     munge do |value|
-      unless value.class == Hash
-        Bmc.munge_boolean(value)
-      end
+      value.is_a?(::Hash) ? value : Bmc.boolean_to_symbol(value)
     end
 
     def should_to_s(value)
-      (value.class == Hash) ? value.inspect : "All => #{value}"
+      value.is_a?(::Hash) ? value.inspect : "All => #{value}"
     end
   end
 
@@ -173,7 +156,7 @@ Puppet::Type.newtype(:bmc_user) do
       "0x#{value.to_s(16)}"
     end
 
-    def is_to_s(value)
+    def to_s?(value)
       "0x#{value.to_s(16)}"
     end
   end

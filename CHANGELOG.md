@@ -1,3 +1,9 @@
+## Supported Release 0.0.4
+### Summary
+Module is now PDK complient 
+* bmc_user
+    - better support for channels in bmc_user ipmi provider.
+
 ## Supported Release 0.0.3
 ### Summary
 Puppet4 data types used.

@@ -8,6 +8,10 @@ class Ipmitool
     (value == :true) ? 'on' : 'off'
   end
 
+  def self.boolean_to_s(value)
+    value ? 'on' : 'off'
+  end
+
   def self.s_to_bool(value)
     value.eql? 'on'
   end
@@ -112,7 +116,7 @@ class Ipmitool
     keys = [:id, :name, :callin, :link, :ipmi, :privilege]
     result = []
     CSV.parse(reply) do |row|
-      n_row = Bmc.munge_array_boolean(row, [2, 3, 4])
+      n_row = Bmc.values_to_boolean(row, [2, 3, 4])
       result.push(n_row)
     end
     result.map { |a| Hash[keys.zip(a)] }
@@ -138,5 +142,41 @@ class Ipmitool
       parsed[@channel_getaccess_keys[line_array[0]] || line_array[0]] = line_array[1] unless line_array[0].empty?
     end
     parsed
+  end
+
+  def self.s_to_role(value)
+    case value
+    when '1'
+      'callback'
+    when '2'
+      'user'
+    when '3'
+      'operator'
+    when '4'
+      'administrator'
+    when '5'
+      'oem_proprietary'
+    when '15'
+      'no_access'
+    end
+  end
+
+  def self.role_to_s(value)
+    case value
+    when 'none'
+      '0'
+    when 'callback'
+      '1'
+    when 'user'
+      '2'
+    when 'operator'
+      '3'
+    when 'administrator'
+      '4'
+    when 'oem_proprietary'
+      '5'
+    when 'no_access'
+      '15'
+    end
   end
 end
