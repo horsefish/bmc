@@ -1,0 +1,13 @@
+Security Alert: Certificate is invalid - self signed certificate in certificate chain
+Continuing execution. Use -S option for racadm to stop execution on certificate-related errors.
+[Key=iDRAC.Embedded.1#Users.2]
+Enable=Enabled
+IpmiLanPrivilege=4
+IpmiSerialPrivilege=4
+!!Password=******** (Write-Only)
+Privilege=0x1ff
+SNMPv3AuthenticationType=SHA
+SNMPv3Enable=Disabled
+SNMPv3PrivacyType=AES
+SolEnable=Enabled
+UserName=root

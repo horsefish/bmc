@@ -1,7 +1,5 @@
-class bmc::oem() {
-
-  # Dell inc.
-  if $::manufactor_id == '674' {
-    contain '::bmc::oem::idrac'
-  }
+# @api private
+# Handle the orchestration of oem software
+class bmc::oem() inherits bmc {
+  if $::bmc::manage_idrac { contain 'bmc::oem::idrac' }
 }

@@ -1,0 +1,24 @@
+Security Alert: Certificate is invalid - self signed certificate in certificate chain
+Continuing execution. Use -S option for racadm to stop execution on certificate-related errors.
+[Key=iDRAC.Embedded.1#NIC.1]
+AutoConfig=Disabled
+AutoDetect=Disabled
+Autoneg=Enabled
+DedicatedNICScanTime=5
+DNSDomainFromDHCP=Disabled
+DNSDomainName=example.com
+DNSDomainNameFromDHCP=Disabled
+DNSRacName=console
+DNSRegister=Disabled
+Duplex=Full
+Enable=Enabled
+Failover=None
+#MACAddress=18:FB:7B:AA:BB:CC
+MTU=1500
+Selection=Dedicated
+SharedNICScanTime=30
+Speed=1000
+VLanEnable=Disabled
+VLanID=1
+VLANPort=Both
+VLanPriority=0

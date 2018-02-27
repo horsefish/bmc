@@ -1,0 +1,16 @@
+1,,true,false,false,NO ACCESS
+2,root,true,true,true,ADMINISTRATOR
+3,xx xxd,true,true,true,USER
+4,xx,true,true,true,OPERATOR
+5,true,true,true,true,OEM
+6,name,true,true,true,CALLBACK
+7,,true,true,true,NO ACCESS
+8,,true,true,true,NO ACCESS
+9,,true,true,true,NO ACCESS
+10,,true,true,true,NO ACCESS
+11,,true,true,true,NO ACCESS
+12,,true,true,true,NO ACCESS
+13,,true,true,true,NO ACCESS
+14,,true,true,true,NO ACCESS
+15,,true,true,true,NO ACCESS
+16,,true,true,true,NO ACCESS

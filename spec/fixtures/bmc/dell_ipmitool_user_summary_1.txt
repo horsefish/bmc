@@ -1,0 +1,3 @@
+Maximum IDs	    : 16
+Enabled User Count  : 1
+Fixed Name Count    : 1
