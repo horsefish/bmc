@@ -24,8 +24,9 @@ matrix:
     - env: CHECK="syntax lint"
     - env: CHECK=metadata_lint
     - env: CHECK=release_checks
-    - env: CHECK=spec
-    - env: PUPPET_GEM_VERSION="~> 4.0" CHECK=spec
+    - env: PUPPET_GEM_VERSION="~> 3.8.0" CHECK=spec
+    - env: PUPPET_GEM_VERSION="~> 4.10.0" CHECK=spec
+    - env: PUPPET_GEM_VERSION="~> 5.0" CHECK=spec
 branches:
   only:
     - master
