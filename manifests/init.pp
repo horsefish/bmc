@@ -1,21 +1,10 @@
-# = Class: bmc
+#Class: bmc
 #
-# This module manages the bmc (Baseboard Management Controller)
-# and the software needed to control it.
+# Parameters:
 #
-# == Parameters:
-#
-# [*ensure*]
-#   Parsed to package and controls the state of the software
-#   Default: present
-#
-# [*manage_repo*]
-#   Should the module manged the repositories
-#   Default: true
-#
-# [*manage_idrac*]
-#   Should idrac software be installed
-#   Default: true if OS is installed on a DELL hardware
+# ensure: Control the existences of this bmc module.
+# manage_oem_repo: Should 3rd party OEM repositry be managed.
+# oem_software: What 3rd party OEM should be installed.
 #
 # Actions:
 #
@@ -25,8 +14,8 @@
 #
 class bmc (
   Enum['present', 'absent', 'purged', 'latest']$ensure = 'present',
-  Boolean $manage_repo                                 = true,
-  Boolean $manage_idrac                                = $bmc::params::manage_idrac,
+  Boolean $manage_oem_repo                             = true,
+  Array[Enum['idrac']] $oem_software                   = $::bmc::params::oem_software,
 ) inherits bmc::params {
 
   if $ensure == 'present' or $ensure == 'latest' {

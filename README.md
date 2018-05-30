@@ -5,30 +5,20 @@
 [apt module]: https://forge.puppet.com/puppetlabs/apt
 [racadm]: http://pilot.search.dell.com/racadm
 
-####Table of Contents
+#### Table of Contents
 
 1. [Overview](#overview)
 2. [Module Description](#module-description)
 3. [Setup](#setup)
-    * [Setup requirements](#setup-requirements)
+    * [Requirements](#Setup-Requirements)
+    * [Installation](#beginning-with-bmc)
 4. [Usage](#usage)
 5. [Operating Systems Support](#operating-systems-support)
 6. [Development](#development)
 
-##Overview
+## Overview
 
 This module configures the Remote Management System (Baseboard Management Controller) on Enterprise servers. 
-
-##Setup
-
-**What this module affects:**
-This module affect's configures the BMC controller.
-
-###Setup Requirements
-* PuppetLabs [stdlib module]
-* PuppetLabs [apt module]
-* Puppet version >= 4.0.x
-* Facter version >= 2.4.3
 
 ##Module Description
 
@@ -36,6 +26,23 @@ You can configure the BMC's LAN, LDAP and SSL certificates and manage the local 
 
 It use [IPMItool] or a server provider specific tool (ie. [racadm]) to do the actual communication with the BMC.
 
+## Setup
+
+**What this module affects:**
+This module affect's configures the BMC controller.
+
+### Setup Requirements
+* PuppetLabs [stdlib module]
+* PuppetLabs [apt module]
+* Puppet version >= 4.0.x
+* Facter version >= 2.4.3
+
+###Beginning with bmc
+To begin using the bmc module just include the bmc module and it will install ipmitools and 3rd party OEM sofware if it
+is run on supported hardware.
+```puppet
+  include bmc
+```
 
 ##Usage
 ###Simple user
