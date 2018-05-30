@@ -13,6 +13,14 @@ describe Racadm do
     output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'racadm7_getConfigUserNotExist.txt')
     IO.read(output)
   end
+  let(:idrac7_getConfigUserRoot) do
+    output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'racadm7_getConfigUserRoot.txt')
+    IO.read(output)
+  end
+  let(:idrac9_getConfigUserRoot) do
+    output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'racadm9_getConfigUserRoot.txt')
+    IO.read(output)
+  end
   let(:getIDRAC_Users) do
     output = File.join(File.dirname(__FILE__), '..', '..', '..', 'fixtures', 'bmc', 'racadm7_getIDRAC.Users.txt')
     IO.read(output)
@@ -62,11 +70,46 @@ describe Racadm do
     end
   end
 
-  describe 'racadm7 get IDRAC.LDAP' do
+  describe 'racadm7 getconfig NoUser' do
     subject { described_class.parse_racadm getConfigUserNotExist }
 
     it do
       is_expected.to be_empty
+    end
+  end
+
+  describe 'idrac7 getconfig Root' do
+    subject { described_class.parse_racadm idrac7_getConfigUserRoot }
+
+    it do
+      is_expected
+        .to include(
+          '#cfgUserAdminIndex' => '2',
+          'cfgUserAdminUserName' => 'root',
+          '#cfgUserAdminPassword' => '******** (Write-Only)',
+          'cfgUserAdminEnable' => '1',
+          'cfgUserAdminPrivilege' => '0x000001ff',
+          'cfgUserAdminIpmiLanPrivilege' => '4',
+          'cfgUserAdminIpmiSerialPrivilege' => '4',
+          'cfgUserAdminSolEnable' => '1',
+        )
+    end
+  end
+
+  describe 'racadm9 getconfig Root' do
+    subject { described_class.parse_racadm idrac9_getConfigUserRoot }
+
+    it do
+      is_expected
+        .to include(
+          '#cfgUserAdminIndex' => '2',
+          'cfgUserAdminUserName' => 'root',
+          'cfgUserAdminEnable' => 'Enabled',
+          'cfgUserAdminPrivilege' => '0x1ff',
+          'cfgUserAdminIpmiLanPrivilege' => '4',
+          'cfgUserAdminIpmiSerialPrivilege' => '4',
+          'cfgUserAdminSolEnable' => 'Enabled',
+        )
     end
   end
 

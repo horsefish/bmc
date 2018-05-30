@@ -1,0 +1,15 @@
+#cfgUserAdminIndex=2
+cfgUserAdminUserName=root
+!!cfgUserAdminPassword=******** (Write-Only)
+cfgUserAdminEnable=Enabled
+cfgUserAdminPrivilege=0x1ff
+cfgUserAdminIpmiLanPrivilege=4
+cfgUserAdminIpmiSerialPrivilege=4
+cfgUserAdminSolEnable=Enabled
+
+
+RAC1168: The RACADM "getconfig" command will be deprecated in a
+future version of iDRAC firmware. Run the RACADM
+"racadm get" command to retrieve the iDRAC configuration parameters.
+For more information on the get command, run the RACADM command
+"racadm help get".
