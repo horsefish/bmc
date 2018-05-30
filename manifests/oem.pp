@@ -1,5 +1,5 @@
 # @api private
 # Handle the orchestration of oem software
 class bmc::oem() inherits bmc {
-  if $::bmc::manage_idrac { contain 'bmc::oem::idrac' }
+  if member($::bmc::oem_software, 'idrac') { contain 'bmc::oem::idrac' }
 }

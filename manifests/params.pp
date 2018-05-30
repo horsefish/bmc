@@ -4,8 +4,8 @@ class bmc::params () {
 
   case $::manufactor_id {
     # Dell inc.
-    '674': { $manage_idrac = true }
-    default: { $manage_idrac = false }
+    '674': { $oem_software = ['idrac'] }
+    default: { $oem_software = [] }
   }
 
   case $::osfamily {

@@ -1,7 +1,7 @@
 # @api private
 # Install idrac software
 class bmc::oem::idrac inherits bmc {
-  if $::bmc::manage_repo {
+  if $::bmc::manage_oem_repo {
     case $::osfamily {
       'Debian': {
         include ::apt
@@ -24,7 +24,7 @@ class bmc::oem::idrac inherits bmc {
       }
       'RedHat': {
         exec { 'Dell Yum repository':
-          command => 'wget -q -O - http://linux.dell.com/repo/hardware/dsu/bootstrap.cgi | bash',
+          command => 'curl -s http://linux.dell.com/repo/hardware/dsu/bootstrap.cgi | bash',
           cwd     => '/tmp',
           creates => '/etc/yum.repos.d/dell-system-update.repo',
           path    => ['/usr/bin', '/usr/sbin'],
