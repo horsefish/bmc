@@ -36,7 +36,7 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
       else
         racadm_out = Racadm.racadm_call(
           call_info,
-          ['get', "iDRAC.Users.#{getconfig_user['# cfgUserAdminIndex']}"],
+          ['get', "iDRAC.Users.#{getconfig_user['#cfgUserAdminIndex']}"],
         )
         idrac_user = Racadm.parse_racadm racadm_out
         type.provider = new(

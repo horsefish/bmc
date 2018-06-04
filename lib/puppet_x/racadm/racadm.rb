@@ -36,7 +36,7 @@ class Racadm
           subvalue = '[Key=' + sub_line_array.join('=').strip
           parsed[subkey] = subvalue
         elsif !sub_line_array[0].start_with? '!!'
-          subkey = sub_line_array.slice!(0).strip
+          subkey = sub_line_array.slice!(0).strip.gsub(%r{\s+}, '')
           subvalue = sub_line_array.join('=').strip
           parsed[subkey] = subvalue
         end
