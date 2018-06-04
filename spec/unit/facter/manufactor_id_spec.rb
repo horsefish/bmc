@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe Facter::Util::Fact do
-
+describe 'Facter::Util::Fact' do
   before(:each) do
     Facter.clear
   end
@@ -13,9 +12,10 @@ describe Facter::Util::Fact do
     output = File.join(File.dirname(__FILE__), '..', '..', 'fixtures', 'bmc', 'dell_ipmitool_mc_info.txt')
     IO.read(output)
   end
+
   describe '#manufactor_id' do
     context '#manufactor_id physical' do
-      let(:facter) {{:is_virtual => false, }}
+      let(:facter) { { is_virtual: false } }
 
       it do
         allow(Facter::Core::Execution).to receive(:which).and_return('/bin/ipmitool')

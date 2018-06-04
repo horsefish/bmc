@@ -1,3 +1,9 @@
+## Supported Release 0.1.0
+### Summary
+* bmc
+    - change parameter name to manage_oem_repo because it more informativ.
+    - change parameter name and type to oem_software of type Array to better support remote setup.
+
 ## Supported Release 0.0.4
 ### Summary
 Module is now PDK complient 
