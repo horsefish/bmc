@@ -13,25 +13,21 @@ describe 'Facter::Util::Fact' do
     IO.read(output)
   end
 
-  describe '#manufactor_id' do
-    context '#manufactor_id physical' do
-      let(:facter) { { is_virtual: false } }
+  describe '#manufactor_id physical' do
+    it do
+      allow(Facter::Core::Execution).to receive(:which).and_return('/bin/ipmitool')
+      allow(Facter::Core::Execution).to receive(:execute).and_call_original
+      allow(Facter::Core::Execution).to receive(:execute).with('/bin/ipmitool mc info 2>&1').and_return(dell_ipmitool_mc_info)
+      allow(Facter.fact(:is_virtual)).to receive(:value).and_return(false)
 
-      it do
-        allow(Facter::Core::Execution).to receive(:which).and_return('/bin/ipmitool')
-        allow(Facter::Core::Execution).to receive(:execute).and_call_original
-        allow(Facter::Core::Execution).to receive(:execute).with('/bin/ipmitool mc info 2>&1').and_return(dell_ipmitool_mc_info)
-
-        expect(Facter.fact(:manufactor_id).value).to eq '674'
-      end
+      expect(Facter.fact(:manufactor_id).value).to eq '674'
     end
+  end
 
-    context '#manufactor_id virtual' do
-      Facter.fact(:is_virtual).stubs(:value).returns true
-      it do
-        allow(Facter.fact(:is_virtual)).to receive(:value).and_return(true)
-        expect(Facter.fact(:manufactor_id)).to be_nil
-      end
+  describe '#manufactor_id virtual' do
+    it do
+      allow(Facter.fact(:is_virtual)).to receive(:value).and_return(true)
+      expect(Facter.fact(:manufactor_id)).to be_nil
     end
   end
 end
