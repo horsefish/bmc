@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file. The format 
 ## Supported Release 0.1.0
 ### Summary
 Made change to init arguments so we dont need to change API when we add support for more BMC's
+Module is now PDK 1.5.0 complient
 ### Changed
 * bmc
     - change parameter name to manage_oem_repo because it more informativ.
