@@ -43,7 +43,7 @@ Puppet::Type.newtype(:bmc_user) do
     defaultto 'administrator'
 
     validate do |value|
-      valid_roles = %w[callback user operator administrator oem_proprietary no_access]
+      valid_roles = ['callback', 'user', 'operator', 'administrator', 'oem_proprietary', 'no_access']
       if value.is_a?(::Hash)
         unless (value.values - valid_roles).empty?
           raise Puppet::Error, '%s contains at least one invalid role' % value.inspect
