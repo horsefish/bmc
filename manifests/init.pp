@@ -1,5 +1,7 @@
 #Class: bmc
 #
+# Baseboard Management Controller
+#
 # Parameters:
 #
 # ensure: Control the existences of this bmc module.
