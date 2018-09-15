@@ -29,6 +29,7 @@ class bmc (
     -> Class['bmc::config']
     -> Class['bmc::install']
   }
+
   contain 'bmc::install'
   contain 'bmc::config'
   contain 'bmc::oem'
