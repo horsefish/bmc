@@ -6,16 +6,18 @@
   "license": "Apache-2.0",
   "source": "https://github.com/horsefish/bmc",
   "project_page": "https://github.com/orgs/horsefish/dashboard",
+  "issues_url": "https://github.com/horsefish/bmc/issues",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 2.4.0 < 5.0.0"
+      "version_requirement": ">= 4.13.0 < 6.0.0"
     },
     {
       "name": "puppetlabs/apt",
-      "version_requirement": ">= 1.4.0 < 5.0.0"
+      "version_requirement": ">= 2.0.0 < 7.0.0"
     }
   ],
+  "data_provider": "hiera",
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -44,7 +46,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.7.0 < 6.0.0"
+      "version_requirement": ">= 4.10.0 < 6.0.0"
     }
   ],
   "tags": [

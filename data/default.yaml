@@ -1,0 +1,2 @@
+bmc::ensure: 'present'
+bmc::manage_oem_repo: true

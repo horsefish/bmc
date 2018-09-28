@@ -1,5 +1,6 @@
 # @api private
 # Handle the orchestration of oem software
 class bmc::oem() inherits bmc {
-  if member($::bmc::oem_software, 'idrac') { contain 'bmc::oem::idrac' }
+  require ::bmc::params
+  if member($::bmc::oem_software, 'dell') { contain 'bmc::oem::omsa' }
 }

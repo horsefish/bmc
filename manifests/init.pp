@@ -15,9 +15,9 @@
 # Sample Usage: look at README.md
 #
 class bmc (
-  Enum['present', 'absent', 'purged', 'latest']$ensure = 'present',
-  Boolean $manage_oem_repo                             = true,
-  Array[Enum['idrac']] $oem_software                   = $::bmc::params::oem_software,
+  Enum['present', 'absent', 'purged', 'latest']$ensure,
+  Boolean $manage_oem_repo,
+  Optional[Array[Enum['dell']]] $oem_software = $::bmc::params::oem_software,
 ) inherits bmc::params {
 
   if $ensure == 'present' or $ensure == 'latest' {

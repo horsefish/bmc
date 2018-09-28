@@ -1,12 +1,11 @@
 # @api private
-# Install idrac software
-class bmc::oem::idrac inherits bmc {
+# Install OpenManage Server Administrator (OMSA), iDRAC Service Module(iSM) and Deployment Tool Kit (DTK) software
+class bmc::oem::omsa inherits bmc {
   if $::bmc::manage_oem_repo {
     case $::osfamily {
       'Debian': {
         include ::apt
 
-        Class['::apt::update'] -> Package['::srvadmin-all']
         apt::source { 'DellOpenManage':
           comment  => 'Dell OpenManage Ubuntu & Debian Repositories',
           location => 'http://linux.dell.com/repo/community/ubuntu',
@@ -19,7 +18,7 @@ class bmc::oem::idrac inherits bmc {
           include  => {
             'src' => false
           },
-          before   => Class['apt::update', 'srvadmin-all'],
+          before   => [Class['apt::update'], Package['srvadmin-all']],
         }
       }
       'RedHat': {
