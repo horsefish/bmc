@@ -2,6 +2,7 @@
 # Install OpenManage Server Administrator (OMSA), iDRAC Service Module(iSM) and Deployment Tool Kit (DTK) software
 class bmc::oem::omsa inherits bmc {
 
+  require ::bmc::params
   $_yum_repo_file_name = '/etc/yum.repos.d/dell-system-update.repo'
   $_omsa_package = 'srvadmin-all'
 
@@ -18,9 +19,9 @@ class bmc::oem::omsa inherits bmc {
         apt::source { 'DellOpenManage':
           ensure   => $apt_ensure,
           comment  => 'Dell OpenManage Ubuntu & Debian Repositories',
-          location => 'http://linux.dell.com/repo/community/ubuntu',
+          location => $::bmc::params::apt_source_location,
           release  => $::lsbdistcodename,
-          repos    => 'openmanage',
+          repos    => $::bmc::params::apt_source_repos,
           key      => {
             'id'     => '42550ABD1E80D7C1BC0BAD851285491434D8786F',
             'server' => 'pool.sks-keyservers.net',
