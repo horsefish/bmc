@@ -6,5 +6,8 @@ defaults:
   data_hash: yaml_data
 
 hierarchy:
-    - name: 'default values'
-      path: 'default.yaml'
+  - name: 'manufacturer specific'
+    path: 'manufacturer/%{facts.dmi.board.manufacturer}-fact.yaml'
+
+  - name: 'default values'
+    path: 'default.yaml'

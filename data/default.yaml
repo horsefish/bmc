@@ -1,2 +1,4 @@
 bmc::ensure: 'present'
 bmc::manage_oem_repo: true
+bmc::oem_software:
+- 'ipmi'

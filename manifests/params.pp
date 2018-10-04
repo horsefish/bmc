@@ -2,12 +2,6 @@
 # Params for BMC variables
 class bmc::params () {
 
-  case $::manufactor_id {
-    # Dell inc.
-    '674': { $oem_software = ['dell'] }
-    default: { $oem_software = [] }
-  }
-
   case $::osfamily {
     'Redhat': {
       case $::operatingsystemmajrelease {
