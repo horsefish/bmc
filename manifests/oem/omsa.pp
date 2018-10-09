@@ -54,7 +54,7 @@ class bmc::oem::omsa inherits bmc {
     }
   }
 
-  package { 'srvadmin-all':
+  package { $_omsa_package:
     ensure => $::bmc::ensure,
   }
 }
