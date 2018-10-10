@@ -11,9 +11,13 @@ class bmc::params () {
         '6', '7': {
           $ipmi_packages = ['ipmitool']
         }
+        default: {
+          fail("Module ${module_name} is not supported on Redhat release ${facts['os']['release']['major']}")
+        }
       }
     }
     'Debian': {
+      $ipmi_packages = ['ipmitool']
       case $facts['os']['release']['major'] {
         '16.04': {
           $_decription_version = split($facts['os']['distro']['description'], ' ')[1]
@@ -29,8 +33,10 @@ class bmc::params () {
           $apt_source_location = 'http://linux.dell.com/repo/community/ubuntu'
           $apt_source_repos = 'openmanage'
         }
+        default: {
+          fail("Module ${module_name} is not supported on Debian release ${facts['os']['release']['major']}")
+        }
       }
-      $ipmi_packages = ['ipmitool']
     }
     default: {
       fail("Module ${module_name} is not supported on ${facts['os']['family']}")
