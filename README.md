@@ -38,10 +38,17 @@ This module affect's configures the BMC controller.
 * Facter version >= 2.4.3
 
 ###Beginning with bmc
-To begin using the bmc module just include the bmc module and it will install ipmitools and 3rd party OEM sofware if it
-is run on supported hardware.
+To begin using the bmc module just include the bmc module and it will install ipmitools or 3rd party OEM sofware if it
+is on supported hardware.
 ```puppet
   include bmc
+```
+
+If you don't have access to the internet you can manage if 3rd party repositores should be installed. 
+```puppet
+  class { 'bmc':
+    manage_oem_repo => false,
+  }
 ```
 
 ##Usage
