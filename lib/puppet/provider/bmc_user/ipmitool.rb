@@ -8,6 +8,8 @@ Puppet::Type.type(:bmc_user).provide(:ipmitool) do
 
   has_feature :ipmi
 
+  commands ipmitool: 'ipmitool'
+
   mk_resource_methods
 
   def self.prefetch(resources)

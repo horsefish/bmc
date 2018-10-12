@@ -8,9 +8,6 @@ Puppet::Type.type(:bmc_ssl).provide(:racadm7) do
 
   confine osfamily: [:redhat, :debian]
   confine exists: '/opt/dell/srvadmin/bin/idracadm7'
-  defaultfor manufactor_id: :'674'
-
-  commands ipmitool: 'ipmitool'
 
   mk_resource_methods
 

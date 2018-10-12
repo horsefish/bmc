@@ -6,7 +6,6 @@ Puppet::Type.type(:bmc_time).provide(:racadm7) do
 
   confine osfamily: [:redhat, :debian]
   confine exists: '/opt/dell/srvadmin/bin/idracadm7'
-  defaultfor manufactor_id: :'674'
 
   mk_resource_methods
 
