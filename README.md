@@ -1,5 +1,8 @@
 # Baseboard Management Controller module
 
+[![Build Status](https://api.travis-ci.org/horsefish/bmc.png?branch=master)](https://travis-ci.org/horsefish/bmc)
+[![Code Coverage](https://coveralls.io/repos/github/horsefish/bmc/badge.svg?branch=master)](https://coveralls.io/github/horsefish/bmc)
+
 [IPMItool]: https://sourceforge.net/projects/ipmitool/
 [stdlib module]: https://github.com/puppetlabs/puppetlabs-stdlib
 [apt module]: https://forge.puppet.com/puppetlabs/apt

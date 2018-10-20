@@ -2,14 +2,18 @@ All notable changes to this project will be documented in this file. The format 
 ## Supported Release 0.1.3
 ### Summary
 - Module is now PDK 1.7.1 compliant
+
 ### Added
 - More versions of Ubuntu is now supported
+
 ### Changed
 - Fix typos
 - Changed data_provider to hiera
 - Made installation of ipmitool optional
+
 ### Removed
 - Fact manufactor_id because it depended on ipmitool
+
 ### Fixed
 - ensure = absent|purged is now working as intended
 
@@ -25,6 +29,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Summary
 - Made change to init arguments so we dont need to change API when we add support for more BMC's
 - Module is now PDK 1.5.0 compliant
+
 ### Changed
 - bmc
   - change parameter name to manage_oem_repo because it more informativ.
@@ -33,6 +38,7 @@ All notable changes to this project will be documented in this file. The format 
 ## Supported Release 0.0.4
 ### Summary
 - Module is now PDK compliant
+
 ### Changed
 - bmc_user
   - better support for channels in bmc_user ipmi provider.
@@ -40,6 +46,7 @@ All notable changes to this project will be documented in this file. The format 
 ## Supported Release 0.0.3
 ### Summary
 - Puppet4 data types used.
+
 ### Added
 - bmc_user
   - general support for enable/disable user.
@@ -53,6 +60,7 @@ All notable changes to this project will be documented in this file. The format 
   - performance improvments
 - other
     - more robust manufactor_id fact
+    
 ### Removed    
 * bmc_network
     - removed defaultto from most property
