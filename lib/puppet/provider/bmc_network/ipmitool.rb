@@ -10,7 +10,7 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
   mk_resource_methods
 
   def self.prefetch(resources)
-    resources.each do |_key, type|
+    resources.each_value do |type|
       ipmitool_out = ipmitool('lan', 'print', type.value(:channel))
       lan_print = Ipmitool.parse_lan(ipmitool_out)
       type.provider = new(
@@ -23,19 +23,19 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
     end
   end
 
-  def ip_source(value)
+  def ip_source=(value)
     ipmitool('lan', 'set', @property_hash[:channel], 'ipsrc', value)
   end
 
-  def ipv4_ip_address(value)
-    ipmitool('lan', 'set', @property_hash[:channel], 'ipaddr', value)
+  def ipv4_ip_address=(value)
+   ipmitool('lan', 'set', @property_hash[:channel], 'ipaddr', value)
   end
 
-  def ipv4_gateway(value)
+  def ipv4_gateway=(value)
     ipmitool('lan', 'set', @property_hash[:channel], 'defgw', 'ipaddr', value)
   end
 
-  def ipv4_netmask(value)
-    ipmitool('lan', 'set', @property_hash[:channel], 'netmask', value)
+  def ipv4_netmask=(value)
+   ipmitool('lan', 'set', @property_hash[:channel], 'netmask', value)
   end
 end

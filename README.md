@@ -27,7 +27,7 @@ This module configures the Remote Management System (Baseboard Management Contro
 
 You can configure the BMC's LAN, LDAP and SSL certificates and manage the local users.
 
-Can use [IPMItool] or a server provider specific tool (ie. [racadm]) to do the actual communication with the BMC.
+Can use [IPMItool] require at least version 1.8.18 or a server provider specific tool (ie. [racadm]) to do the actual communication with the BMC.
 
 ## Setup
 
