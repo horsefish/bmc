@@ -28,7 +28,7 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
   end
 
   def ipv4_ip_address=(value)
-   ipmitool('lan', 'set', @property_hash[:channel], 'ipaddr', value)
+    ipmitool('lan', 'set', @property_hash[:channel], 'ipaddr', value)
   end
 
   def ipv4_gateway=(value)
@@ -36,6 +36,6 @@ Puppet::Type.type(:bmc_network).provide(:ipmitool) do
   end
 
   def ipv4_netmask=(value)
-   ipmitool('lan', 'set', @property_hash[:channel], 'netmask', value)
+    ipmitool('lan', 'set', @property_hash[:channel], 'netmask', value)
   end
 end
