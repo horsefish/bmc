@@ -128,7 +128,7 @@ class Ipmitool
     'User ID' => :user_id,
     'User Name' => :user_name,
     'Fixed Name' => :fixed_name,
-    'Access Available' => :access_avaliable,
+    'Access Available' => :access_available,
     'Link Authentication' => :link,
     'IPMI Messaging' => :ipmi,
     'Privilege Level' => :privilege,

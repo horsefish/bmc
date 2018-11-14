@@ -190,7 +190,7 @@ describe Ipmitool do
         user_id: '1',
         user_name: '',
         fixed_name: 'Yes',
-        access_avaliable: 'call-in / callback',
+        access_available: 'call-in / callback',
         link: 'disabled',
         ipmi: 'disabled',
         privilege: 'NO ACCESS',
