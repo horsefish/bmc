@@ -1,4 +1,11 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
+## not releasted
+### Summary
+- Module is now PDK 1.8.0 compliant
+
+### Added
+- Added some unit tests
+
 ## Supported Release 0.1.4
 ### Sumary
 - Bugfix release
