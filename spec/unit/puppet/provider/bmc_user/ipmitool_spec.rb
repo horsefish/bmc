@@ -1,16 +1,29 @@
 require 'spec_helper'
 
-type_class = Puppet::Type.type(:bmc_user)
+provider_class = Puppet::Type.type(:bmc_user).provider(:ipmitool)
 
-describe type_class.provider(:ipmitool) do
+describe provider_class do
+  let :params do
+    {}
+  end
+
+  let :resource do
+    Puppet::Type::Bmc_user.new(
+      {
+        title: 'a_user',
+        password: 'a_secret',
+        callin: false,
+        ipmi: true,
+        link: false,
+      }.merge(params),
+    )
+  end
+
   let :provider do
-    resource = type_class.new(title: 'test')
-    instance = described_class.new(title: 'test')
-    resource.provider = instance
-    instance
+    provider_class.new(resource)
   end
 
   describe 'default instance' do
-    it { expect(provider.name).to eq 'test' }
+    it { expect(provider.name).to eq 'a_user' }
   end
 end
