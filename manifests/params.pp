@@ -38,6 +38,9 @@ class bmc::params () {
         }
       }
     }
+    'FreeBSD': {
+      $ipmi_packages = ['ipmitool']
+    }
     default: {
       fail("Module ${module_name} is not supported on ${facts['os']['family']}")
     }
