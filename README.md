@@ -128,10 +128,10 @@ A bmc user with administrator privilege on channel 2 and user privilege on chann
 ###To configure a static NIC setup
 ```puppet
   bmc_network { 'bmc_network':
-    ipsrc   => static,
-    ipaddr  => '192.168.0.2',
-    gateway => '10.235.70.254',
-    netmask => '255.255.255.0',
+    ip_source       => static,
+    ipv4_ip_address => '192.168.0.2',
+    ipv4_gateway    => '10.235.70.254',
+    ipv4_netmask    => '255.255.255.0',
   }
 ```
 
@@ -158,6 +158,7 @@ if bmc_server_host is not set it ask ipmitool lan print
 This is tested on these OS:
 - Ubuntu 14.04
 - Centos 7.4
+- FreeBSD 11.2, 12.0
 
 ##Development
 To develop (and test) providers we need access to as many and divert BMC's
