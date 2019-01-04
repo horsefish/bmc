@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-provider_class = Puppet::Type.type(:bmc_user).provider(:racadm7)
+provider_class = Puppet::Type.type(:bmc_ldap_group).provider(:racadm7)
 
 describe provider_class do
   let :params do
@@ -8,13 +8,9 @@ describe provider_class do
   end
 
   let :resource do
-    Puppet::Type::Bmc_user.new(
+    Puppet::Type::Bmc_ldap_group.new(
       {
-        title: 'a_user',
-        password: 'a_secret',
-        callin: false,
-        ipmi: true,
-        link: false,
+        title: '1',
       }.merge(params),
     )
   end
@@ -26,6 +22,6 @@ describe provider_class do
   it { expect(provider_class.name).to eq :racadm7 }
 
   describe 'default instance' do
-    it { expect(provider.name).to eq 'a_user' }
+    it { expect(provider.name).to eq 1.to_s.to_sym }
   end
 end

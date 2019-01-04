@@ -23,6 +23,8 @@ describe provider_class do
     provider_class.new(resource)
   end
 
+  it { expect(provider_class.name).to eq :ipmitool }
+
   describe 'default instance' do
     it { expect(provider.name).to eq 'a_user' }
   end

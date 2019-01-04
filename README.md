@@ -130,7 +130,7 @@ A bmc user with administrator privilege on channel 2 and user privilege on chann
   bmc_network { 'bmc_network':
     ip_source       => static,
     ipv4_ip_address => '192.168.0.2',
-    ipv4_gateway    => '10.235.70.254',
+    ipv4_gateway    => '192.168.0.1',
     ipv4_netmask    => '255.255.255.0',
   }
 ```

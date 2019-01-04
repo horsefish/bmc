@@ -1,10 +1,18 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
-## not releasted
+## 0.1.5
 ### Summary
 - Module is now PDK 1.8.0 compliant
 
+### Fixed
+- bmc_user racadm provider id was never set in prefetch 
+
 ### Added
 - Added some unit tests
+- Added support for FreeBSD (Thanks to Eirik Øverby)
+
+### Changed
+- Fix typos
+- Dropped test running Puppet 3
 
 ## Supported Release 0.1.4
 ### Sumary
