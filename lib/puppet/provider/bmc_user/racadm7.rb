@@ -39,7 +39,7 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
         )
         idrac_user = Racadm.parse_racadm racadm_out
         type.provider = new(
-          id: getconfig_user['# cfgUserAdminIndex'],
+          id: getconfig_user['#cfgUserAdminIndex'],
           ensure: :present,
           enable: Bmc.boolean_to_symbol(Racadm.s_to_bool(idrac_user['Enable'])),
           privilege:
