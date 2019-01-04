@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'pu
 Puppet::Type.type(:bmc_network).provide(:ipmitool) do
   desc 'Manage BMC network via ipmitool.'
 
-  confine osfamily: [:redhat, :debian]
+  confine osfamily: [:redhat, :debian, :freebsd]
 
   commands ipmitool: 'ipmitool'
 

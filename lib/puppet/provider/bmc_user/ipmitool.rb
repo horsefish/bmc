@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'pu
 require 'open3'
 
 Puppet::Type.type(:bmc_user).provide(:ipmitool) do
-  confine osfamily: [:redhat, :debian]
+  confine osfamily: [:redhat, :debian, :freebsd]
   desc 'Manage local users via ipmitool.'
 
   has_feature :ipmi
