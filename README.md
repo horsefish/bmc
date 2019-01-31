@@ -96,7 +96,6 @@ A bmc user with administrator privilege on channel 2 and user privilege on chann
     idrac    => 0x1ff,
   }
 ```
-*There is no support for separate rules pr channel for a user yet.*
 ### To change the SSL certificate 
 ```puppet
   bmc_ssl { 'IDRAC ssl':
@@ -116,16 +115,14 @@ A bmc user with administrator privilege on channel 2 and user privilege on chann
   bmc_ssl { 'IDRAC ssl':
     certificate_file => '/etc/ssl/private/idrac.pem',
     certificate_key  => '/etc/ssl/private/idrac.key',
-    password         => 'mypassword',
-    require          => Bmc_user['root'],
   }
 ```
-### To configure the NIC to use DHCP
+### Configure the NIC to use DHCP
 ```puppet
   bmc_network { 'bmc_network':
   }
 ```
-### To configure a static NIC setup
+### Configure a static NIC setup
 ```puppet
   bmc_network { 'bmc_network':
     ip_source       => static,
@@ -134,24 +131,33 @@ A bmc user with administrator privilege on channel 2 and user privilege on chann
     ipv4_netmask    => '255.255.255.0',
   }
 ```
-
-if bmc_server_host is not set it ask ipmitool lan print
-*It only support racadm7*
-
-### To configure LDAP
+### Configure LDAP
 ```puppet
-  bmc_ldap{'iDrac_ldap' :
+  bmc_ldap{'my_ldap' :
     server  => 'ldap.example.com',
     base_dn => 'CN=users,CN=accounts,DC=example,DC=com',
   }
 ```
-### To configure LDAP groups
+### Configure LDAP groups
 ```puppet
   bmc_ldap_group{'1' :
     server  => 'ldap.example.com',
     base_dn => 'CN=users,CN=accounts,DC=example,DC=com',
   }
 ```
+### Configure NTP
+```puppet
+  bmc_time{'my_ntp' :
+    ntp_servers => ['ntp01.example.com','ntp02.example.com'],
+  }
+```
+### Configure syslog
+```puppet
+  bmc_syslog{'my_syslog' :
+    syslog_servers => ['syslog01.example.com'],
+  }
+```
+
 
 ## Operating Systems Support
 

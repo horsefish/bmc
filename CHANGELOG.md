@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 - Module is now PDK 1.9.0 compliant
 
 ### Added
-- support for syslog configuration (Thanks to Xand Meaden)
+- Support for syslog configuration (Thanks to Xand Meaden)
 
 ## 0.1.5
 ### Summary
@@ -14,8 +14,8 @@ All notable changes to this project will be documented in this file. The format 
 - bmc_user racadm provider id was never set in prefetch 
 
 ### Added
-- more unit tests
-- support for FreeBSD (Thanks to Eirik Øverby)
+- More unit tests
+- Support for FreeBSD (Thanks to Eirik Øverby)
 
 ### Changed
 - Fix typos
