@@ -4,16 +4,8 @@ require 'csv'
 
 # Ipmitool specific Utilily class
 class Ipmitool
-  def self.symbol_to_s(value)
-    (value == :true) ? 'on' : 'off'
-  end
-
   def self.boolean_to_s(value)
     value ? 'on' : 'off'
-  end
-
-  def self.s_to_bool(value)
-    value.eql? 'on'
   end
 
   def self.ipmi_call(ipmi_args, cmd_args, suppress_error = false)
