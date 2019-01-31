@@ -1,4 +1,11 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
+## 0.1.6
+### Summary
+- Module is now PDK 1.9.0 compliant
+
+### Added
+- support for syslog configuration (Thanks to Xand Meaden)
+
 ## 0.1.5
 ### Summary
 - Module is now PDK 1.8.0 compliant
@@ -7,8 +14,8 @@ All notable changes to this project will be documented in this file. The format 
 - bmc_user racadm provider id was never set in prefetch 
 
 ### Added
-- Added some unit tests
-- Added support for FreeBSD (Thanks to Eirik Øverby)
+- more unit tests
+- support for FreeBSD (Thanks to Eirik Øverby)
 
 ### Changed
 - Fix typos
