@@ -73,7 +73,7 @@ A bmc user that only can use ipmi
   }
 ```
 ### A very complex user
-A bmc user with administrator privilege on channel 2 and user privilege on channem 1. 
+A bmc user with administrator privilege on channel 2 and user privilege on channel 1. 
 ```puppet
   bmc_user { 'Very complex':
     password  => 'password',
@@ -83,7 +83,7 @@ A bmc user with administrator privilege on channel 2 and user privilege on chann
       {
         '1' => user,
         '2' => administrator,
-      }
+      },
   }
 ```
 ### With access to iDRAC with admin rights
