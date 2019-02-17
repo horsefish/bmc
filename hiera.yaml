@@ -8,6 +8,7 @@ defaults:
 hierarchy:
   - name: 'manufacturer specific'
     path: 'manufacturer/%{facts.dmi.board.manufacturer}-fact.yaml'
-
+  - name: "OS values"
+    path: "os/%{facts.os.family}/%{facts.os.release.major}.yaml"
   - name: 'default values'
     path: 'default.yaml'

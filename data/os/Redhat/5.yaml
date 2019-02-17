@@ -1,0 +1,3 @@
+bmc::oem::ipmi::packages:
+  - 'OpenIPMI'
+  - 'OpenIPMI-tools'

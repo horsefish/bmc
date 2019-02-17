@@ -4,7 +4,8 @@
 #
 # Parameters:
 #
-# ensure: Control the existences of this bmc module.
+# ensure: Control the existences of software used by bmc module.
+# specific versions can be controlled in the oem classes.
 # manage_oem_repo: Should 3rd party OEM repositry be managed.
 # oem_software: What 3rd party OEM should be installed.
 #

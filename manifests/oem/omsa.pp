@@ -1,15 +1,37 @@
 # @api private
 # Install OpenManage Server Administrator (OMSA), iDRAC Service Module(iSM) and Deployment Tool Kit (DTK) software
-class bmc::oem::omsa inherits bmc {
+#
+# Parameters:
+#
+# ensure: If you need a specific version of omsa.
+class bmc::oem::omsa (
+  Optional[String] $ensure,
+  Array[String] $packages,
+  Optional[String] $apt_repos,
+  Optional[String] $apt_source_location,
+) inherits bmc {
 
-  require ::bmc::params
-  $_yum_repo_file_name = '/etc/yum.repos.d/dell-system-update.repo'
-  $_omsa_package = 'srvadmin-all'
+  if $ensure {
+    $_ensure = $ensure
+  } else {
+    $_ensure = $::bmc::ensure
+  }
 
   if $::bmc::manage_oem_repo {
     case $::osfamily {
       'Debian': {
         include ::apt
+        if $facts['os']['release']['major'] == '16.04' {
+          $_decription_version = split($facts['os']['distro']['description'], ' ')[1]
+          if versioncmp($_decription_version, '16.04.4') >= 0 {
+            $_omsa_version = '911'
+          } else {
+            $_omsa_version = '910'
+          }
+          $_apt_location = "http://linux.dell.com/repo/community/openmanage/${_omsa_version}/${::lsbdistcodename}"
+        } else {
+          $_apt_location = $apt_source_location
+        }
 
         if $::bmc::ensure == 'purged' {
           $apt_ensure = 'absent'
@@ -19,9 +41,9 @@ class bmc::oem::omsa inherits bmc {
         apt::source { 'DellOpenManage':
           ensure   => $apt_ensure,
           comment  => 'Dell OpenManage Ubuntu & Debian Repositories',
-          location => $::bmc::params::apt_source_location,
+          location => $_apt_location,
           release  => $::lsbdistcodename,
-          repos    => $::bmc::params::apt_source_repos,
+          repos    => $apt_repos,
           key      => {
             'id'     => '42550ABD1E80D7C1BC0BAD851285491434D8786F',
             'server' => 'pool.sks-keyservers.net',
@@ -29,10 +51,12 @@ class bmc::oem::omsa inherits bmc {
           include  => {
             'src' => false
           },
-          before   => [Class['apt::update'], Package[$_omsa_package]],
+          before   => [Class['apt::update'], Package[$packages]],
         }
       }
       'RedHat': {
+        $_yum_repo_file_name = '/etc/yum.repos.d/dell-system-update.repo'
+
         if $::bmc::ensure == 'purged' {
           File { 'DELL system update repo':
             ensure => absent,
@@ -44,7 +68,7 @@ class bmc::oem::omsa inherits bmc {
             cwd     => '/tmp',
             creates => $_yum_repo_file_name,
             path    => ['/usr/bin', '/usr/sbin'],
-            before  => Package[$_omsa_package],
+            before  => Package[$packages],
           }
         }
       }
@@ -54,7 +78,7 @@ class bmc::oem::omsa inherits bmc {
     }
   }
 
-  package { $_omsa_package:
-    ensure => $::bmc::ensure,
+  package { $packages:
+    ensure => $_ensure,
   }
 }

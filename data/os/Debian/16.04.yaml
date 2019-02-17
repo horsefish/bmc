@@ -1,0 +1,2 @@
+bmc::oem::omsa::apt_repos: 'main'
+bmc::oem::omsa::apt_source_location: ~
