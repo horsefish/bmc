@@ -8,3 +8,5 @@ bmc::oem::ipmi::packages:
 bmc::oem::omsa::ensure: 'present'
 bmc::oem::omsa::packages:
   - 'srvadmin-all'
+bmc::oem::omsa::apt_repos: ~
+bmc::oem::omsa::apt_source_location: ~
