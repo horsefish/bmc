@@ -22,13 +22,13 @@ class bmc (
 ) {
 
   if $ensure == 'present' or $ensure == 'latest' {
-    Class['bmc::install']
-    -> Class['bmc::config']
+    Class['::bmc::install']
+    -> Class['::bmc::config']
   } elsif $ensure == 'purged' or $ensure == 'absent' {
-    Class['bmc::config']
-    -> Class['bmc::install']
+    Class['::bmc::config']
+    -> Class['::bmc::install']
   }
 
-  contain 'bmc::install'
-  contain 'bmc::config'
+  contain '::bmc::install'
+  contain '::bmc::config'
 }

@@ -2,8 +2,9 @@ bmc::ensure: 'present'
 bmc::manage_oem_repo: true
 bmc::oem_software:
   - 'ipmi'
-bmc::oem::ipmi::ensure: ''
+bmc::oem::ipmi::ensure: 'present'
 bmc::oem::ipmi::packages:
   - 'ipmitool'
+bmc::oem::omsa::ensure: 'present'
 bmc::oem::omsa::packages:
   - 'srvadmin-all'
