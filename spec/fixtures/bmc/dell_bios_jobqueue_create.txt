@@ -1,0 +1,4 @@
+RAC1024: Successfully scheduled a job.
+Verify the job status using "racadm jobqueue view -i JID_xxxxx" command.
+Commit JID = JID_531744579899
+Reboot JID = RID_531744580337

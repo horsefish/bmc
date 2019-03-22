@@ -1,5 +1,6 @@
 require 'puppet/provider'
 require 'open3'
+require 'digest'
 
 # Racadm specific Utilily class
 class Racadm
@@ -8,6 +9,7 @@ class Racadm
     unless racadm_args[:bmc_server_host].nil? ||
            racadm_args[:bmc_username].nil? ||
            racadm_args[:bmc_password].nil?
+
       cmd.push('-u').push(racadm_args[:bmc_username]) if racadm_args[:bmc_username]
       cmd.push('-p').push(racadm_args[:bmc_password]) if racadm_args[:bmc_password]
       cmd.push('-r').push(racadm_args[:bmc_server_host]) if racadm_args[:bmc_server_host]
@@ -40,6 +42,25 @@ class Racadm
           subvalue = sub_line_array.join('=').strip
           parsed[subkey] = subvalue
         end
+      end
+    end
+    parsed
+  end
+
+  def self.password_changed?(new_password, sha256, salt)
+    new_password_sha = Digest::SHA256.hexdigest(
+      new_password + salt.gsub(%r{..}) { |pair| pair.hex.chr },
+    ).upcase
+    !new_password_sha.eql? sha256
+  end
+
+  def self.parse_jobqueue(reply)
+    parsed = {}
+    reply.each_line do |line|
+      if line.start_with? 'Reboot JID'
+        parsed['reboot_id'] = line.split(' ').last
+      elsif line.start_with? 'Commit JID'
+        parsed['commit_id'] = line.split(' ').last
       end
     end
     parsed

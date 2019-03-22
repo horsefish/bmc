@@ -23,12 +23,8 @@ Puppet::Type.newtype(:bmc_user) do
       '<secret>'
     end
 
-    def to_s?(_value)
+    def is_to_s(_value)
       '<secret>'
-    end
-
-    def change_to_s(_current, _desire)
-      'changed password'
     end
   end
 
@@ -156,7 +152,7 @@ Puppet::Type.newtype(:bmc_user) do
       "0x#{value.to_s(16)}"
     end
 
-    def to_s?(value)
+    def to_s(value)
       "0x#{value.to_s(16)}"
     end
   end
