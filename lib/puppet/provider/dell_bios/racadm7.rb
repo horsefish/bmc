@@ -39,20 +39,20 @@ Puppet::Type.type(:dell_bios).provide(:racadm7) do
         real_password_fields_group = real_password_fields[groupname]
         unless real_password_fields_group.nil?
           relevant_settings.each do |k, v|
-            if real_password_fields_group.include? k
-              if Racadm.password_changed?(
-                group_details[k],
-                settings["SHA256#{k}"],
-                settings["SHA256#{k}Salt"],
-              )
-                # to ensure that puppet notice the password is changed
-                relevant_settings[k] = group_details[k] + '_'
-              else
-                relevant_settings[k] = group_details[k]
-              end
-            else
-              relevant_settings[k] = v
-            end
+            relevant_settings[k] = if real_password_fields_group.include? k
+                                     if Racadm.password_changed?(
+                                       group_details[k],
+                                       settings["SHA256#{k}"],
+                                       settings["SHA256#{k}Salt"],
+                                     )
+                                       # to ensure that puppet notice the password is changed
+                                       group_details[k] + '_'
+                                     else
+                                       group_details[k]
+                                     end
+                                   else
+                                     v
+                                   end
           end
         end
         current_values[groupname] = relevant_settings
