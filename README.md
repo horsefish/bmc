@@ -21,7 +21,7 @@
 
 ## Overview
 
-This module configures the Remote Management System (Baseboard Management Controller) on Enterprise servers. 
+This module configures the Remote Management System (Baseboard Management Controller) on Enterprise servers.
 
 ## Module Description
 
@@ -158,12 +158,11 @@ A bmc user with administrator privilege on channel 2 and user privilege on chann
   }
 ```
 
-
 ## Operating Systems Support
 
 This is tested on these OS:
 - Ubuntu 14.04
-- Centos 7.4
+- Centos 7.6
 - FreeBSD 11.2, 12.0
 
 ## Development

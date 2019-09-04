@@ -68,7 +68,8 @@
     "ilom",
     "imm",
     "ilo",
-    "bios"
+    "bios",
+    "dell"
   ],
   "pdk-version": "1.13.0",
   "template-url": "pdk-default#1.13.0",

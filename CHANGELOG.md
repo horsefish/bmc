@@ -1,10 +1,12 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 ## 0.1.7
 ### Summary
-- Module is now PDK 1.12.0 compliant
+- Module is now PDK 1.13.0 compliant
 
 ### Added
-- Initial support for Dell Bios configuration.
+- Initial support for Dell Bios configuration. This is work in progress because some of the Bios configuration in some
+situations has to be done before a OS is installed and right now it is not clear how this is done best. Eventually this
+should also be moved to independent module.
 
 ## 0.1.6
 ### Summary
