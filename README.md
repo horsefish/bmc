@@ -38,7 +38,7 @@ This module affect's configures the BMC controller.
 ### Setup Requirements
 * PuppetLabs [stdlib module]
 * PuppetLabs [apt module]
-* Puppet version >= 4.0.x
+* Puppet version >= 4.10.x
 * Facter version >= 2.4.3
 
 ### Beginning with bmc
