@@ -1,4 +1,8 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
+## 0.1.8
+### Fixed
+ - Bmc_user and Bmc_ldap_group: Could not evaluate: wrong number of arguments (0 for 1)
+ 
 ## 0.1.7
 ### Summary
 - Module is now PDK 1.13.0 compliant

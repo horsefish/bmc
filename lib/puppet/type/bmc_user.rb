@@ -149,11 +149,11 @@ Puppet::Type.newtype(:bmc_user) do
     end
 
     def should_to_s(value)
-      "0x#{value.to_s(16)}"
+      "0x#{value.to_s(16)}" if value
     end
 
-    def to_s(value)
-      "0x#{value.to_s(16)}"
+    def is_to_s(value)
+      "0x#{value.to_s(16)}" if value
     end
   end
 end

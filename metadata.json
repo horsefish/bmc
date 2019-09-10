@@ -1,6 +1,6 @@
 {
   "name": "horsefish-bmc",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": "horsefish",
   "summary": "Configures and manages Out-of-band management controller.",
   "license": "Apache-2.0",
