@@ -5,7 +5,7 @@
   "summary": "Configures and manages Out-of-band management controller.",
   "license": "Apache-2.0",
   "source": "https://github.com/horsefish/bmc",
-  "project_page": "https://github.com/orgs/horsefish/dashboard",
+  "project_page": "https://github.com/horsefish/bmc",
   "issues_url": "https://github.com/horsefish/bmc/issues",
   "dependencies": [
     {
