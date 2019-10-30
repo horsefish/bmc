@@ -9,12 +9,12 @@ class Ipmitool
   end
 
   def self.ipmi_call(ipmi_args, cmd_args, suppress_error = false)
-    case Facter.value('osfamily')
-    when 'FreeBSD'
-      cmd = ['/usr/local/bin/ipmitool']
-    else
-      cmd = ['/usr/bin/ipmitool']
-    end
+    cmd = case Facter.value('osfamily')
+          when 'FreeBSD'
+            ['/usr/local/bin/ipmitool']
+          else
+            ['/usr/bin/ipmitool']
+          end
 
     unless ipmi_args[:bmc_server_host].nil? ||
            ipmi_args[:bmc_username].nil? ||
@@ -38,12 +38,12 @@ class Ipmitool
   end
 
   def self.ipmi_current_password(ipmi_args, user_id, password)
-    case Facter.value('osfamily')
-    when 'FreeBSD'
-      basic_cmd = ['/usr/local/bin/ipmitool']
-    else
-      basic_cmd = ['/usr/bin/ipmitool']
-    end
+    basic_cmd = case Facter.value('osfamily')
+                when 'FreeBSD'
+                  ['/usr/local/bin/ipmitool']
+                else
+                  ['/usr/bin/ipmitool']
+                end
 
     unless ipmi_args[:bmc_server_host].nil? ||
            ipmi_args[:bmc_username].nil? ||
