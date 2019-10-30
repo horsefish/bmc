@@ -1,10 +1,16 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
+## 0.1.10
+### Summary
+- Updated module dependencies
+- Changed OpenManage version to 9.3.0 for Ubuntu 18.04
+
 ## 0.1.9
+### Summary
+- Module is now PDK 1.14.0 compliant
+
 ### Fixed
 - Project_page is now correct (Thanks to Oleg Ginzburg)
 - Ipmitool is installed on a different location in FreeBSD
-### Summary
-- Module is now PDK 1.14.0 compliant
 
 ## 0.1.8
 ### Fixed

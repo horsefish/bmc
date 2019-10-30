@@ -1,2 +1,2 @@
 bmc::oem::omsa::apt_repos: 'main'
-bmc::oem::omsa::apt_source_location: "http://linux.dell.com/repo/community/openmanage/920/%{facts.lsbdistcodename}"
+bmc::oem::omsa::apt_source_location: "http://linux.dell.com/repo/community/openmanage/930/%{facts.lsbdistcodename}"
