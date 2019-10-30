@@ -10,6 +10,8 @@ Puppet::Type.type(:bmc_network).provide(:racadm7) do
   confine osfamily: [:redhat, :debian]
   confine exists: '/opt/dell/srvadmin/bin/idracadm7'
 
+  defaultfor osfamily: [:redhat, :debian]
+
   mk_resource_methods
 
   def initialize(value = {})

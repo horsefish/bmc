@@ -12,6 +12,8 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   confine osfamily: [:redhat, :debian]
   confine exists: '/opt/dell/srvadmin/bin/idracadm7'
 
+  defaultfor osfamily: [:redhat, :debian]
+
   def self.prefetch(resources)
     resources.each_value do |type|
       call_info = {
