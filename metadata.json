@@ -71,7 +71,7 @@
     "bios",
     "dell"
   ],
-  "pdk-version": "1.14.0",
-  "template-url": "pdk-default#1.14.0",
-  "template-ref": "1.14.0-0-g1bf3a4e"
+  "pdk-version": "1.16.0",
+  "template-url": "pdk-default#1.16.0",
+  "template-ref": "tags/1.16.0-0-gaf44904"
 }
