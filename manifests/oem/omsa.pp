@@ -22,8 +22,8 @@ class bmc::oem::omsa (
       'Debian': {
         include ::apt
         if $facts['os']['release']['major'] == '16.04' {
-          $_decription_version = split($facts['os']['distro']['description'], ' ')[1]
-          if versioncmp($_decription_version, '16.04.4') >= 0 {
+          $_description_version = split($facts['os']['distro']['description'], ' ')[1]
+          if versioncmp($_description_version, '16.04.4') >= 0 {
             $_omsa_version = '911'
           } else {
             $_omsa_version = '910'

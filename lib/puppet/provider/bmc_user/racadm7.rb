@@ -15,33 +15,52 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   defaultfor osfamily: [:redhat, :debian]
 
   def self.prefetch(resources)
+    users_cache = [
+      {
+        UserName: 'anonymous', # this user can not be modified
+      },
+    ]
+    max_user_count = -1
     resources.each_value do |type|
       call_info = {
         bmc_username: type.value(:bmc_username),
         bmc_password: type.value(:bmc_password),
         bmc_server_host: type.value(:bmc_server_host),
       }
-      # the getconfig method is deprecated but have not been able to figure out how the alternative "get Idrac.Users"
-      # support search by username
-      racadm_out = Racadm.racadm_call(
-        call_info,
-        ['getconfig', '-u', "'#{type.name}'"],
-        true,
-      )
-      getconfig_user = Racadm.parse_racadm racadm_out
-      if getconfig_user.empty?
+
+      user_cache_id = users_cache.index { |user_cache| user_cache['UserName'] == type.name }
+
+      if user_cache_id.nil?
+        if max_user_count == -1
+          racadm_out = Racadm.racadm_call(call_info, ['get', 'iDRAC.Users'])
+          idrac_users = Racadm.parse_racadm racadm_out
+          max_user_count = idrac_users.size
+        end
+
+        current_max_id_in_cache = users_cache.size + 1
+        (current_max_id_in_cache..max_user_count).each do |current_user_id|
+          racadm_out = Racadm.racadm_call(
+            call_info,
+            ['get', "iDRAC.Users.#{current_user_id}"],
+          )
+          idrac_user = Racadm.parse_racadm racadm_out
+          users_cache << idrac_user
+          if idrac_user['UserName'] == type.name
+            user_cache_id = current_user_id - 1
+            break
+          end
+        end
+      end
+
+      if user_cache_id.nil?
         type.provider = new(
           ensure: :absent,
           name: type.name,
         )
       else
-        racadm_out = Racadm.racadm_call(
-          call_info,
-          ['get', "iDRAC.Users.#{getconfig_user['#cfgUserAdminIndex']}"],
-        )
-        idrac_user = Racadm.parse_racadm racadm_out
+        idrac_user = users_cache[user_cache_id]
         type.provider = new(
-          id: getconfig_user['#cfgUserAdminIndex'],
+          id: user_cache_id + 1,
           ensure: :present,
           enable: Bmc.boolean_to_symbol(Racadm.s_to_bool(idrac_user['Enable'])),
           privilege:
@@ -101,7 +120,7 @@ Puppet::Type.type(:bmc_user).provide(:racadm7) do
   def password
     newpass = Digest::SHA256.hexdigest(
       @resource[:password] +
-      @property_hash[:password_salt].gsub(%r{..}) { |pair| pair.hex.chr },
+        @property_hash[:password_salt].gsub(%r{..}) { |pair| pair.hex.chr },
     ).upcase
     @resource[:password] if newpass.eql? @property_hash[:password_sha256]
   end
